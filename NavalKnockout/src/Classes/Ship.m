@@ -8,6 +8,7 @@
 
 #import "Ship.h"
 #import "Game.h"
+#import "ShipsTray.h"
 
 #include <math.h>
 
@@ -19,7 +20,7 @@
     float offsetY;
 }
 
-@property (nonatomic, weak) SPSprite *trayContainer;
+@property (nonatomic, weak) ShipsTray *trayContainer;
 @property (nonatomic, weak) SPSprite *gridContainer;
 @property (nonatomic, weak) Game *gameContainer;
 
@@ -94,9 +95,6 @@ static BOOL shipTypeMapsInitialized = NO;
     self.pivotX = self.width / 2.0f;
     self.pivotY = self.height / 2.0f;
     
-    
-    
-    // add the sprite to the stage (or whatever)
 }
 
 
@@ -124,6 +122,7 @@ static BOOL shipTypeMapsInitialized = NO;
         SPPoint *touchUpPosition = [touchUp locationInSpace:_gridContainer];
         [self removeEventListener:@selector(dragFromTray:) atObject:self forType:SP_EVENT_TYPE_TOUCH];
         [_gridContainer addChild:self];
+        [_trayContainer removedShip:self];
         self.x = touchUpPosition.x;
         self.y = touchUpPosition.y;
         [self snapToGrid];

@@ -16,6 +16,9 @@
 		631C23F518C52640009EA080 /* ShipsTray.m in Sources */ = {isa = PBXBuildFile; fileRef = 631C23F418C52640009EA080 /* ShipsTray.m */; };
 		631C23F818C53E64009EA080 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 631C23F718C53E64009EA080 /* Images.xcassets */; };
 		63371EA018C56E2C00AA3FAE /* ShipCommandBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 63371E9F18C56E2C00AA3FAE /* ShipCommandBar.m */; };
+		6354EDFA18C6391300BC257E /* green_button06.png in Resources */ = {isa = PBXBuildFile; fileRef = 6354EDF918C6391300BC257E /* green_button06.png */; };
+		6354EDFD18C6391800BC257E /* green_checkmark.png in Resources */ = {isa = PBXBuildFile; fileRef = 6354EDFC18C6391800BC257E /* green_checkmark.png */; };
+		6354EDFF18C659AE00BC257E /* Glossy08.png in Resources */ = {isa = PBXBuildFile; fileRef = 6354EDFE18C659AE00BC257E /* Glossy08.png */; };
 		638896CC18C3A6F80044693E /* Ship.m in Sources */ = {isa = PBXBuildFile; fileRef = 638896CB18C3A6F80044693E /* Ship.m */; };
 		638896D118C3E0C90044693E /* blue_button13.png in Resources */ = {isa = PBXBuildFile; fileRef = 638896D018C3E0C90044693E /* blue_button13.png */; };
 		638896D318C3E2DC0044693E /* Glossy05.png in Resources */ = {isa = PBXBuildFile; fileRef = 638896D218C3E2DC0044693E /* Glossy05.png */; };
@@ -93,6 +96,9 @@
 		631C23F718C53E64009EA080 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Scaffold/Images.xcassets; sourceTree = "<group>"; };
 		63371E9E18C56E2C00AA3FAE /* ShipCommandBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShipCommandBar.h; sourceTree = "<group>"; };
 		63371E9F18C56E2C00AA3FAE /* ShipCommandBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShipCommandBar.m; sourceTree = "<group>"; };
+		6354EDF918C6391300BC257E /* green_button06.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = green_button06.png; sourceTree = "<group>"; };
+		6354EDFC18C6391800BC257E /* green_checkmark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = green_checkmark.png; sourceTree = "<group>"; };
+		6354EDFE18C659AE00BC257E /* Glossy08.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Glossy08.png; sourceTree = "<group>"; };
 		638896CA18C3A6F80044693E /* Ship.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ship.h; sourceTree = "<group>"; };
 		638896CB18C3A6F80044693E /* Ship.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Ship.m; sourceTree = "<group>"; };
 		638896D018C3E0C90044693E /* blue_button13.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = blue_button13.png; sourceTree = "<group>"; };
@@ -258,10 +264,10 @@
 				DE4A3DE410FFB2AF00FDA492 /* Game.m */,
 				631C23F318C52640009EA080 /* ShipsTray.h */,
 				631C23F418C52640009EA080 /* ShipsTray.m */,
-				638896CA18C3A6F80044693E /* Ship.h */,
-				638896CB18C3A6F80044693E /* Ship.m */,
 				63371E9E18C56E2C00AA3FAE /* ShipCommandBar.h */,
 				63371E9F18C56E2C00AA3FAE /* ShipCommandBar.m */,
+				638896CA18C3A6F80044693E /* Ship.h */,
+				638896CB18C3A6F80044693E /* Ship.m */,
 				DE4F80D414E153E600655D44 /* Media.h */,
 				DE4F80D514E153E600655D44 /* Media.m */,
 			);
@@ -290,6 +296,8 @@
 		DE4F80DD14E1541400655D44 /* 1x */ = {
 			isa = PBXGroup;
 			children = (
+				6354EDF918C6391300BC257E /* green_button06.png */,
+				6354EDFC18C6391800BC257E /* green_checkmark.png */,
 				DE4F80DE14E1541400655D44 /* atlas.png */,
 				63BE1C4A18C2A0AF00D00F2D /* WaterTile1.png */,
 				DE4F80DF14E1541400655D44 /* atlas.xml */,
@@ -298,6 +306,7 @@
 				63BE1C4E18C2A70400D00F2D /* tank5.1.png */,
 				638896D018C3E0C90044693E /* blue_button13.png */,
 				638896D218C3E2DC0044693E /* Glossy05.png */,
+				6354EDFE18C659AE00BC257E /* Glossy08.png */,
 				638896D418C3E4D40044693E /* ship_small_body.png */,
 				638896D618C3E5940044693E /* water.png */,
 				638896D818C3E7760044693E /* waterBlock.png */,
@@ -395,6 +404,7 @@
 			files = (
 				DE4F80E814E1541400655D44 /* sound.caf in Resources */,
 				DE4F80E914E1541400655D44 /* atlas.png in Resources */,
+				6354EDFD18C6391800BC257E /* green_checkmark.png in Resources */,
 				638896D718C3E5940044693E /* water.png in Resources */,
 				63BE1C4F18C2A70400D00F2D /* tank5.1.png in Resources */,
 				DE4F80EA14E1541400655D44 /* atlas.xml in Resources */,
@@ -404,6 +414,7 @@
 				638896D918C3E7760044693E /* waterBlock.png in Resources */,
 				631C23F818C53E64009EA080 /* Images.xcassets in Resources */,
 				DE4F80EE14E1541400655D44 /* atlas@2x.xml in Resources */,
+				6354EDFA18C6391300BC257E /* green_button06.png in Resources */,
 				638896D118C3E0C90044693E /* blue_button13.png in Resources */,
 				DE115961162320F100A25086 /* background.jpg in Resources */,
 				638896D518C3E4D40044693E /* ship_small_body.png in Resources */,
@@ -411,6 +422,7 @@
 				DE115963162320F800A25086 /* background@2x.jpg in Resources */,
 				DE0C71011624177000357F6E /* Default.png in Resources */,
 				DE0C71031624177500357F6E /* Default@2x.png in Resources */,
+				6354EDFF18C659AE00BC257E /* Glossy08.png in Resources */,
 				DE0C71051624177800357F6E /* Default-568h@2x.png in Resources */,
 				DE0C71071624178400357F6E /* Default-Portrait~ipad.png in Resources */,
 				DE0C71091624179300357F6E /* Default-Landscape~ipad.png in Resources */,

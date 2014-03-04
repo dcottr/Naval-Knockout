@@ -6,6 +6,7 @@
 #import "Game.h"
 #import "Ship.h"
 #import "ShipsTray.h"
+#import "ShipCommandBar.h"
 
 @interface Game () {
 	bool isGrabbed;
@@ -18,9 +19,6 @@
 }
 
 - (void)setup;
-//- (void)onImageTouched:(SPTouchEvent *)event;
-//- (void)onResize:(SPResizeEvent *)event;
-
 
 @end
 
@@ -32,7 +30,8 @@
 {
     if ((self = [super init]))
     {
-        _tileSize = 32;
+        _tileSize = 32.0f;
+        _tileCount = 32;
         [self setup];
     }
     return self;
@@ -48,7 +47,7 @@
 - (void)setup
 {
     
-    [SPAudioEngine start];  // starts up the sound engine
+//    [SPAudioEngine start];  // starts up the sound engine
     
     
     _content = [[SPSprite alloc] init];
@@ -64,7 +63,7 @@
     // that way, you will be able to access your textures and sounds throughout your
     // application, without duplicating any resources.
     
-    [Media initSound];      // loads all your sounds    -> see Media.h/Media.m
+//    [Media initSound];      // loads all your sounds    -> see Media.h/Media.m
     
     
     int gameHeight = Sparrow.stage.height;
@@ -86,26 +85,14 @@
     _shipJuggler = [[SPJuggler alloc] init];
     [self addEventListener:@selector(advanceJugglers:) atObject:self forType:SP_EVENT_TYPE_ENTER_FRAME];
     
-    _shipsTray = [[ShipsTray alloc] init];
+    _shipsTray = [[ShipsTray alloc] initWithGame:self];
     _shipsTray.y = gameHeight - 100.0f;
     _shipsTray.x = 0.0f;
     [self addChild:_shipsTray];
 
     
-    
-    for (int i = 0; i < 5; i++) {
-        Ship *ship;
-        if (i < 3) {
-            ship = [[Ship alloc] initWithGame:self type:Torpedo];
-        } else {
-            ship = [[Ship alloc] initWithGame:self type:Miner];
-        }
-        ship.x = 10.0f + i * ship.width;
-        ship.y = 10.0f + ship.height/2;
-        [_shipsTray addChild:ship];
-    }
-    
-    
+    NSArray *ships = [NSArray arrayWithObjects:num(Torpedo), num(Torpedo), num(Torpedo), num(Miner), num(Miner), nil];
+    [_shipsTray presentShips:ships];
     
     
     [_gridContainer addEventListener:@selector(scrollGrid:) atObject:self forType:SP_EVENT_TYPE_TOUCH];
@@ -115,19 +102,21 @@
 {
     NSArray *touches = [[event touchesWithTarget:_gridContainer andPhase:SPTouchPhaseMoved] allObjects];
     
-//    NSArray* touchArray = [[event touches]allObjects];
-//    for (SPTouch* touch in touchArray)
-//    {
-//        if ([touch.target isKindOfClass:[Ship class]]) {
-//            return;
-//        }
-//    }
     if (touches.count == 1) {
         SPTouch *touch = touches[0];
         SPPoint *movement = [touch movementInSpace:_content.parent];
         
         _content.x += movement.x;
         _content.y += movement.y;
+
+        // Doesn't work, since pivot changes......
+//        newY = _content.y + movement.y;
+//        int lb = Sparrow.stage.height - _tileCount * _tileSize - 162.0f;
+//        NSLog(@"newY: %f", newY);
+//        if (newY <= 62 && lb <= newY) {
+//            _content.y = newY;
+//        }
+
     } else if (touches.count >= 2) {
         // two fingers touching -> rotate and scale
         SPTouch *touch1 = touches[0];
@@ -139,7 +128,7 @@
         SPPoint *touch2Pos = [touch2 locationInSpace:_content.parent];
         
         SPPoint *prevVector = [touch1PrevPos subtractPoint:touch2PrevPos];
-        SPPoint *vector = [touch1Pos subtractPoint:touch2Pos]; 
+        SPPoint *vector = [touch1Pos subtractPoint:touch2Pos];
         
         // update pivot point based on previous center
         SPPoint *touch1PrevLocalPos = [touch1 previousLocationInSpace:_content];
@@ -152,7 +141,7 @@
         _content.y = (touch1Pos.y + touch2Pos.y) * 0.5f;
         
         float sizeDiff = vector.length / prevVector.length;
-        _content.scaleX = _content.scaleY = MAX(0.5f, _content.scaleX * sizeDiff);
+        _content.scaleX = _content.scaleY = MAX(0.45f, _content.scaleX * sizeDiff);
     }
 }
 
@@ -161,5 +150,16 @@
     [_shipJuggler advanceTime:event.passedTime];
 }
 
+- (void)doneSettingShips
+{
+    [self removeChild:_shipsTray];
+    _shipsTray = nil;
+    
+    _shipCommandBar = [[ShipCommandBar alloc] init];
+    _shipCommandBar.y = Sparrow.stage.height - 100.0f;
+    _shipCommandBar.x = 0.0f;
+    [self addChild:_shipCommandBar];
+    
+}
 
 @end
