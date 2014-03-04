@@ -34,5 +34,10 @@ static SPTexture *commandBarTexture = nil;
     return self;
 }
 
+- (void)setSelected:(Ship *)ship
+{
+    
+}
+
 
 @end

@@ -44,5 +44,7 @@ typedef NSInteger WeaponType;
 @interface Ship : SPSprite
 
 - (id)initWithGame:(Game *)game type:(ShipType)type;
+- (void)positionedShip;
+
 
 @end

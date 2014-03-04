@@ -8,6 +8,9 @@
 
 #import "SPSprite.h"
 
+@class Ship;
 @interface ShipCommandBar : SPSprite
 
+
+- (void)setSelected:(Ship *)ship;
 @end

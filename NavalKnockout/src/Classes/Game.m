@@ -32,6 +32,7 @@
     {
         _tileSize = 32.0f;
         _tileCount = 32;
+        _ships = [[NSMutableSet alloc] init];
         [self setup];
     }
     return self;
@@ -109,7 +110,7 @@
         _content.x += movement.x;
         _content.y += movement.y;
 
-        // Doesn't work, since pivot changes......
+        // Doesn't work, since pivot changes on drag....
 //        newY = _content.y + movement.y;
 //        int lb = Sparrow.stage.height - _tileCount * _tileSize - 162.0f;
 //        NSLog(@"newY: %f", newY);
@@ -159,6 +160,10 @@
     _shipCommandBar.y = Sparrow.stage.height - 100.0f;
     _shipCommandBar.x = 0.0f;
     [self addChild:_shipCommandBar];
+    
+    for (Ship *ship in _ships) {
+        [ship positionedShip];
+    }
     
 }
 

@@ -9,6 +9,7 @@
 #import "Ship.h"
 #import "Game.h"
 #import "ShipsTray.h"
+#import "ShipCommandBar.h"
 
 #include <math.h>
 
@@ -246,6 +247,20 @@ static BOOL shipTypeMapsInitialized = NO;
     
     self.x = newX;
     self.y = newY;
+}
+
+- (void)positionedShip
+{
+    [self removeEventListener:@selector(positionShip:) atObject:self forType:SP_EVENT_TYPE_TOUCH];
+    [self addEventListener:@selector(selectShip:) atObject:self forType:SP_EVENT_TYPE_TOUCH];
+}
+
+- (void)selectShip:(SPTouchEvent *)event
+{
+    SPTouch *touchUp = [[event touchesWithTarget:self andPhase:SPTouchPhaseEnded] anyObject];
+    if (touchUp) {
+        [_gameContainer.shipCommandBar setSelected:self];
+    }
 }
 
 
