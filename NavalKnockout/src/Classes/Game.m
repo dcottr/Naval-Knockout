@@ -7,18 +7,18 @@
 #import "Ship.h"
 #import "ShipsTray.h"
 #import "ShipCommandBar.h"
+#import "Tile.h"
 
 @interface Game () {
 	bool isGrabbed;
-	float offsetX;
-	float offsetY;
-    
+    bool isPinched;
     bool shipGrabbed;
     float shipOffsetX;
     float shipOffsetY;
 }
 
 - (void)setup;
+
 
 @end
 
@@ -69,19 +69,23 @@
     
     int gameHeight = Sparrow.stage.height;
 
-    SPTexture *waterTexture = [SPTexture textureWithContentsOfFile:@"watertile.jpeg"];
-    for (int i = 0; i < 32; i++) {
-        for (int j = 0; j < 32; j++) {
+//    SPTexture *waterTexture = [SPTexture textureWithContentsOfFile:@"watertile.jpeg"];
+    NSMutableArray *tiles = [[NSMutableArray alloc] init];
+    for (int i = 0; i < _tileCount; i++) {
+        NSMutableArray *column = [[NSMutableArray alloc] init];
+        for (int j = 0; j < _tileCount; j++) {
+            Tile *tile = [[Tile alloc] initWithGame:self row:j column:i];
             
-            SPImage *image = [[SPImage alloc] initWithTexture:waterTexture];
-            image.width = _tileSize;
-            image.height = _tileSize;
-            image.x = i * image.width;
-            image.y = j * image.height;
+            tile.x = i * _tileSize;
+            tile.y = j * _tileSize;
             
-            [_gridContainer addChild:image];
+            [_gridContainer addChild:tile];
+            [column addObject:tile];
         }
+        [tiles addObject:[NSArray arrayWithArray:column]];
     }
+    
+    _tiles = [NSArray arrayWithArray:tiles];
     
     _shipJuggler = [[SPJuggler alloc] init];
     [self addEventListener:@selector(advanceJugglers:) atObject:self forType:SP_EVENT_TYPE_ENTER_FRAME];
@@ -92,7 +96,7 @@
     [self addChild:_shipsTray];
 
     
-    NSArray *ships = [NSArray arrayWithObjects:num(Torpedo), num(Torpedo), num(Torpedo), num(Miner), num(Miner), nil];
+    NSArray *ships = [NSArray arrayWithObjects:num(Torpedo), num(Miner), nil];
     [_shipsTray presentShips:ships];
     
     
@@ -102,8 +106,27 @@
 - (void)scrollGrid:(SPTouchEvent *)event
 {
     NSArray *touches = [[event touchesWithTarget:_gridContainer andPhase:SPTouchPhaseMoved] allObjects];
+    SPTouch *touchUp = [[event touchesWithTarget:self andPhase:SPTouchPhaseEnded] anyObject];
     
-    if (touches.count == 1) {
+
+    
+    if (touches.count == 0) {
+        if (touchUp) {
+            if (!isGrabbed && !isPinched) {
+                [self tapGrid:touchUp];
+//                if (_shipCommandBar) {
+//                    [_shipCommandBar deselect];
+//                }
+            }
+            isGrabbed = NO;
+            isPinched = NO;
+            return;
+        }
+    } else if (touches.count == 1) {
+        if (!isGrabbed) {
+            isGrabbed = YES;
+        }
+        
         SPTouch *touch = touches[0];
         SPPoint *movement = [touch movementInSpace:_content.parent];
         
@@ -119,6 +142,7 @@
 //        }
 
     } else if (touches.count >= 2) {
+        isPinched = YES;
         // two fingers touching -> rotate and scale
         SPTouch *touch1 = touches[0];
         SPTouch *touch2 = touches[1];
@@ -146,6 +170,20 @@
     }
 }
 
+- (void)tapGrid:(SPTouch *)touchUp
+{
+    SPPoint *touchPosition = [touchUp locationInSpace:_gridContainer];
+    // Get i, j of tile
+    int i = floor(touchPosition.x / _tileSize);
+    int j = floor(touchPosition.y / _tileSize);
+    
+    Tile *tile = [[_tiles objectAtIndex:i] objectAtIndex:j];
+    if (_shipCommandBar) {
+        [_shipCommandBar selectTile:tile];
+    }
+}
+
+
 - (void)advanceJugglers:(SPEnterFrameEvent *)event
 {
     [_shipJuggler advanceTime:event.passedTime];
@@ -164,7 +202,6 @@
     for (Ship *ship in _ships) {
         [ship positionedShip];
     }
-    
 }
 
 @end

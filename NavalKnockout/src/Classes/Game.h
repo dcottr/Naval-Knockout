@@ -24,6 +24,7 @@
 
 @property (nonatomic, assign) float tileSize;
 @property (nonatomic, assign) int tileCount;
+@property (nonatomic, strong) NSArray *tiles;
 
 - (void)doneSettingShips;
 

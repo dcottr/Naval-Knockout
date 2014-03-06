@@ -46,5 +46,12 @@ typedef NSInteger WeaponType;
 - (id)initWithGame:(Game *)game type:(ShipType)type;
 - (void)positionedShip;
 
+- (void)turnRight;
+- (void)turnLeft;
+
+- (NSSet *)validMoveTiles;
+
+@property (nonatomic, assign) ShipType shipType;
+
 
 @end

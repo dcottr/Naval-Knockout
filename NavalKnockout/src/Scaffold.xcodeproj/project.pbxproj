@@ -26,6 +26,7 @@
 		638896D718C3E5940044693E /* water.png in Resources */ = {isa = PBXBuildFile; fileRef = 638896D618C3E5940044693E /* water.png */; };
 		638896D918C3E7760044693E /* waterBlock.png in Resources */ = {isa = PBXBuildFile; fileRef = 638896D818C3E7760044693E /* waterBlock.png */; };
 		638896DB18C3E7A30044693E /* darkSkyBlock.png in Resources */ = {isa = PBXBuildFile; fileRef = 638896DA18C3E7A30044693E /* darkSkyBlock.png */; };
+		63AB936718C817B00055E77B /* Tile.m in Sources */ = {isa = PBXBuildFile; fileRef = 63AB936618C817B00055E77B /* Tile.m */; };
 		63BE1C4B18C2A0AF00D00F2D /* WaterTile1.png in Resources */ = {isa = PBXBuildFile; fileRef = 63BE1C4A18C2A0AF00D00F2D /* WaterTile1.png */; };
 		63BE1C4D18C2A62500D00F2D /* button2.png in Resources */ = {isa = PBXBuildFile; fileRef = 63BE1C4C18C2A62500D00F2D /* button2.png */; };
 		63BE1C4F18C2A70400D00F2D /* tank5.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 63BE1C4E18C2A70400D00F2D /* tank5.1.png */; };
@@ -107,6 +108,8 @@
 		638896D618C3E5940044693E /* water.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = water.png; sourceTree = "<group>"; };
 		638896D818C3E7760044693E /* waterBlock.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = waterBlock.png; sourceTree = "<group>"; };
 		638896DA18C3E7A30044693E /* darkSkyBlock.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = darkSkyBlock.png; sourceTree = "<group>"; };
+		63AB936518C817AF0055E77B /* Tile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tile.h; sourceTree = "<group>"; };
+		63AB936618C817B00055E77B /* Tile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tile.m; sourceTree = "<group>"; };
 		63BE1C4A18C2A0AF00D00F2D /* WaterTile1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = WaterTile1.png; sourceTree = "<group>"; };
 		63BE1C4C18C2A62500D00F2D /* button2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = button2.png; sourceTree = "<group>"; };
 		63BE1C4E18C2A70400D00F2D /* tank5.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tank5.1.png; sourceTree = "<group>"; };
@@ -262,6 +265,8 @@
 			children = (
 				DE4A3DE310FFB2AF00FDA492 /* Game.h */,
 				DE4A3DE410FFB2AF00FDA492 /* Game.m */,
+				63AB936518C817AF0055E77B /* Tile.h */,
+				63AB936618C817B00055E77B /* Tile.m */,
 				631C23F318C52640009EA080 /* ShipsTray.h */,
 				631C23F418C52640009EA080 /* ShipsTray.m */,
 				63371E9E18C56E2C00AA3FAE /* ShipCommandBar.h */,
@@ -449,6 +454,7 @@
 				631C23F518C52640009EA080 /* ShipsTray.m in Sources */,
 				DE4A3DE510FFB2AF00FDA492 /* Game.m in Sources */,
 				DE4F80D614E153E600655D44 /* Media.m in Sources */,
+				63AB936718C817B00055E77B /* Tile.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

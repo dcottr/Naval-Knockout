@@ -8,9 +8,13 @@
 
 #import "SPSprite.h"
 
-@class Ship;
+@class Ship, Tile;
 @interface ShipCommandBar : SPSprite
 
 
 - (void)setSelected:(Ship *)ship;
+- (void)deselect;
+
+- (void)selectTile:(Tile *)tile;
+
 @end
