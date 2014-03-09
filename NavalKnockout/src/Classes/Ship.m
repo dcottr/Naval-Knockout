@@ -10,6 +10,7 @@
 #import "Game.h"
 #import "ShipsTray.h"
 #import "ShipCommandBar.h"
+#import "Tile.h"
 
 #include <math.h>
 
@@ -29,7 +30,8 @@
 @property (nonatomic, strong) SPImage *shipImage;
 
 @property (nonatomic, assign) Direction dir;
-@property (nonatomic, assign) ShipType shipType;
+@property (nonatomic, assign) int baseRow;
+@property (nonatomic, assign) int baseColumn;
 @property (nonatomic, assign) int shipLength;
 @property (nonatomic, assign) int shipSpeed;
 @property (nonatomic, assign) ArmourType shipArmour;
@@ -171,6 +173,12 @@ static BOOL shipTypeMapsInitialized = NO;
     }
 }
 
+//- (void)move:(Tile *)tile
+//{
+//    tile.row * 32 + _gameContainer.tileSize/2;
+//    SPTween *tween = [SPTween tweenWithTarget:self time:0.5 transition:SP_TRANSITION_LINEAR];
+//    [tween animateProperty:@"y" targetValue:self.y - ]
+//}
 
 // Move up on tap.
 - (void) move:(SPTouchEvent *)event
@@ -249,6 +257,74 @@ static BOOL shipTypeMapsInitialized = NO;
     self.y = newY;
 }
 
+
+- (void)turnLeft
+{
+    int k = ((_shipLength - 1) * _gameContainer.tileSize)/2;
+    float newX;
+    float newY;
+    
+    switch (_dir) {
+        case Up:
+            newX = self.x - k;
+            newY = self.y + k;
+            self.rotation = 3.0f * M_PI/2;
+            _dir = Left;
+            break;
+        case Right:
+            newX = self.x - k;
+            newY = self.y - k;
+            self.rotation = 0.0f;
+            _dir = Up;
+            break;
+        case Down:
+            newX = self.x + k;
+            newY = self.y - k;
+            self.rotation = M_PI/2;
+            _dir = Right;
+            break;
+        case Left:
+            newX = self.x + k;
+            newY = self.y + k;
+            self.rotation = M_PI;
+            _dir = Down;
+            break;
+        default:
+            break;
+    }
+    
+    self.x = newX;
+    self.y = newY;
+}
+
+- (void)setX:(float)x
+{
+    [super setX:x];
+    [self updatePosition];
+}
+
+- (void)setY:(float)y
+{
+    [super setY:y];
+    [self updatePosition];
+}
+
+
+// Updates _baseColumn and _baseRow
+- (void)updatePosition
+{
+    int tileSize = _gameContainer.tileSize;
+    switch (_dir) {
+        case Up:
+            _baseColumn = floor(self.x / tileSize);
+            _baseRow = floor((self.y / tileSize)) + _shipLength % 2;
+            break;
+            
+        default:
+            break;
+    }
+}
+
 - (void)positionedShip
 {
     [self removeEventListener:@selector(positionShip:) atObject:self forType:SP_EVENT_TYPE_TOUCH];
@@ -261,6 +337,21 @@ static BOOL shipTypeMapsInitialized = NO;
     if (touchUp) {
         [_gameContainer.shipCommandBar setSelected:self];
     }
+}
+
+- (NSSet *)validMoveTiles
+{
+    NSMutableSet *validTiles = [[NSMutableSet alloc] init];
+    if (_dir == Up) {
+        NSArray *column = [_gameContainer.tiles objectAtIndex:_baseColumn];
+        for (Tile *tile in column) {
+            if (tile.row <= _baseRow - _shipLength) {
+                [validTiles addObject:tile];
+                NSLog(@"col: %d row: %d", tile.col, tile.row);
+            }
+        }
+    }
+    return validTiles;
 }
 
 

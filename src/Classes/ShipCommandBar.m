@@ -110,11 +110,18 @@ static SPTexture *buttonTexture = nil;
     }
     
     [_ship turnRight];
+    [self setSelected:_ship];
 }
 
 - (void)turnLeft:(SPEvent *)event
 {
+    if (!_ship) {
+        [self deselect];
+        return;
+    }
+    
     [_ship turnLeft];
+    [self setSelected:_ship];
 }
 
 - (void)selectTile:(Tile *)tile
@@ -125,17 +132,15 @@ static SPTexture *buttonTexture = nil;
     }
     
     if ([_validTileSelects containsObject:tile]) {
-        [tile setVisible:NO];
-        // Move to spot. if selectedAction is Move
+        [_ship performMoveActionTo:tile];
         
+        // Refreshes GUI after move operation
+        [self setSelected:_ship];
     } else {
         [self deselect];
     }
 }
 
-- (void)performMoveActionTo:(Tile *)tile
-{
-    
-}
+
 
 @end

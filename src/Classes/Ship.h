@@ -40,7 +40,7 @@ enum {
 typedef NSInteger WeaponType;
 
 
-@class Game;
+@class Game, Tile;
 @interface Ship : SPSprite
 
 - (id)initWithGame:(Game *)game type:(ShipType)type;
@@ -52,6 +52,8 @@ typedef NSInteger WeaponType;
 - (NSSet *)validMoveTiles;
 
 @property (nonatomic, assign) ShipType shipType;
+
+- (void)performMoveActionTo:(Tile *)tile;
 
 
 @end
