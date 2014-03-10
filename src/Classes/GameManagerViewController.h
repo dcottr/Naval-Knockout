@@ -7,7 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "NKMatchHelper.h"
 
-@interface GameManagerViewController : UIViewController
+@interface GameManagerViewController : SPViewController <NKMatchHelperDelegate>
+
 
 @end

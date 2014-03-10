@@ -8,6 +8,7 @@
 
 #import "MatchMakerViewController.h"
 #import "NKMatchHelper.h"
+#import "GameManagerViewController.h"
 
 @interface MatchMakerViewController ()
 
@@ -36,6 +37,7 @@
   [super viewDidAppear:animated];
   NKMatchHelper *helper = [NKMatchHelper sharedInstance];
   helper.presentingViewController = self;
+  helper.delegate = [[GameManagerViewController alloc] init];
   [[NKMatchHelper sharedInstance] authenticateLocalPlayer];
 //  [[NKMatchHelper sharedInstance] findMatchWithMinPlayers:2 maxPlayers:2 viewController:self];
 }

@@ -12,6 +12,7 @@
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
+		30C4967E18CD670300FCA0CC /* GameManagerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 30C4967D18CD670300FCA0CC /* GameManagerViewController.m */; };
 		631C23ED18C50587009EA080 /* watertile.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 631C23EC18C50587009EA080 /* watertile.jpeg */; };
 		631C23F518C52640009EA080 /* ShipsTray.m in Sources */ = {isa = PBXBuildFile; fileRef = 631C23F418C52640009EA080 /* ShipsTray.m */; };
 		631C23F818C53E64009EA080 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 631C23F718C53E64009EA080 /* Images.xcassets */; };
@@ -94,6 +95,8 @@
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		30C4967C18CD670300FCA0CC /* GameManagerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameManagerViewController.h; sourceTree = "<group>"; };
+		30C4967D18CD670300FCA0CC /* GameManagerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameManagerViewController.m; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* App-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "App-Prefix.pch"; sourceTree = "<group>"; };
 		631C23EC18C50587009EA080 /* watertile.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = watertile.jpeg; sourceTree = "<group>"; };
 		631C23F318C52640009EA080 /* ShipsTray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShipsTray.h; sourceTree = "<group>"; };
@@ -181,6 +184,7 @@
 			isa = PBXGroup;
 			children = (
 				63615BC918CD5A2E006ACB25 /* MatchMaker */,
+				30C4967F18CD670C00FCA0CC /* GameManager */,
 				DE4F80D714E153EA00655D44 /* Game */,
 				1D3623240D0F684500981E51 /* AppDelegate.h */,
 				1D3623250D0F684500981E51 /* AppDelegate.m */,
@@ -246,6 +250,15 @@
 				288765FC0DF74451002DB57D /* CoreGraphics.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		30C4967F18CD670C00FCA0CC /* GameManager */ = {
+			isa = PBXGroup;
+			children = (
+				30C4967C18CD670300FCA0CC /* GameManagerViewController.h */,
+				30C4967D18CD670300FCA0CC /* GameManagerViewController.m */,
+			);
+			name = GameManager;
 			sourceTree = "<group>";
 		};
 		63615BC918CD5A2E006ACB25 /* MatchMaker */ = {
@@ -478,6 +491,7 @@
 				1D3623260D0F684500981E51 /* AppDelegate.m in Sources */,
 				63615BCF18CD5C37006ACB25 /* MatchMakerViewController.m in Sources */,
 				63371EA018C56E2C00AA3FAE /* ShipCommandBar.m in Sources */,
+				30C4967E18CD670300FCA0CC /* GameManagerViewController.m in Sources */,
 				631C23F518C52640009EA080 /* ShipsTray.m in Sources */,
 				DE4A3DE510FFB2AF00FDA492 /* Game.m in Sources */,
 				DE4F80D614E153E600655D44 /* Media.m in Sources */,

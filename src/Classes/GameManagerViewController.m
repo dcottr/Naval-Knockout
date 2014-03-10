@@ -7,6 +7,8 @@
 //
 
 #import "GameManagerViewController.h"
+#import "NKMatchHelper.h"
+#import "Game.h"
 
 @interface GameManagerViewController ()
 
@@ -14,13 +16,17 @@
 
 @implementation GameManagerViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+- (id)init
 {
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
+  self = [super init];
+  if (self) {
+	self.showStats = YES;
+    self.multitouchEnabled = YES;
+    self.preferredFramesPerSecond = 60;
+    
+    [self startWithRoot:[Game class] supportHighResolutions:YES doubleOnPad:YES];
+  }
+  return self;
 }
 
 - (void)viewDidLoad
@@ -29,10 +35,80 @@
 	// Do any additional setup after loading the view.
 }
 
-- (void)didReceiveMemoryWarning
+- (void)enterNewGame:(GKTurnBasedMatch *)match
 {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+  // Initiate game state setup?
+  NSLog(@"Entering game");
 }
+
+- (void)layoutMatch:(GKTurnBasedMatch *)match
+{
+  NSLog(@"LayoutMatch");
+}
+
+- (void)takeTurn:(GKTurnBasedMatch *)match
+{
+  NSLog(@"Taking turn");
+}
+
+- (void)recieveEndGame:(GKTurnBasedMatch *)match
+{
+  
+}
+
+- (void)sendNotice:(NSString *)notice forMatch:(GKTurnBasedMatch *)match
+{
+  
+}
+
+- (void)sendTurn
+{
+  GKTurnBasedMatch *currentMatch = [[NKMatchHelper sharedInstance] currentMatch];
+  
+  NSString *sendString = @"Hello World";
+  NSData *data = [sendString dataUsingEncoding:NSUTF8StringEncoding ];
+  
+  NSUInteger currentIndex = [currentMatch.participants indexOfObject:currentMatch.currentParticipant];
+  GKTurnBasedParticipant *nextParticipant;
+  
+  NSUInteger nextIndex = (currentIndex + 1) % [currentMatch.participants count];
+  nextParticipant = [currentMatch.participants objectAtIndex:nextIndex];
+  
+  for (int i = 0; i < [currentMatch.participants count]; i++) {
+	nextParticipant = [currentMatch.participants objectAtIndex:((currentIndex + 1 + i) % [currentMatch.participants count ])];
+	if (nextParticipant.matchOutcome != GKTurnBasedMatchOutcomeQuit) {
+	  NSLog(@"isnt' quit %@", nextParticipant);
+	  break;
+	} else {
+	  NSLog(@"nex part %@", nextParticipant);
+	}
+  }
+  
+  if ([data length] > 3800) {
+	for (GKTurnBasedParticipant *part in currentMatch.participants) {
+	  part.matchOutcome = GKTurnBasedMatchOutcomeTied;
+	}
+	[currentMatch endMatchInTurnWithMatchData:data completionHandler:^(NSError *error) {
+	  if (error) {
+		NSLog(@"%@", error);
+	  }
+	}];
+//	statusLabel.text = @"Game has ended";
+  } else {
+	
+	[currentMatch endTurnWithNextParticipant:nextParticipant matchData:data completionHandler:^(NSError *error) {
+	  if (error) {
+		NSLog(@"%@", error);
+//		statusLabel.text = @"Oops, there was a problem.  Try that again.";
+	  } else {
+//		statusLabel.text = @"Your turn is over.";
+//		textInputField.enabled = NO;
+	  }
+	}];
+  }
+  
+  NSLog(@"Send Turn, %@, %@", data, nextParticipant);
+}
+
 
 @end
