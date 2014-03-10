@@ -4,7 +4,8 @@
 //
 
 #import "AppDelegate.h"
-#import "Game.h"
+//#import "Game.h"
+#import "MatchMakerViewController.h"
 
 // --- c functions ---
 
@@ -14,6 +15,10 @@ void onUncaughtException(NSException *exception)
 }
 
 // ---
+@interface AppDelegate ()
+
+@property (nonatomic, strong) MatchMakerViewController *matchMaker;
+@end
 
 @implementation AppDelegate
 {
@@ -28,7 +33,7 @@ void onUncaughtException(NSException *exception)
     CGRect screenBounds = [UIScreen mainScreen].bounds;
     _window = [[UIWindow alloc] initWithFrame:screenBounds];
     
-    _viewController = [[SPViewController alloc] init];
+    /* _viewController = [[SPViewController alloc] init];
     
     // Enable some common settings here:
     //
@@ -41,7 +46,12 @@ void onUncaughtException(NSException *exception)
     [_window setRootViewController:_viewController];
     [_window makeKeyAndVisible];
     _viewController.multitouchEnabled = YES;
-    
+    */
+  
+	_matchMaker = [[MatchMakerViewController alloc] init];
+  [_window setRootViewController:_matchMaker];
+  [_window makeKeyAndVisible];
+  
     return YES;
 }
 
