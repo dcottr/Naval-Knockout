@@ -19,6 +19,10 @@
 		6354EDFA18C6391300BC257E /* green_button06.png in Resources */ = {isa = PBXBuildFile; fileRef = 6354EDF918C6391300BC257E /* green_button06.png */; };
 		6354EDFD18C6391800BC257E /* green_checkmark.png in Resources */ = {isa = PBXBuildFile; fileRef = 6354EDFC18C6391800BC257E /* green_checkmark.png */; };
 		6354EDFF18C659AE00BC257E /* Glossy08.png in Resources */ = {isa = PBXBuildFile; fileRef = 6354EDFE18C659AE00BC257E /* Glossy08.png */; };
+		63615BCB18CD5C0C006ACB25 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63615BCA18CD5C0C006ACB25 /* GameKit.framework */; };
+		63615BCF18CD5C37006ACB25 /* MatchMakerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 63615BCD18CD5C37006ACB25 /* MatchMakerViewController.m */; };
+		63615BD018CD5C37006ACB25 /* MatchMakerViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 63615BCE18CD5C37006ACB25 /* MatchMakerViewController.xib */; };
+		63615BD318CD5C42006ACB25 /* NKMatchHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 63615BD218CD5C42006ACB25 /* NKMatchHelper.m */; };
 		638896CC18C3A6F80044693E /* Ship.m in Sources */ = {isa = PBXBuildFile; fileRef = 638896CB18C3A6F80044693E /* Ship.m */; };
 		638896D118C3E0C90044693E /* blue_button13.png in Resources */ = {isa = PBXBuildFile; fileRef = 638896D018C3E0C90044693E /* blue_button13.png */; };
 		638896D318C3E2DC0044693E /* Glossy05.png in Resources */ = {isa = PBXBuildFile; fileRef = 638896D218C3E2DC0044693E /* Glossy05.png */; };
@@ -100,6 +104,12 @@
 		6354EDF918C6391300BC257E /* green_button06.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = green_button06.png; sourceTree = "<group>"; };
 		6354EDFC18C6391800BC257E /* green_checkmark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = green_checkmark.png; sourceTree = "<group>"; };
 		6354EDFE18C659AE00BC257E /* Glossy08.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Glossy08.png; sourceTree = "<group>"; };
+		63615BCA18CD5C0C006ACB25 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
+		63615BCC18CD5C37006ACB25 /* MatchMakerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MatchMakerViewController.h; sourceTree = "<group>"; };
+		63615BCD18CD5C37006ACB25 /* MatchMakerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MatchMakerViewController.m; sourceTree = "<group>"; };
+		63615BCE18CD5C37006ACB25 /* MatchMakerViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MatchMakerViewController.xib; sourceTree = "<group>"; };
+		63615BD118CD5C42006ACB25 /* NKMatchHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NKMatchHelper.h; sourceTree = "<group>"; };
+		63615BD218CD5C42006ACB25 /* NKMatchHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NKMatchHelper.m; sourceTree = "<group>"; };
 		638896CA18C3A6F80044693E /* Ship.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ship.h; sourceTree = "<group>"; };
 		638896CB18C3A6F80044693E /* Ship.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Ship.m; sourceTree = "<group>"; };
 		638896D018C3E0C90044693E /* blue_button13.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = blue_button13.png; sourceTree = "<group>"; };
@@ -149,6 +159,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				63615BCB18CD5C0C006ACB25 /* GameKit.framework in Frameworks */,
 				DE4A3DB910FFB0FE00FDA492 /* libSparrow.a in Frameworks */,
 				DE5C4E6E138ED109004892CA /* libz.dylib in Frameworks */,
 				DEAAF3DF16BC114D004EB9D5 /* GLKit.framework in Frameworks */,
@@ -169,6 +180,7 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				63615BC918CD5A2E006ACB25 /* MatchMaker */,
 				DE4F80D714E153EA00655D44 /* Game */,
 				1D3623240D0F684500981E51 /* AppDelegate.h */,
 				1D3623250D0F684500981E51 /* AppDelegate.m */,
@@ -221,6 +233,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				63615BCA18CD5C0C006ACB25 /* GameKit.framework */,
 				DE5C4E6D138ED109004892CA /* libz.dylib */,
 				DEAAF3DE16BC114D004EB9D5 /* GLKit.framework */,
 				DE3F093711B7B9DC009D4DB0 /* AVFoundation.framework */,
@@ -233,6 +246,18 @@
 				288765FC0DF74451002DB57D /* CoreGraphics.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		63615BC918CD5A2E006ACB25 /* MatchMaker */ = {
+			isa = PBXGroup;
+			children = (
+				63615BCC18CD5C37006ACB25 /* MatchMakerViewController.h */,
+				63615BCD18CD5C37006ACB25 /* MatchMakerViewController.m */,
+				63615BCE18CD5C37006ACB25 /* MatchMakerViewController.xib */,
+				63615BD118CD5C42006ACB25 /* NKMatchHelper.h */,
+				63615BD218CD5C42006ACB25 /* NKMatchHelper.m */,
+			);
+			name = MatchMaker;
 			sourceTree = "<group>";
 		};
 		DE0C71121624180300357F6E /* system */ = {
@@ -422,6 +447,7 @@
 				6354EDFA18C6391300BC257E /* green_button06.png in Resources */,
 				638896D118C3E0C90044693E /* blue_button13.png in Resources */,
 				DE115961162320F100A25086 /* background.jpg in Resources */,
+				63615BD018CD5C37006ACB25 /* MatchMakerViewController.xib in Resources */,
 				638896D518C3E4D40044693E /* ship_small_body.png in Resources */,
 				638896DB18C3E7A30044693E /* darkSkyBlock.png in Resources */,
 				DE115963162320F800A25086 /* background@2x.jpg in Resources */,
@@ -450,10 +476,12 @@
 				638896CC18C3A6F80044693E /* Ship.m in Sources */,
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
 				1D3623260D0F684500981E51 /* AppDelegate.m in Sources */,
+				63615BCF18CD5C37006ACB25 /* MatchMakerViewController.m in Sources */,
 				63371EA018C56E2C00AA3FAE /* ShipCommandBar.m in Sources */,
 				631C23F518C52640009EA080 /* ShipsTray.m in Sources */,
 				DE4A3DE510FFB2AF00FDA492 /* Game.m in Sources */,
 				DE4F80D614E153E600655D44 /* Media.m in Sources */,
+				63615BD318CD5C42006ACB25 /* NKMatchHelper.m in Sources */,
 				63AB936718C817B00055E77B /* Tile.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
