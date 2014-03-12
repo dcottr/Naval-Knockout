@@ -13,6 +13,7 @@
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
 		30C4967E18CD670300FCA0CC /* GameManagerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 30C4967D18CD670300FCA0CC /* GameManagerViewController.m */; };
+		630F253D18D0CB83007301A4 /* Mine.m in Sources */ = {isa = PBXBuildFile; fileRef = 630F253C18D0CB83007301A4 /* Mine.m */; };
 		631C23ED18C50587009EA080 /* watertile.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 631C23EC18C50587009EA080 /* watertile.jpeg */; };
 		631C23F518C52640009EA080 /* ShipsTray.m in Sources */ = {isa = PBXBuildFile; fileRef = 631C23F418C52640009EA080 /* ShipsTray.m */; };
 		631C23F818C53E64009EA080 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 631C23F718C53E64009EA080 /* Images.xcassets */; };
@@ -98,6 +99,8 @@
 		30C4967C18CD670300FCA0CC /* GameManagerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameManagerViewController.h; sourceTree = "<group>"; };
 		30C4967D18CD670300FCA0CC /* GameManagerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameManagerViewController.m; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* App-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "App-Prefix.pch"; sourceTree = "<group>"; };
+		630F253B18D0CB83007301A4 /* Mine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mine.h; sourceTree = "<group>"; };
+		630F253C18D0CB83007301A4 /* Mine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Mine.m; sourceTree = "<group>"; };
 		631C23EC18C50587009EA080 /* watertile.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = watertile.jpeg; sourceTree = "<group>"; };
 		631C23F318C52640009EA080 /* ShipsTray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShipsTray.h; sourceTree = "<group>"; };
 		631C23F418C52640009EA080 /* ShipsTray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShipsTray.m; sourceTree = "<group>"; };
@@ -311,6 +314,8 @@
 				63371E9F18C56E2C00AA3FAE /* ShipCommandBar.m */,
 				638896CA18C3A6F80044693E /* Ship.h */,
 				638896CB18C3A6F80044693E /* Ship.m */,
+				630F253B18D0CB83007301A4 /* Mine.h */,
+				630F253C18D0CB83007301A4 /* Mine.m */,
 				DE4F80D414E153E600655D44 /* Media.h */,
 				DE4F80D514E153E600655D44 /* Media.m */,
 			);
@@ -488,6 +493,7 @@
 			files = (
 				638896CC18C3A6F80044693E /* Ship.m in Sources */,
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
+				630F253D18D0CB83007301A4 /* Mine.m in Sources */,
 				1D3623260D0F684500981E51 /* AppDelegate.m in Sources */,
 				63615BCF18CD5C37006ACB25 /* MatchMakerViewController.m in Sources */,
 				63371EA018C56E2C00AA3FAE /* ShipCommandBar.m in Sources */,

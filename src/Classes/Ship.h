@@ -50,6 +50,7 @@ typedef NSInteger WeaponType;
 - (void)turnLeft;
 
 - (NSSet *)validMoveTiles;
+- (NSSet *)validDropMineTiles;
 
 @property (nonatomic, assign) ShipType shipType;
 

@@ -4,7 +4,9 @@
 //
 
 #import "AppDelegate.h"
-//#import "Game.h"
+/// Comment this out
+#import "Game.h"
+///
 #import "MatchMakerViewController.h"
 
 // --- c functions ---
@@ -32,26 +34,25 @@ void onUncaughtException(NSException *exception)
     
     CGRect screenBounds = [UIScreen mainScreen].bounds;
     _window = [[UIWindow alloc] initWithFrame:screenBounds];
+
+    //     Comment out from here:
+     _viewController = [[SPViewController alloc] init];
     
-    /* _viewController = [[SPViewController alloc] init];
-    
-    // Enable some common settings here:
-    //
-    // _viewController.showStats = YES;
-    // _viewController.multitouchEnabled = YES;
-    // _viewController.preferredFramesPerSecond = 60;
+     _viewController.showStats = YES;
+     _viewController.multitouchEnabled = YES;
+     _viewController.preferredFramesPerSecond = 60;
     
     [_viewController startWithRoot:[Game class] supportHighResolutions:YES doubleOnPad:YES];
     
     [_window setRootViewController:_viewController];
     [_window makeKeyAndVisible];
     _viewController.multitouchEnabled = YES;
-    */
-  
+    
+/*
 	_matchMaker = [[MatchMakerViewController alloc] init];
   [_window setRootViewController:_matchMaker];
   [_window makeKeyAndVisible];
-  
+  */
     return YES;
 }
 

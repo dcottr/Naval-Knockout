@@ -38,6 +38,11 @@
     return self;
 }
 
+- (void)createGameFromData:(NSData *)data
+{
+    
+}
+
 - (void)dealloc
 {
     // release any resources here

@@ -16,4 +16,6 @@
 @property (nonatomic, assign) int col;
 @property (nonatomic, assign) BOOL selectable;
 
+- (void)performMineAction;
+
 @end

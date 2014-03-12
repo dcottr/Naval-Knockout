@@ -8,6 +8,9 @@
 
 #import "SPSprite.h"
 
+@class Tile;
 @interface Mine : SPSprite
+
+- (id)initWithTile:(Tile *)tile;
 
 @end

@@ -26,6 +26,7 @@ typedef NSInteger Action;
 @property (nonatomic, strong) SPImage *commandBar;
 @property (nonatomic, strong) SPButton *lButton;
 @property (nonatomic, strong) SPButton *rButton;
+@property (nonatomic, strong) SPButton *dropMineButton;
 
 @property (nonatomic, strong) Ship *ship;
 
@@ -68,13 +69,18 @@ static SPTexture *commandBarTexture = nil;
         [self addChild:_rButton];
         [_rButton setVisible:NO];
         
+        _dropMineButton = [[SPButton alloc] initWithUpState:buttonTexture text:@"Mine"];
+        [_dropMineButton addEventListener:@selector(dropMine:) atObject:self forType:SP_EVENT_TYPE_TRIGGERED];
+        _dropMineButton.x = 30.0f * 2 + _lButton.width;
+        _dropMineButton.y = 5.0f + _lButton.y;
+        [self addChild:_dropMineButton];
+        [_dropMineButton setVisible:NO];
+        
     }
     return self;
 }
 
 static SPTexture *buttonTexture = nil;
-
-
 - (void)setSelected:(Ship *)ship
 {
     [self deselect];
@@ -82,24 +88,39 @@ static SPTexture *buttonTexture = nil;
     [_commandBar setVisible:YES];
     [_lButton setVisible:YES];
     [_rButton setVisible:YES];
-    
-    // Set validTileSelections
+    // Set validTileSelections Likes
     _selectedAction = ActionMove;
     _validTileSelects = [ship validMoveTiles];
-    for (Tile *tile in _validTileSelects) {
-        [tile setSelectable:YES];
+    if (_ship.shipType == Miner) {
+        [_dropMineButton setVisible:YES];
     }
+    [self setSelectableTiles];
 }
 
 - (void)deselect
 {
-    for (Tile *oldTile in _validTileSelects) {
-        [oldTile setSelectable:NO];
-    }
+    [self deselectTiles];
     [_commandBar setVisible:NO];
     [_lButton setVisible:NO];
     [_rButton setVisible:NO];
+    [_dropMineButton setVisible:NO];
     _ship = nil;
+}
+
+// Hides visual of valid selectable tiles
+- (void)deselectTiles
+{
+    for (Tile *oldTile in _validTileSelects) {
+        [oldTile setSelectable:NO];
+    }
+}
+
+// Shows visual of valid selectable tiles
+- (void)setSelectableTiles
+{
+    for (Tile *tile in _validTileSelects) {
+        [tile setSelectable:YES];
+    }
 }
 
 - (void)turnRight:(SPEvent *)event
@@ -124,6 +145,18 @@ static SPTexture *buttonTexture = nil;
     [self setSelected:_ship];
 }
 
+- (void)dropMine:(SPEvent *)event
+{
+    if (_selectedAction == ActionMine) {
+        [self setSelected:_ship];
+        return;
+    }
+    [self deselectTiles];
+    _validTileSelects = [_ship validDropMineTiles];
+    [self setSelectableTiles];
+    _selectedAction = ActionMine;
+}
+
 - (void)selectTile:(Tile *)tile
 {
     if (!_validTileSelects) {
@@ -132,13 +165,15 @@ static SPTexture *buttonTexture = nil;
     }
     
     if ([_validTileSelects containsObject:tile]) {
-        [_ship performMoveActionTo:tile];
+        if (_selectedAction == ActionMove) {
+            [_ship performMoveActionTo:tile];
+        } else if (_selectedAction == ActionMine) {
+            [tile performMineAction];
+        }
         
-        // Refreshes GUI after move operation
-        [self setSelected:_ship];
-    } else {
-        [self deselect];
+        // Refreshes GUI after operation
     }
+    [self deselect];
 }
 
 

@@ -424,6 +424,57 @@ static BOOL shipTypeMapsInitialized = NO;
     return validTiles;
 }
 
+- (NSSet *)validDropMineTiles
+{
+    NSMutableSet *validTiles = [[NSMutableSet alloc] init];
+    for (NSArray *column in _gameContainer.tiles) {
+        for (Tile *tile in column) {
+            if (_dir == Up) {
+                if (tile.col == _baseColumn + 1 || tile.col == _baseColumn - 1) {
+                    if (tile.row == _baseRow || tile.row == _baseRow - 1) {
+                        [validTiles addObject:tile];
+                    }
+                } else if (tile.col == _baseColumn) {
+                    if (tile.row == _baseRow + 1 || tile.row == _baseRow - 2) {
+                        [validTiles addObject:tile];
+                    }
+                }
+            } else if (_dir == Down) {
+                if (tile.col == _baseColumn + 1 || tile.col == _baseColumn - 1) {
+                    if (tile.row == _baseRow || tile.row == _baseRow + 1) {
+                        [validTiles addObject:tile];
+                    }
+                } else if (tile.col == _baseColumn) {
+                    if (tile.row == _baseRow + 2 || tile.row == _baseRow - 1) {
+                        [validTiles addObject:tile];
+                    }
+                }
+            } else if (_dir == Left) {
+                if (tile.row == _baseRow + 1 || tile.row == _baseRow - 1) {
+                    if (tile.col == _baseColumn || tile.col == _baseColumn - 1) {
+                        [validTiles addObject:tile];
+                    }
+                } else if (tile.row == _baseRow) {
+                    if (tile.col == _baseColumn + 1 || tile.col == _baseColumn - 2) {
+                        [validTiles addObject:tile];
+                    }
+                }
+            } else if (_dir == Right) {
+                if (tile.row == _baseRow + 1 || tile.row == _baseRow - 1) {
+                    if (tile.col == _baseColumn || tile.col == _baseColumn + 1) {
+                        [validTiles addObject:tile];
+                    }
+                } else if (tile.row == _baseRow) {
+                    if (tile.col == _baseColumn + 2 || tile.col == _baseColumn - 1) {
+                        [validTiles addObject:tile];
+                    }
+                }
+            }
+        }
+    }
+    return validTiles;
+}
+
 
 #pragma mark("TODO: Check for collision")
 - (void)performMoveActionTo:(Tile *)tile

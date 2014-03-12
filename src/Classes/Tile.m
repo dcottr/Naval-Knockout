@@ -8,12 +8,14 @@
 
 #import "Tile.h"
 #import "Game.h"
+#import "Mine.h"
 
 @interface Tile ()
 
 @property (nonatomic, weak) Game * game;
 @property (nonatomic, strong) SPQuad *selectableOverlay;
 
+@property (nonatomic, strong) Mine *mine;
 
 @end
 
@@ -47,6 +49,12 @@ static SPTexture *waterTexture = nil;
         [self addChild:_selectableOverlay];
     }
     [_selectableOverlay setVisible:selectable];
+}
+
+- (void)performMineAction
+{
+    _mine = [[Mine alloc] initWithTile:self];
+    [self addChild:_mine];
 }
 
 @end
