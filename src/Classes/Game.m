@@ -9,7 +9,6 @@
 #import "ShipsTray.h"
 #import "ShipCommandBar.h"
 #import "Tile.h"
-#import "Position.h"
 
 @interface Game () {
 	bool isGrabbed;
@@ -38,6 +37,7 @@
         _myShips = [[NSMutableSet alloc] init];
         _enemyShips = [[NSMutableSet alloc] init];
         [self setup];
+        
     }
     return self;
 }

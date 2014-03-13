@@ -43,6 +43,7 @@
 	
 	NSMutableDictionary *tempstate= (NSMutableDictionary *) [NSKeyedUnarchiver unarchiveObjectWithData:data];
 	_state = [tempstate copy];
+      NSLog(@"NewState: %@", _state);
 	// get opponent string here from dict keys
 	/*
 	NSString * player = [GKLocalPlayer localPlayer].playerID;

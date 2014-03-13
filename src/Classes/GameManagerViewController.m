@@ -10,10 +10,12 @@
 #import "GameManagerViewController.h"
 #import "NKMatchHelper.h"
 #import "Game.h"
+#import "GameState.h"
 
 @interface GameManagerViewController ()
 
 @property (nonatomic, strong) Game *game;
+@property (nonatomic, strong) GameState *gameState;
 
 @end
 
@@ -23,7 +25,16 @@
 {
     self = [super init];
     if (self) {
+        _gameState = [[GameState alloc] init];
         
+        self.showStats = YES;
+        self.multitouchEnabled = YES;
+        self.preferredFramesPerSecond = 60;
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(gameInitialized)
+                                                     name:@"GameInitialized" object:nil];
+        [self startWithRoot:[Game class] supportHighResolutions:YES doubleOnPad:YES];
+
     }
     return self;
 }
@@ -31,13 +42,10 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.showStats = YES;
-    self.multitouchEnabled = YES;
-    self.preferredFramesPerSecond = 60;
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(gameInitialized)
-                                                 name:@"GameInitialized" object:nil];
-    [self startWithRoot:[Game class] supportHighResolutions:YES doubleOnPad:YES];
+    UIInterfaceOrientation orientation = self.interfaceOrientation;
+
+//    [self rotateToInterfaceOrientation:orientation animationTime:0];
+
     
 	// Do any additional setup after loading the view.
 }
@@ -62,7 +70,7 @@
 - (void)takeTurn:(GKTurnBasedMatch *)match
 {
     NSLog(@"Taking turn");
-    NSLog(@"Match Data: %@", [[NSString alloc] initWithData:match.matchData encoding:NSUTF8StringEncoding]);
+    [_gameState DataToState:match.matchData];
 }
 
 - (void)recieveEndGame:(GKTurnBasedMatch *)match
@@ -92,9 +100,8 @@
     NSString *myID = [GKLocalPlayer localPlayer].playerID;
     NSString *oppID = nextParticipant.playerID;
     NSDictionary *gameDataDict = [_game getDataDictWithMyID:myID opponentID:oppID];
-    //    NSData *data = GameState.stateStuff;
-    NSData *data;
     
+    NSData *data = [_gameState DataFromState:gameDataDict];
     
     for (int i = 0; i < [currentMatch.participants count]; i++) {
         nextParticipant = [currentMatch.participants objectAtIndex:((currentIndex + 1 + i) % [currentMatch.participants count ])];
