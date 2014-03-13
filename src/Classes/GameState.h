@@ -13,7 +13,7 @@
 @interface GameState : NSObject
 
 @property (nonatomic, strong) NSMutableDictionary *state;
--(NSData *) DataFromState;
+-(NSData *) DataFromState:(NSDictionary *)gameState;
 -(NSMutableDictionary *) populateDictionary:(NSDictionary *)board;
 -(void)DataToState:(NSData *) data;
 

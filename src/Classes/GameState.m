@@ -11,34 +11,31 @@
 @implementation GameState
 
 
-// gets called by gamemanagerviewcontroller
--(NSData *) DataFromState
+// gets called by gamemanagerviewcontroller after a player makes a move
+-(NSData *) DataFromState:(NSMutableDictionary *)gameState
 {
-  if(_state){
-	/*
-	NSMutableData *data = [[NSMutableData alloc] init];
-	NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:data];
-	[archiver encodeObject:_state forKey:@"Some Key Value"];
-	[archiver finishEncoding];
-	return data;
-	 */
-	return [NSKeyedArchiver archivedDataWithRootObject:_state];
-  }
-  else
-  {
-	NSLog(@"this game does not exist!!");
-	return nil;
-  }
+  _state = [self populateDictionary:gameState];
+  return [NSKeyedArchiver archivedDataWithRootObject:_state];
+  NSLog(@"stored data.");
+  
 }
 
 -(NSMutableDictionary *) populateDictionary:(NSDictionary *) board
 {
-  
+  /*
+   NSMutableData *data = [[NSMutableData alloc] init];
+   NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:data];
+   [archiver encodeObject:_state forKey:@"Some Key Value"];
+   [archiver finishEncoding];
+   return data;
+   */
   // fill dictionary with game board info.
   
-  return nil;
+  return (NSMutableDictionary *) board;
 }
 
+
+// gets called after a player receives a turn and hasn't yet updated the game
 -(void) DataToState:(NSData *) data
 {
   @try
