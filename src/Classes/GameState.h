@@ -12,10 +12,13 @@
 
 @interface GameState : NSObject
 
+@property (nonatomic, strong) NSString *playerKey;
+
 @property (nonatomic, strong) NSMutableDictionary *state;
 -(NSData *) DataFromState:(NSDictionary *)gameState;
--(NSMutableDictionary *) populateDictionary:(NSDictionary *)board;
--(void)DataToState:(NSData *) data;
+-(NSMutableDictionary *) updateState:(NSDictionary *)board;
+-(NSMutableDictionary *) DataToState:(NSData *) data;
+//-(NSArray *) compareToNewState:(NSMutableDictionary *) newState;
 
 
 /*
@@ -26,7 +29,7 @@
  @"mines"	-> mine positons
  
  future implementations:
- +base health
+ +base health (as a ship)
  +last move
  
  

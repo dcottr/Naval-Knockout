@@ -50,7 +50,7 @@ BOOL setup = NO;
     NSString *myId = [GKLocalPlayer localPlayer].playerID;
     NSLog(@"My id: %@", myId);
     
-    if (state == nil || [((NSDictionary *)[state objectForKey:myId]) count] == 0) {
+    if (state == nil || [state objectForKey:myId] == nil || [((NSDictionary *)[state objectForKey:myId]) count] == 0) {
         NSLog(@"Setup phase");
     } else {
         NSLog(@"Not setup phase");

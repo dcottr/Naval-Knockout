@@ -10,47 +10,46 @@
 
 @implementation GameState
 
+@synthesize playerKey;
 
 // gets called by gamemanagerviewcontroller after the local player makes a move
 -(NSData *) DataFromState:(NSMutableDictionary *)gameState
 {
-  _state = [self populateDictionary:gameState];
+  // update state to latest
+  [self updateState:gameState];
   NSLog(@"stored data.");
+  // give data corresponding to
   return [NSKeyedArchiver archivedDataWithRootObject:_state];
   
   
 }
 
--(NSMutableDictionary *) populateDictionary:(NSDictionary *) board
+-(NSMutableDictionary *) updateState:(NSDictionary *) board
 {
-  // fill dictionary with game board info.
-//  NSString * player = [GKLocalPlayer localPlayer].playerID;
-//  NSString * opp = [board keysOfEntriesPassingTest:
-//					^BOOL(id key, id obj, BOOL *stop):<#(NSString *)#>]
-//  if () {
-//	
-//  }
+  
+  if(![board valueForKey:[GKLocalPlayer localPlayer].playerID]){
+	// Init Game: Got their game state , local player's is absent. add it:
+	[board setValue:[_state valueForKey:self.playerKey]
+			 forKey:self.playerKey];
+  }
+  _state = [board copy];
   return (NSMutableDictionary *) board;
 }
 
 
 // gets called after a player receives a turn and hasn't yet updated the game
--(void) DataToState:(NSData *) data
+-(NSMutableDictionary *) DataToState:(NSData *) data
 {
   @try
   {
 	
 	NSMutableDictionary *tempstate= (NSMutableDictionary *) [NSKeyedUnarchiver unarchiveObjectWithData:data];
-	_state = [tempstate copy];
-      NSLog(@"NewState: %@", _state);
-      
+	NSLog(@"NewState: %@", tempstate);
+	[self updateState: tempstate];
       NSNotification *notification = [[NSNotification alloc] initWithName:@"GameStateUpdated" object:self userInfo:nil];
       [[NSNotificationCenter defaultCenter] postNotification:notification];
 
-	// get opponent string here from dict keys
-	/*
-	
-	 */
+	// optional: call to update viewController (observer)
   }
   @catch(NSException * e)
   {
@@ -59,5 +58,10 @@
   
 }
 
+//-(NSArray *) compareToNewState:(NSMutableDictionary *)newState
+//{
+//  
+//}
+//
 
 @end

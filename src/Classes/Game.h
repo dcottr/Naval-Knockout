@@ -36,6 +36,4 @@
 
 - (void)newState:(NSDictionary *)state;
 
-- (void)followDataFrom:(GameState *)gameState;
-
 @end
