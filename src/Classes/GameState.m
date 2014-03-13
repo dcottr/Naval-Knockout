@@ -43,6 +43,10 @@
 	NSMutableDictionary *tempstate= (NSMutableDictionary *) [NSKeyedUnarchiver unarchiveObjectWithData:data];
 	_state = [tempstate copy];
       NSLog(@"NewState: %@", _state);
+      
+      NSNotification *notification = [[NSNotification alloc] initWithName:@"GameStateUpdated" object:self userInfo:nil];
+      [[NSNotificationCenter defaultCenter] postNotification:notification];
+
 	// get opponent string here from dict keys
 	/*
 	

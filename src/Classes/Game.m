@@ -22,11 +22,13 @@
 - (void)setup;
 
 
+
 @end
 
 
 @implementation Game
 
+BOOL setup = NO;
 
 - (id)init
 {
@@ -37,27 +39,73 @@
         _myShips = [[NSMutableSet alloc] init];
         _enemyShips = [[NSMutableSet alloc] init];        
         [self setup];
-        
     }
     return self;
+}
+
+
+- (void)newState:(NSDictionary *)state
+{
+    
+    NSString *myId = [GKLocalPlayer localPlayer].playerID;
+    NSLog(@"My id: %@", myId);
+    
+    if (state == nil || [((NSDictionary *)[state objectForKey:myId]) count] == 0) {
+        NSLog(@"Setup phase");
+    } else {
+        NSLog(@"Not setup phase");
+        while (!setup) {
+            ;
+        }
+        // Need to position ships onto tiles
+        // Need to create and drop ships
+        if (!_shipsTray) {
+            NSLog(@"shipsTray not initialized");
+        }
+        [self removeChild:_shipsTray];
+        _shipsTray = nil;
+        
+        _shipCommandBar = [[ShipCommandBar alloc] init];
+        _shipCommandBar.y = Sparrow.stage.height - 100.0f;
+        _shipCommandBar.x = 0.0f;
+        [self addChild:_shipCommandBar];
+        
+        NSArray *myShips = [state objectForKey:myId];
+        [self setupMyShips:myShips];
+    }
+
+}
+
+- (void)setupMyShips:(NSArray *)myShips
+{
+    
+
+    _myShips = nil;
+    for (NSArray *shipAttrs in myShips) {
+        Ship *newShip = [[Ship alloc] initWithGame:self type:(ShipType)([(NSNumber *)[shipAttrs objectAtIndex:3] intValue])];
+        [_myShips addObject:newShip];
+        [_gridContainer addChild:newShip];
+        [newShip positionedShip];
+        [newShip updateLocation];
+        
+    }
 }
 
 - (NSDictionary *)getDataDictWithMyID:(NSString *)myID opponentID:(NSString *)oppID
 {
     
-    NSMutableDictionary *myShips = [[NSMutableDictionary alloc] init];
+    NSMutableArray *myShips = [[NSMutableArray alloc] init];
     for (Ship *ship in _myShips) {
-        NSArray *position = [NSArray arrayWithObjects:num(ship.baseRow), num(ship.baseColumn), nil];
-        NSArray *attributes = [NSArray arrayWithObjects:num(ship.dir), num(ship.shipType), nil];
-        [myShips setObject:attributes forKey:position];
+        NSArray *shipAttrs = [NSArray arrayWithObjects:num(ship.baseRow), num(ship.baseColumn), num(ship.dir), num(ship.shipType), nil];
+        [myShips addObject:shipAttrs];
     }
     
-    NSMutableDictionary *enemyShips = [[NSMutableDictionary alloc] init];
+    NSMutableArray *enemyShips = [[NSMutableArray alloc] init];
     for (Ship *ship in _enemyShips) {
-        NSArray *position = [NSArray arrayWithObjects:num(ship.baseRow), num(ship.baseColumn), nil];
-        NSArray *attributes = [NSArray arrayWithObjects:num(ship.dir), num(ship.shipType), nil];
-        [enemyShips setObject:attributes forKey:position];
+        NSArray *shipAttrs = [NSArray arrayWithObjects:num(ship.baseRow), num(ship.baseColumn), num(ship.dir), num(ship.shipType), nil];
+        [enemyShips addObject:shipAttrs];
     }
+    
     NSDictionary *result = [[NSDictionary alloc] initWithObjectsAndKeys:myShips, myID, enemyShips, oppID, nil];
     return result;
     
@@ -92,22 +140,11 @@
     _content = [[SPSprite alloc] init];
     _gridContainer = [[SPSprite alloc] init];
     
-    [self addChild:_content];
+    [self addChild:_content atIndex:0];
     
     
     [_content addChild:_gridContainer];
     
-    // The Application contains a very handy "Media" class which loads your texture atlas
-    // and all available sound files automatically. Extend this class as you need it --
-    // that way, you will be able to access your textures and sounds throughout your
-    // application, without duplicating any resources.
-    
-//    [Media initSound];      // loads all your sounds    -> see Media.h/Media.m
-    
-    
-    int gameHeight = Sparrow.stage.height;
-
-//    SPTexture *waterTexture = [SPTexture textureWithContentsOfFile:@"watertile.jpeg"];
     NSMutableArray *tiles = [[NSMutableArray alloc] init];
     for (int i = 0; i < _tileCount; i++) {
         NSMutableArray *column = [[NSMutableArray alloc] init];
@@ -128,18 +165,25 @@
     _shipJuggler = [[SPJuggler alloc] init];
     [self addEventListener:@selector(advanceJugglers:) atObject:self forType:SP_EVENT_TYPE_ENTER_FRAME];
     
+    
+    int gameHeight = Sparrow.stage.height;
     _shipsTray = [[ShipsTray alloc] initWithGame:self];
     _shipsTray.y = gameHeight - 100.0f;
     _shipsTray.x = 0.0f;
     [self addChild:_shipsTray];
-
+    
     
     NSArray *ships = [NSArray arrayWithObjects:num(Torpedo), num(Miner), nil];
     [_shipsTray presentShips:ships];
-    
-    
+
     [_gridContainer addEventListener:@selector(scrollGrid:) atObject:self forType:SP_EVENT_TYPE_TOUCH];
+    setup = YES;
 }
+
+//- (void)setupShipsTray
+//{
+//
+//}
 
 - (void)scrollGrid:(SPTouchEvent *)event
 {
@@ -218,9 +262,6 @@
     Tile *tile = [[_tiles objectAtIndex:i] objectAtIndex:j];
     if (_shipCommandBar) {
         [_shipCommandBar selectTile:tile];
-        
-        [_delegate sendTurn];
-        
     }
 }
 
@@ -232,6 +273,7 @@
 
 - (void)doneSettingShips
 {
+    NSLog(@"Here");
     [self removeChild:_shipsTray];
     _shipsTray = nil;
     
@@ -243,6 +285,7 @@
     for (Ship *ship in _myShips) {
         [ship positionedShip];
     }
+    [_delegate sendTurn];
 }
 
 @end

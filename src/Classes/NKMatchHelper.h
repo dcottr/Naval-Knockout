@@ -25,7 +25,7 @@
 @end
 
 
-@interface NKMatchHelper : NSObject <GKTurnBasedMatchmakerViewControllerDelegate, GKTurnBasedEventHandlerDelegate>
+@interface NKMatchHelper : NSObject <GKTurnBasedMatchmakerViewControllerDelegate, GKLocalPlayerListener>
 
 @property (nonatomic, strong) UIViewController *presentingViewController;
 @property (assign, readonly) BOOL gameCenterAvailable;

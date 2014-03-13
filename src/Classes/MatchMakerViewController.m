@@ -48,10 +48,6 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (IBAction)newGame:(id)sender
-{
-  
-}
 - (IBAction)loadGame:(id)sender
 {
   [[NKMatchHelper sharedInstance] findMatchWithMinPlayers:2 maxPlayers:2 viewController:self];

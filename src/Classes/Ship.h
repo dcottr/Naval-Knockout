@@ -56,6 +56,8 @@ typedef NSInteger WeaponType;
 @property (nonatomic, assign) Direction dir;
 @property (nonatomic, assign) int baseRow;
 @property (nonatomic, assign) int baseColumn;
+- (void)updateLocation;
+
 
 - (void)performMoveActionTo:(Tile *)tile;
 
