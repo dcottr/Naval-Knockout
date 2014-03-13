@@ -116,7 +116,7 @@
     NSString *myID = [GKLocalPlayer localPlayer].playerID;
     NSString *oppID = nextParticipant.playerID;
     NSDictionary *gameDataDict = [_game getDataDictWithMyID:myID opponentID:oppID];
-    
+    NSLog(@"Sending turn: %@", gameDataDict);
     NSData *data = [_gameState DataFromState:gameDataDict];
     
     for (int i = 0; i < [currentMatch.participants count]; i++) {

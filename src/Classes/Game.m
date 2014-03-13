@@ -75,6 +75,17 @@
         
         NSArray *myShips = [state objectForKey:myId];
         [self setupMyShips:myShips];
+        
+        NSArray *enemyShips;
+        for (NSString *enemyId in [state allKeys]) {
+            if (![enemyId isEqualToString:@"Mines"] && ![enemyId isEqualToString:myId]) {
+                enemyShips = [state objectForKey:enemyId];
+            }
+        }
+        if (enemyShips) {
+            [self setupEnemyShips:enemyShips];
+        }
+        
     }
 
 }
