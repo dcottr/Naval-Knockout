@@ -33,7 +33,7 @@
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(gameInitialized)
                                                      name:@"GameInitialized" object:nil];
-        [self startWithRoot:[Game class] supportHighResolutions:YES doubleOnPad:YES];
+        [self startWithRoot:[Game class] supportHighResolutions:YES];
 
     }
     return self;
@@ -45,7 +45,8 @@
     UIInterfaceOrientation orientation = self.interfaceOrientation;
 
 //    [self rotateToInterfaceOrientation:orientation animationTime:0];
-
+    
+    NSLog(@"MAtch DATa: %@", _gameState.state);
     
 	// Do any additional setup after loading the view.
 }
@@ -53,6 +54,7 @@
 - (void)gameInitialized
 {
     _game = ((AppDelegate *)[UIApplication sharedApplication].delegate).game;
+    [_game setDelegate:self];
     NSLog(@"Game: %@", _game);
 }
 
@@ -62,6 +64,7 @@
     NSLog(@"Entering game");
 }
 
+// Called when entering a game whether or not it is your turn
 - (void)layoutMatch:(GKTurnBasedMatch *)match
 {
     NSLog(@"LayoutMatch");
@@ -112,8 +115,9 @@
             NSLog(@"nex part %@", nextParticipant);
         }
     }
-    
-    if ([data length] > 3800) {
+    NSLog(@"data length: %d", [data length]);
+    if ([data length] > 8 * 1024) {
+        NSLog(@"Data more than 3,800 so ending match");
         for (GKTurnBasedParticipant *part in currentMatch.participants) {
             part.matchOutcome = GKTurnBasedMatchOutcomeTied;
         }
@@ -124,7 +128,6 @@
         }];
         //	statusLabel.text = @"Game has ended";
     } else {
-        
         [currentMatch endTurnWithNextParticipant:nextParticipant matchData:data completionHandler:^(NSError *error) {
             if (error) {
                 NSLog(@"%@", error);

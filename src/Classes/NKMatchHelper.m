@@ -75,18 +75,13 @@ static NKMatchHelper *sharedHelper = nil;
         NSLog(@"Authenticated with error: %@", error);
         if (viewController != nil)
         {
-            
-            
             [_presentingViewController presentViewController:viewController animated:YES completion:nil];
-            //showAuthenticationDialogWhenReasonable: is an example method name. Create your own method that displays an authentication view when appropriate for your app.
-            //	  [self showAuthenticationDialogWhenReasonable: viewController];
         }
         else if (localPlayer.isAuthenticated)
         {
 #pragma mark("TODO: If no active game")
+            
             [[NKMatchHelper sharedInstance] findMatchWithMinPlayers:2 maxPlayers:2 viewController:_presentingViewController];
-            //authenticatedPlayer: is an example method name. Create your own method that is called after the loacal player is authenticated.
-            //[self authenticatedPlayer: localPlayer];
         }
         else
         {
@@ -141,18 +136,13 @@ static NKMatchHelper *sharedHelper = nil;
 -(void)turnBasedMatchmakerViewController:
 (GKTurnBasedMatchmakerViewController *)viewController
 							didFindMatch:(GKTurnBasedMatch *)match {
-    //  [_presentingViewController dismissViewControllerAnimated:YES completion:nil];
     [[[UIApplication sharedApplication] keyWindow] addSubview:((UIViewController *)_delegate).view];
-    //  [_presentingViewController presentViewController:(UIViewController *)_delegate animated:YES completion:nil];
     self.currentMatch = match;
     GKTurnBasedParticipant *firstParticipant = [match.participants objectAtIndex:0];
     if (firstParticipant.lastTurnDate == NULL) {
         // It's a new game!
         
         [_delegate enterNewGame:match];
-        
-        // temp
-        [_delegate sendTurn];
     } else {
         if ([match.currentParticipant.playerID isEqualToString:[GKLocalPlayer localPlayer].playerID]) {
             // It's your turn!
@@ -182,7 +172,7 @@ static NKMatchHelper *sharedHelper = nil;
     [_presentingViewController presentModalViewController:viewController animated:YES];
 }
 
--(void)handleTurnEventForMatch:(GKTurnBasedMatch *)match {
+- (void)handleTurnEventForMatch:(GKTurnBasedMatch *)match didBecomeActive:(BOOL)didBecomeActive {
     NSLog(@"Turn has happened");
     if ([match.matchID isEqualToString:_currentMatch.matchID]) {
         if ([match.currentParticipant.playerID isEqualToString:[GKLocalPlayer localPlayer].playerID]) {

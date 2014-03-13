@@ -24,12 +24,12 @@
 -(NSMutableDictionary *) populateDictionary:(NSDictionary *) board
 {
   // fill dictionary with game board info.
-  NSString * player = [GKLocalPlayer localPlayer].playerID;
-  NSString * opp = [board keysOfEntriesPassingTest:
-					^BOOL(id key, id obj, BOOL *stop):<#(NSString *)#>]
-  if () {
-	
-  }
+//  NSString * player = [GKLocalPlayer localPlayer].playerID;
+//  NSString * opp = [board keysOfEntriesPassingTest:
+//					^BOOL(id key, id obj, BOOL *stop):<#(NSString *)#>]
+//  if () {
+//	
+//  }
   return (NSMutableDictionary *) board;
 }
 

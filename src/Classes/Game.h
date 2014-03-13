@@ -6,7 +6,7 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIDevice.h>
 
-@class ShipsTray, ShipCommandBar;
+@class ShipsTray, ShipCommandBar, GameManagerViewController;
 
 @interface Game : SPSprite
 
@@ -26,6 +26,8 @@
 @property (nonatomic, assign) float tileSize;
 @property (nonatomic, assign) int tileCount;
 @property (nonatomic, strong) NSArray *tiles;
+
+@property (nonatomic, weak) GameManagerViewController *delegate;
 
 - (void)doneSettingShips;
 
