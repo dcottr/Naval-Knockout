@@ -27,26 +27,17 @@
     if (self) {
         _gameState = [[GameState alloc] init];
         
-    
+        self.showStats = YES;
+        self.multitouchEnabled = YES;
+        self.preferredFramesPerSecond = 60;
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(gameInitialized)
+                                                     name:@"GameInitialized" object:nil];
+        [self startWithRoot:[Game class] supportHighResolutions:YES];
+
         
     }
     return self;
-}
-
-- (void)presentGame
-{
-    self.showStats = YES;
-    self.multitouchEnabled = YES;
-    self.preferredFramesPerSecond = 60;
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(gameInitialized)
-                                                 name:@"GameInitialized" object:nil];
-    self.onRootCreated = ^(Game *game)
-    {
-        
-        [game followDataFrom:nil];
-    };
-    [self startWithRoot:[Game class] supportHighResolutions:YES];
 }
 
 - (void)viewDidLoad

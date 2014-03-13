@@ -28,17 +28,16 @@
 
 @implementation Game
 
-BOOL setup = NO;
 
 - (id)init
 {
     if ((self = [super init])) {
-        [((AppDelegate *)[UIApplication sharedApplication].delegate) setGame:self];
         _tileSize = 32.0f;
         _tileCount = 32;
         _myShips = [[NSMutableSet alloc] init];
         _enemyShips = [[NSMutableSet alloc] init];        
         [self setup];
+        [((AppDelegate *)[UIApplication sharedApplication].delegate) setGame:self];
     }
     return self;
 }
@@ -46,7 +45,9 @@ BOOL setup = NO;
 
 - (void)newState:(NSDictionary *)state
 {
-    
+    ///////
+    return;
+    ///////
     NSString *myId = [GKLocalPlayer localPlayer].playerID;
     NSLog(@"My id: %@", myId);
     
@@ -54,9 +55,6 @@ BOOL setup = NO;
         NSLog(@"Setup phase");
     } else {
         NSLog(@"Not setup phase");
-        while (!setup) {
-            ;
-        }
         // Need to position ships onto tiles
         // Need to create and drop ships
         if (!_shipsTray) {
@@ -140,7 +138,7 @@ BOOL setup = NO;
     _content = [[SPSprite alloc] init];
     _gridContainer = [[SPSprite alloc] init];
     
-    [self addChild:_content atIndex:0];
+    [self addChild:_content];
     
     
     [_content addChild:_gridContainer];
@@ -177,7 +175,6 @@ BOOL setup = NO;
     [_shipsTray presentShips:ships];
 
     [_gridContainer addEventListener:@selector(scrollGrid:) atObject:self forType:SP_EVENT_TYPE_TOUCH];
-    setup = YES;
 }
 
 //- (void)setupShipsTray
