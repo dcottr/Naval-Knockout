@@ -32,12 +32,12 @@
 - (id)init
 {
     if ((self = [super init])) {
-        [((AppDelegate *)[UIApplication sharedApplication].delegate) setGame:self];
         _tileSize = 32.0f;
         _tileCount = 32;
         _myShips = [[NSMutableSet alloc] init];
         _enemyShips = [[NSMutableSet alloc] init];        
         [self setup];
+        [((AppDelegate *)[UIApplication sharedApplication].delegate) setGame:self];
     }
     return self;
 }
@@ -45,7 +45,9 @@
 
 - (void)newState:(NSDictionary *)state
 {
-    
+    ///////
+    return;
+    ///////
     NSString *myId = [GKLocalPlayer localPlayer].playerID;
     NSLog(@"My id: %@", myId);
     
@@ -58,7 +60,6 @@
         if (!_shipsTray) {
             NSLog(@"shipsTray not initialized");
         }
-        return;
         [self removeChild:_shipsTray];
         _shipsTray = nil;
         
