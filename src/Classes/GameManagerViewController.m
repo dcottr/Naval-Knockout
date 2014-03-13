@@ -34,8 +34,6 @@
                                                  selector:@selector(gameInitialized)
                                                      name:@"GameInitialized" object:nil];
         [self startWithRoot:[Game class] supportHighResolutions:YES];
-
-        
     }
     return self;
 }
@@ -57,12 +55,11 @@
     _game = ((AppDelegate *)[UIApplication sharedApplication].delegate).game;
     [_game setDelegate:self];
     NSLog(@"Game: %@", _game);
-    
-    if (_gameState.state) {
-        [_game newState:_gameState.state];
-    } else {
-        [_game newState:nil];
-    }
+//    if (_gameState.state) {
+//        [_game newState:_gameState.state];
+//    } else {
+//        [_game newState:nil];
+//    }
 }
 
 - (void)enterNewGame:(GKTurnBasedMatch *)match
@@ -76,7 +73,11 @@
 - (void)layoutMatch:(GKTurnBasedMatch *)match
 {
     [_gameState DataToState:match.matchData];
-    NSLog(@"LayoutMatch");
+    NSLog(@"LayoutMatch: %@", _gameState.state);
+//    [_gameState DataToState:match.matchData];
+//    if (_game) {
+//        [_game newState:_gameState.state];
+//    }
 }
 
 - (void)takeTurn:(GKTurnBasedMatch *)match

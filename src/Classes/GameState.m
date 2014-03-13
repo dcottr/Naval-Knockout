@@ -17,9 +17,8 @@
 {
   // update state to latest
   [self updateState:gameState];
-  NSLog(@"stored data.");
   // give data corresponding to
-  return [NSKeyedArchiver archivedDataWithRootObject:_state];
+  return [NSKeyedArchiver archivedDataWithRootObject:gameState];
   
   
 }
@@ -33,6 +32,7 @@
 			 forKey:self.playerKey];
   }
   _state = [board copy];
+    NSLog(@"NewState: %@", _state);
   return (NSMutableDictionary *) board;
 }
 
@@ -40,12 +40,12 @@
 // gets called after a player receives a turn and hasn't yet updated the game
 -(NSMutableDictionary *) DataToState:(NSData *) data
 {
-    return [[NSMutableDictionary alloc] init];
+    
   @try
   {
 	
 	NSMutableDictionary *tempstate= (NSMutableDictionary *) [NSKeyedUnarchiver unarchiveObjectWithData:data];
-	NSLog(@"NewState: %@", tempstate);
+      
 	[self updateState: tempstate];
 
 	// optional: call to update viewController (observer)
@@ -54,6 +54,7 @@
   {
 	NSLog(@"could not store game state from data!\n %@", e );
   }
+    return _state;
   
 }
 
