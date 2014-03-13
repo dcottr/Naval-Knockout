@@ -52,7 +52,7 @@ static SPTexture *trayBarTexture = nil;
         ship.y = 10.0f + ship.height/2;
         [self addChild:ship];
         [_trayedShips addObject:ship];
-        [_game.ships addObject:ship];
+        [_game.myShips addObject:ship];
     }
 }
 

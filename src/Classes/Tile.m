@@ -54,6 +54,7 @@ static SPTexture *waterTexture = nil;
 - (void)performMineAction
 {
     _mine = [[Mine alloc] initWithTile:self];
+    _hasMine = YES;
     [self addChild:_mine];
 }
 

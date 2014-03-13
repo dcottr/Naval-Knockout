@@ -29,9 +29,6 @@
 
 @property (nonatomic, strong) SPImage *shipImage;
 
-@property (nonatomic, assign) Direction dir;
-@property (nonatomic, assign) int baseRow;
-@property (nonatomic, assign) int baseColumn;
 @property (nonatomic, assign) int shipLength;
 @property (nonatomic, assign) int shipSpeed;
 @property (nonatomic, assign) ArmourType shipArmour;

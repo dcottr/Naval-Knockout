@@ -12,4 +12,6 @@
 @interface GameManagerViewController : SPViewController <NKMatchHelperDelegate>
 
 
+- (void)sendTurn;
+
 @end

@@ -3,11 +3,13 @@
 //  AppScaffold
 //
 
+#import "AppDelegate.h"
 #import "Game.h"
 #import "Ship.h"
 #import "ShipsTray.h"
 #import "ShipCommandBar.h"
 #import "Tile.h"
+#import "Position.h"
 
 @interface Game () {
 	bool isGrabbed;
@@ -30,16 +32,47 @@
 {
     if ((self = [super init]))
     {
+        [((AppDelegate *)[UIApplication sharedApplication].delegate) setGame:self];
         _tileSize = 32.0f;
         _tileCount = 32;
-        _ships = [[NSMutableSet alloc] init];
+        _myShips = [[NSMutableSet alloc] init];
+        _enemyShips = [[NSMutableSet alloc] init];
         [self setup];
     }
     return self;
 }
 
-- (void)createGameFromData:(NSData *)data
+- (NSDictionary *)getDataDictWithMyID:(NSString *)myID opponentID:(NSString *)oppID
 {
+    
+    NSMutableDictionary *myShips = [[NSMutableDictionary alloc] init];
+    for (Ship *ship in _myShips) {
+        NSArray *position = [NSArray arrayWithObjects:num(ship.baseRow), num(ship.baseColumn), nil];
+        [myShips setObject:num(ship.dir) forKey:position];
+        [myShips setObject:num(ship.shipType) forKey:position];
+    }
+    
+    NSMutableDictionary *enemyShips = [[NSMutableDictionary alloc] init];
+    for (Ship *ship in _enemyShips) {
+        NSArray *position = [NSArray arrayWithObjects:num(ship.baseRow), num(ship.baseColumn), nil];
+        [enemyShips setObject:num(ship.dir) forKey:position];
+        [enemyShips setObject:num(ship.shipType) forKey:position];
+    }
+    NSDictionary *result = [[NSDictionary alloc] initWithObjectsAndKeys:myShips, myID, enemyShips, oppID, nil];
+    return result;
+    
+    
+    // Mine stuff
+//    NSMutableArray *mines = [[NSMutableArray alloc] init];
+//    for (NSArray *column in _tiles) {
+//        for (Tile *tile in column) {
+//            if (tile.hasMine) {
+//                NSArray *position = [NSArray arrayWithObjects:num(tile.row), num(tile.col), nil];
+//                [mines addObject:position];
+//            }
+//        }
+//    }
+    
     
 }
 
@@ -204,7 +237,7 @@
     _shipCommandBar.x = 0.0f;
     [self addChild:_shipCommandBar];
     
-    for (Ship *ship in _ships) {
+    for (Ship *ship in _myShips) {
         [ship positionedShip];
     }
 }
