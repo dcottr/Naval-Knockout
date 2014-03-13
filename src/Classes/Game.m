@@ -50,6 +50,32 @@
     
     if (state == nil || [state objectForKey:myId] == nil || [((NSDictionary *)[state objectForKey:myId]) count] == 0) {
         NSLog(@"Setup phase");
+        
+        
+        int gameHeight = Sparrow.stage.height;
+        _shipsTray = [[ShipsTray alloc] initWithGame:self];
+        _shipsTray.y = gameHeight - 100.0f;
+        _shipsTray.x = 0.0f;
+        [self addChild:_shipsTray];
+        
+        
+        NSArray *ships = [NSArray arrayWithObjects:num(Torpedo), num(Miner), nil];
+        [_shipsTray presentShips:ships];
+
+        
+        if (state) {
+            NSArray *enemyShips;
+            for (NSString *enemyId in [state allKeys]) {
+                if (![enemyId isEqualToString:@"Mines"] && ![enemyId isEqualToString:myId]) {
+                    NSLog(@"enemyKey: %@", enemyId);
+                    enemyShips = [state objectForKey:enemyId];
+                    break;
+                }
+            }
+            if (enemyShips) {
+                [self setupEnemyShips:enemyShips];
+            }
+        }
     } else {
         NSLog(@"Not setup phase");
         
@@ -79,7 +105,9 @@
         NSArray *enemyShips;
         for (NSString *enemyId in [state allKeys]) {
             if (![enemyId isEqualToString:@"Mines"] && ![enemyId isEqualToString:myId]) {
+                NSLog(@"enemyKey: %@", enemyId);
                 enemyShips = [state objectForKey:enemyId];
+                break;;
             }
         }
         if (enemyShips) {
