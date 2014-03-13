@@ -45,8 +45,10 @@
 	
 	NSMutableDictionary *tempstate= (NSMutableDictionary *) [NSKeyedUnarchiver unarchiveObjectWithData:data];
 	NSLog(@"NewState: %@", tempstate);
-	NSLog(@"OldState: %@", _state);
 	[self updateState: tempstate];
+      NSNotification *notification = [[NSNotification alloc] initWithName:@"GameStateUpdated" object:self userInfo:nil];
+      [[NSNotificationCenter defaultCenter] postNotification:notification];
+
 	// optional: call to update viewController (observer)
   }
   @catch(NSException * e)

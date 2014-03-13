@@ -27,22 +27,31 @@
     if (self) {
         _gameState = [[GameState alloc] init];
         
-        self.showStats = YES;
-        self.multitouchEnabled = YES;
-        self.preferredFramesPerSecond = 60;
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(gameInitialized)
-                                                     name:@"GameInitialized" object:nil];
-        [self startWithRoot:[Game class] supportHighResolutions:YES];
-
+    
+        
     }
     return self;
+}
+
+- (void)presentGame
+{
+    self.showStats = YES;
+    self.multitouchEnabled = YES;
+    self.preferredFramesPerSecond = 60;
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(gameInitialized)
+                                                 name:@"GameInitialized" object:nil];
+    self.onRootCreated = ^(Game *game)
+    {
+        
+        [game followDataFrom:nil];
+    };
+    [self startWithRoot:[Game class] supportHighResolutions:YES];
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    UIInterfaceOrientation orientation = self.interfaceOrientation;
 
 //    [self rotateToInterfaceOrientation:orientation animationTime:0];
     
@@ -51,22 +60,31 @@
 	// Do any additional setup after loading the view.
 }
 
+// Called when Sparrow Game object is finished loading.
 - (void)gameInitialized
 {
     _game = ((AppDelegate *)[UIApplication sharedApplication].delegate).game;
     [_game setDelegate:self];
     NSLog(@"Game: %@", _game);
+    
+    if (_gameState.state) {
+        [_game newState:_gameState.state];
+    } else {
+        [_game newState:nil];
+    }
 }
 
 - (void)enterNewGame:(GKTurnBasedMatch *)match
 {
     // Initiate game state setup?
+    [_gameState DataToState:match.matchData];
     NSLog(@"Entering game");
 }
 
-// Called when entering a game whether or not it is your turn
+// It's not your turn, just display the game state.  (Seems buggy, test-test-test!)
 - (void)layoutMatch:(GKTurnBasedMatch *)match
 {
+    [_gameState DataToState:match.matchData];
     NSLog(@"LayoutMatch");
 }
 
@@ -74,6 +92,9 @@
 {
     NSLog(@"Taking turn");
     [_gameState DataToState:match.matchData];
+    if (_game) {
+        [_game newState:_gameState.state];
+    }
 }
 
 - (void)recieveEndGame:(GKTurnBasedMatch *)match

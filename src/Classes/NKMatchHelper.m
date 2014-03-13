@@ -9,6 +9,11 @@
 #import "NKMatchHelper.h"
 
 
+@interface NKMatchHelper ()
+
+
+@end
+
 @implementation NKMatchHelper
 
 #pragma mark Init_MatchHelper
@@ -59,10 +64,12 @@ static NKMatchHelper *sharedHelper = nil;
         !_userAuthenticated) {
         NSLog(@"Authentication changed: player authenticated.");
         _userAuthenticated = TRUE;
+        [self installTurnBasedEventHandler];
     } else if (![GKLocalPlayer localPlayer].isAuthenticated &&
                _userAuthenticated) {
         NSLog(@"Authentication changed: player not authenticated");
         _userAuthenticated = FALSE;
+        [self uninstallTurnBasedEventHandler];
     }
     
 }
@@ -80,8 +87,7 @@ static NKMatchHelper *sharedHelper = nil;
         else if (localPlayer.isAuthenticated)
         {
 #pragma mark("TODO: If no active game")
-            
-            [[NKMatchHelper sharedInstance] findMatchWithMinPlayers:2 maxPlayers:2 viewController:_presentingViewController];
+//            [[NKMatchHelper sharedInstance] findMatchWithMinPlayers:2 maxPlayers:2 viewController:_presentingViewController];
         }
         else
         {
@@ -90,11 +96,26 @@ static NKMatchHelper *sharedHelper = nil;
     };
 }
 
+- (void)installTurnBasedEventHandler
+{
+    NSLog(@"Listening for playerEvents");
+
+    [[GKLocalPlayer localPlayer] registerListener:self];
+    
+}
+
+- (void)uninstallTurnBasedEventHandler
+{
+    [[GKLocalPlayer localPlayer] unregisterAllListeners];
+}
+
+#pragma mark GKTurnBasedMatchmakerViewControllerDelegate
+
+
 - (void)findMatchWithMinPlayers:(int)minPlayers
 					 maxPlayers:(int)maxPlayers
 				 viewController:(UIViewController *)viewController {
     if (!_gameCenterAvailable) return;
-    
     _presentingViewController = viewController;
     
     GKMatchRequest *request = [[GKMatchRequest alloc] init];
@@ -118,9 +139,7 @@ static NKMatchHelper *sharedHelper = nil;
     NSLog(@"has cancelled");
 }
 
--(void)turnBasedMatchmakerViewController:
-(GKTurnBasedMatchmakerViewController *)viewController
-						didFailWithError:(NSError *)error {
+- (void)turnBasedMatchmakerViewController:(GKTurnBasedMatchmakerViewController *)viewController didFailWithError:(NSError *)error {
     [_presentingViewController
      dismissViewControllerAnimated:YES completion:nil];
     NSLog(@"Error finding match: %@", error.localizedDescription);
@@ -136,6 +155,7 @@ static NKMatchHelper *sharedHelper = nil;
 -(void)turnBasedMatchmakerViewController:
 (GKTurnBasedMatchmakerViewController *)viewController
 							didFindMatch:(GKTurnBasedMatch *)match {
+    [_presentingViewController dismissViewControllerAnimated:YES completion:nil]; // MAYBE
     [[[UIApplication sharedApplication] keyWindow] addSubview:((UIViewController *)_delegate).view];
     self.currentMatch = match;
     GKTurnBasedParticipant *firstParticipant = [match.participants objectAtIndex:0];
@@ -157,9 +177,10 @@ static NKMatchHelper *sharedHelper = nil;
 
 
 
-#pragma mark GKTurnBasedEventHandlerDelegate
+#pragma mark GKLocalPlayerListener
 
 -(void)handleInviteFromGameCenter:(NSArray *)playersToInvite {
+    NSLog(@"Handling invite from friend");
     [_presentingViewController dismissModalViewControllerAnimated:YES];
     GKMatchRequest *request = [[GKMatchRequest alloc] init];
     request.playersToInvite = playersToInvite;
@@ -204,5 +225,27 @@ static NKMatchHelper *sharedHelper = nil;
     }
 }
 
+
+- (void)player:(GKPlayer *)player didAcceptInvite:(GKInvite *)invite
+{
+    NSLog(@"In didAcceptInvite");
+}
+
+- (void)player:(GKPlayer *)player didRequestMatchWithPlayers:(NSArray *)playerIDsToInvite
+{
+    NSLog(@"didRequestMatchWithPlayers");
+}
+
+- (void)player:(GKPlayer *)player receivedTurnEventForMatch:(GKTurnBasedMatch *)match didBecomeActive:(BOOL)didBecomeActive
+{
+    NSLog(@"In receivedTurnEvent active: %hhd", didBecomeActive);
+    
+    if (didBecomeActive) {
+        [[[UIApplication sharedApplication] keyWindow] addSubview:((UIViewController *)_delegate).view];
+        self.currentMatch = match;
+    }
+    
+    [_delegate takeTurn:match];
+}
 
 @end
