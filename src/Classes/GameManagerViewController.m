@@ -41,11 +41,6 @@
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(gameInitialized)
                                                  name:@"GameInitialized" object:nil];
-    self.onRootCreated = ^(Game *game)
-    {
-        
-        [game followDataFrom:nil];
-    };
     [self startWithRoot:[Game class] supportHighResolutions:YES];
 }
 

@@ -40,14 +40,13 @@
 // gets called after a player receives a turn and hasn't yet updated the game
 -(NSMutableDictionary *) DataToState:(NSData *) data
 {
+    return [[NSMutableDictionary alloc] init];
   @try
   {
 	
 	NSMutableDictionary *tempstate= (NSMutableDictionary *) [NSKeyedUnarchiver unarchiveObjectWithData:data];
 	NSLog(@"NewState: %@", tempstate);
 	[self updateState: tempstate];
-      NSNotification *notification = [[NSNotification alloc] initWithName:@"GameStateUpdated" object:self userInfo:nil];
-      [[NSNotificationCenter defaultCenter] postNotification:notification];
 
 	// optional: call to update viewController (observer)
   }
