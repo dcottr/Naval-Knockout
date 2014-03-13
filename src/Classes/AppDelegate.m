@@ -36,6 +36,7 @@ void onUncaughtException(NSException *exception)
     _window = [[UIWindow alloc] initWithFrame:screenBounds];
 
     //     Comment out from here:
+    /*
      _viewController = [[SPViewController alloc] init];
     
      _viewController.showStats = YES;
@@ -47,13 +48,20 @@ void onUncaughtException(NSException *exception)
     [_window setRootViewController:_viewController];
     [_window makeKeyAndVisible];
     _viewController.multitouchEnabled = YES;
-    
-/*
+    */
+
 	_matchMaker = [[MatchMakerViewController alloc] init];
   [_window setRootViewController:_matchMaker];
   [_window makeKeyAndVisible];
-  */
+  
     return YES;
+}
+
+- (void)setGame:(Game *)game
+{
+    _game = game;
+    NSNotification *notification = [[NSNotification alloc] initWithName:@"GameInitialized" object:self userInfo:nil];
+    [[NSNotificationCenter defaultCenter] postNotification:notification];
 }
 
 @end

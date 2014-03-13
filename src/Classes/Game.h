@@ -18,7 +18,8 @@
 @property (nonatomic, strong) ShipCommandBar *shipCommandBar;
 
 // All ships
-@property (nonatomic, strong) NSMutableSet *ships;
+@property (nonatomic, strong) NSMutableSet *myShips;
+@property (nonatomic, strong) NSMutableSet *enemyShips;
 
 @property (nonatomic, strong) SPSprite *content;
 
@@ -27,5 +28,8 @@
 @property (nonatomic, strong) NSArray *tiles;
 
 - (void)doneSettingShips;
+
+
+- (NSDictionary *)getDataDictWithMyID:(NSString *)myID opponentID:(NSString *)oppID;
 
 @end

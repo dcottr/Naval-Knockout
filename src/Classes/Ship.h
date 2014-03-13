@@ -53,6 +53,9 @@ typedef NSInteger WeaponType;
 - (NSSet *)validDropMineTiles;
 
 @property (nonatomic, assign) ShipType shipType;
+@property (nonatomic, assign) Direction dir;
+@property (nonatomic, assign) int baseRow;
+@property (nonatomic, assign) int baseColumn;
 
 - (void)performMoveActionTo:(Tile *)tile;
 

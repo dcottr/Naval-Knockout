@@ -31,6 +31,7 @@
 @property (assign, readonly) BOOL gameCenterAvailable;
 @property (assign, readonly) BOOL userAuthenticated;
 @property (retain) GKTurnBasedMatch * currentMatch;
+
 @property (nonatomic, strong) id <NKMatchHelperDelegate> delegate;
 
 - (void)findMatchWithMinPlayers:(int)minPlayers
