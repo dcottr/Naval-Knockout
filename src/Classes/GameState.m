@@ -54,6 +54,7 @@
 	NSLog(@"could not store game state from data!\n %@", e );
   }
   
+  return nil;
 }
 
 //-(NSArray *) compareToNewState:(NSMutableDictionary *)newState
