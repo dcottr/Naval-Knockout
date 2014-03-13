@@ -531,4 +531,14 @@ static BOOL shipTypeMapsInitialized = NO;
     [_gameContainer.shipJuggler addObject:tween];
 }
 
+- (void)setIsEnemyShip:(BOOL)isEnemyShip
+{
+    _isEnemyShip = isEnemyShip;
+    if (isEnemyShip) {
+        [self removeEventListener:@selector(dragFromTray:) atObject:self forType:SP_EVENT_TYPE_TOUCH];
+        [self removeEventListener:@selector(positionShip:) atObject:self forType:SP_EVENT_TYPE_TOUCH];
+        [self removeEventListener:@selector(selectShip:) atObject:self forType:SP_EVENT_TYPE_TOUCH];
+    }
+}
+
 @end

@@ -61,5 +61,6 @@ typedef NSInteger WeaponType;
 
 - (void)performMoveActionTo:(Tile *)tile;
 
+@property (nonatomic, assign) BOOL isEnemyShip;
 
 @end

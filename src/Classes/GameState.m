@@ -15,25 +15,25 @@
 // gets called by gamemanagerviewcontroller after the local player makes a move
 -(NSData *) DataFromState:(NSMutableDictionary *)gameState
 {
-  // update state to latest
-  [self updateState:gameState];
-  // give data corresponding to
-  return [NSKeyedArchiver archivedDataWithRootObject:gameState];
-  
-  
+    // update state to latest
+    [self updateState:gameState];
+    // give data corresponding to
+    return [NSKeyedArchiver archivedDataWithRootObject:gameState];
 }
 
 -(NSMutableDictionary *) updateState:(NSDictionary *) board
 {
-  
-  if(![board valueForKey:[GKLocalPlayer localPlayer].playerID]){
-	// Init Game: Got their game state , local player's is absent. add it:
-	[board setValue:[_state valueForKey:self.playerKey]
-			 forKey:self.playerKey];
-  }
-  _state = [board copy];
+    
+    
+    
+    if(![board valueForKey:[GKLocalPlayer localPlayer].playerID]){
+        // Init Game: Got their game state , local player's is absent. add it:
+        [board setValue:[_state valueForKey:self.playerKey]
+                 forKey:self.playerKey];
+    }
+    _state = [board copy];
     NSLog(@"NewState: %@", _state);
-  return (NSMutableDictionary *) board;
+    return (NSMutableDictionary *) board;
 }
 
 
@@ -41,22 +41,20 @@
 -(NSMutableDictionary *) DataToState:(NSData *) data
 {
     
-  @try
-  {
-	
-	NSMutableDictionary *tempstate= (NSMutableDictionary *) [NSKeyedUnarchiver unarchiveObjectWithData:data];
-      
-	[self updateState: tempstate];
-
-	// optional: call to update viewController (observer)
-  }
-  @catch(NSException * e)
-  {
-	NSLog(@"could not store game state from data!\n %@", e );
-  }
+    @try
+    {
+        
+        NSMutableDictionary *tempstate= (NSMutableDictionary *) [NSKeyedUnarchiver unarchiveObjectWithData:data];
+        
+        [self updateState: tempstate];
+        
+        // optional: call to update viewController (observer)
+    }
+    @catch(NSException * e)
+    {
+        NSLog(@"could not store game state from data!\n %@", e );
+    }
     return _state;
-  
-  return nil;
 }
 
 //-(NSArray *) compareToNewState:(NSMutableDictionary *)newState

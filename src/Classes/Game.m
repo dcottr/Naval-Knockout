@@ -65,14 +65,13 @@
         if (_shipCommandBar) {
             [_shipCommandBar deselect];
         } else {
-        
-        NSLog(@"State: %@", state);
-            
             _shipCommandBar = [[ShipCommandBar alloc] init];
             _shipCommandBar.y = Sparrow.stage.height - 100.0f;
             _shipCommandBar.x = 0.0f;
             [self addChild:_shipCommandBar];
         }
+        
+        
         
         NSArray *myShips = [state objectForKey:myId];
         [self setupMyShips:myShips];
@@ -100,6 +99,28 @@
         
     }
 }
+
+- (void)setupEnemyShips:(NSArray *)enemyShips
+{
+    for (Ship *ship in _enemyShips) {
+        [ship removeFromParent];
+    }
+    
+    _enemyShips = [[NSMutableSet alloc] init];
+    for (NSArray *shipAttrs in enemyShips) {
+        Ship *newShip = [[Ship alloc] initWithGame:self type:(ShipType)([(NSNumber *)[shipAttrs objectAtIndex:3] intValue])];
+        newShip.baseRow = ([(NSNumber *)[shipAttrs objectAtIndex:0] intValue]);
+        newShip.baseColumn = ([(NSNumber *)[shipAttrs objectAtIndex:1] intValue]);
+        newShip.dir = ([(NSNumber *)[shipAttrs objectAtIndex:2] intValue]);
+        [_enemyShips addObject:newShip];
+        
+        [_gridContainer addChild:newShip];
+        [newShip setIsEnemyShip:YES];
+        [newShip updateLocation];
+        
+    }
+}
+
 
 - (NSDictionary *)getDataDictWithMyID:(NSString *)myID opponentID:(NSString *)oppID
 {
