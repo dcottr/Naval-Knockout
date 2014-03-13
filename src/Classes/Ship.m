@@ -202,6 +202,7 @@ static BOOL shipTypeMapsInitialized = NO;
 
 - (void)updateLocation
 {
+    NSLog(@"Updating location at row: %d", _baseRow);
     float tileSize = _gameContainer.tileSize;
     int k = ((_shipLength - 1) * tileSize)/2;
     if (_dir == Up) {
@@ -277,6 +278,7 @@ static BOOL shipTypeMapsInitialized = NO;
 
 - (void)positionedShip
 {
+    [self removeEventListener:@selector(dragFromTray:) atObject:self forType:SP_EVENT_TYPE_TOUCH];
     [self removeEventListener:@selector(positionShip:) atObject:self forType:SP_EVENT_TYPE_TOUCH];
     [self addEventListener:@selector(selectShip:) atObject:self forType:SP_EVENT_TYPE_TOUCH];
 }

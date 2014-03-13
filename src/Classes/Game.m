@@ -45,9 +45,6 @@
 
 - (void)newState:(NSDictionary *)state
 {
-    ///////
-    return;
-    ///////
     NSString *myId = [GKLocalPlayer localPlayer].playerID;
     NSLog(@"My id: %@", myId);
     
@@ -55,18 +52,27 @@
         NSLog(@"Setup phase");
     } else {
         NSLog(@"Not setup phase");
+        
         // Need to position ships onto tiles
         // Need to create and drop ships
+        
         if (!_shipsTray) {
             NSLog(@"shipsTray not initialized");
+        } else {
+            [self removeChild:_shipsTray];
+            _shipsTray = nil;
         }
-        [self removeChild:_shipsTray];
-        _shipsTray = nil;
+        if (_shipCommandBar) {
+            [_shipCommandBar deselect];
+        } else {
         
-        _shipCommandBar = [[ShipCommandBar alloc] init];
-        _shipCommandBar.y = Sparrow.stage.height - 100.0f;
-        _shipCommandBar.x = 0.0f;
-        [self addChild:_shipCommandBar];
+        NSLog(@"State: %@", state);
+            
+            _shipCommandBar = [[ShipCommandBar alloc] init];
+            _shipCommandBar.y = Sparrow.stage.height - 100.0f;
+            _shipCommandBar.x = 0.0f;
+            [self addChild:_shipCommandBar];
+        }
         
         NSArray *myShips = [state objectForKey:myId];
         [self setupMyShips:myShips];
@@ -76,12 +82,18 @@
 
 - (void)setupMyShips:(NSArray *)myShips
 {
+    for (Ship *ship in _myShips) {
+        [ship removeFromParent];
+    }
     
-
-    _myShips = nil;
+    _myShips = [[NSMutableSet alloc] init];
     for (NSArray *shipAttrs in myShips) {
         Ship *newShip = [[Ship alloc] initWithGame:self type:(ShipType)([(NSNumber *)[shipAttrs objectAtIndex:3] intValue])];
+        newShip.baseRow = ([(NSNumber *)[shipAttrs objectAtIndex:0] intValue]);
+        newShip.baseColumn = ([(NSNumber *)[shipAttrs objectAtIndex:1] intValue]);
+        newShip.dir = ([(NSNumber *)[shipAttrs objectAtIndex:2] intValue]);
         [_myShips addObject:newShip];
+        
         [_gridContainer addChild:newShip];
         [newShip positionedShip];
         [newShip updateLocation];
