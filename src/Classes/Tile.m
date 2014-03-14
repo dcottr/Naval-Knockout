@@ -10,6 +10,7 @@
 #import "Game.h"
 #import "Mine.h"
 #import "Ship.h"
+#import "ShipSegment.h"
 
 @interface Tile ()
 
@@ -168,9 +169,9 @@ static NSDictionary *reefPositions = nil;
 
 - (void)fogOfWar:(BOOL)visible
 {
-    if (_myShip) {
+    if (_myShipSegment) {
         NSLog(@"Ship should be invisible");
-        [_myShip setVisible:visible];
+        [_myShipSegment setFogOfWar:visible];
     }
     [_content setVisible:visible];
     

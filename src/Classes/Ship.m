@@ -11,6 +11,7 @@
 #import "ShipsTray.h"
 #import "ShipCommandBar.h"
 #import "Tile.h"
+#import "ShipSegment.h"
 
 #include <math.h>
 
@@ -32,6 +33,7 @@
 @property (nonatomic, assign) int shipLength;
 @property (nonatomic, assign) int shipSpeed;
 @property (nonatomic, assign) ArmourType shipArmour;
+
 
 @property (nonatomic, strong) Tile *tilesOccupied; // base of ship tile the ship is sitting on.
 
@@ -78,6 +80,7 @@ static BOOL shipTypeMapsInitialized = NO;
         _shipSpeed = [[shipSpeedMap objectForKey:num(type)] intValue];
         _shipArmour = [[shipArmourMap objectForKey:num(type)] intValue];
         _shipWeapons = [shipWeaponsMap objectForKey:num(type)];
+        
         _health = 2;
         _shipImage = [[SPImage alloc] initWithTexture:shipTexture];
         
@@ -86,6 +89,21 @@ static BOOL shipTypeMapsInitialized = NO;
         _shipImage.height = 32 * _shipLength;
         _dir = Up;
         [self addChild:_shipImage];
+        
+        
+        NSMutableArray *shipSegments = [[NSMutableArray alloc] init];
+        for (int i = 0; i < _shipLength; i++) {
+            ShipSegment *shipSegment = [[ShipSegment alloc] init];
+            [shipSegments addObject:shipSegment];
+            shipSegment.width = 32;
+            shipSegment.height = 32;
+            [self addChild:shipSegment];
+            shipSegment.x = 0;
+            shipSegment.y = (_shipLength - 1 - i) * 32;
+        }
+        _shipSegments = shipSegments;
+        
+        
         _gameContainer = game;
         _trayContainer = game.shipsTray;
         _gridContainer = game.content;
@@ -237,25 +255,66 @@ static BOOL shipTypeMapsInitialized = NO;
 
 - (void)updateTilesOccupied
 {
-    if (_tilesOccupied) {
-        _tilesOccupied.myShip = nil;
-        [_tilesOccupied setClear];
-    }
     
     for (NSArray *column in _gameContainer.tiles) {
         for (Tile *tile in column) {
-            if (tile.col == _baseColumn && tile.row == _baseRow) {
-                _tilesOccupied = tile;
-                tile.myShip = self;
-                NSLog(@"At row: %d, col: %d, life: %d", tile.row, tile.col, _health);
-                if (_health == 0) {
-                    [tile setDestroyed];
-                } else if (_health == 1) {
-                    [tile setDamaged];
+            if (_dir == Up) {
+                
+                if (tile.col == _baseColumn) {
+                    if (tile.row <= _baseRow && tile.row > _baseRow - _shipLength) {
+                        ShipSegment *segment = [_shipSegments objectAtIndex:( (_baseRow - tile.row))];
+                        segment.tile = tile;
+                        tile.myShipSegment = segment;
+                    }
+                }
+            } else if(_dir == Left) {
+                if (tile.row == _baseRow) {
+                    if (tile.col <= _baseColumn && tile.col > _baseColumn - _shipLength) {
+                        ShipSegment *segment = [_shipSegments objectAtIndex:((_baseColumn - tile.col))];
+                        segment.tile = tile;
+                        tile.myShipSegment = segment;
+                    }
+                }
+            } else if(_dir == Right) {
+                if (tile.row == _baseRow) {
+                    if (tile.col >= _baseColumn && tile.col < _baseColumn + _shipLength) {
+                        ShipSegment *segment = [_shipSegments objectAtIndex:(tile.col - _baseColumn)];
+                        segment.tile = tile;
+                        tile.myShipSegment = segment;
+                    }
+                }
+            } else if(_dir == Down) {
+                if (tile.col == _baseColumn) {
+                    if (tile.row >= _baseRow && tile.row < _baseRow + _shipLength) {
+                        ShipSegment *segment = [_shipSegments objectAtIndex:(tile.row - _baseRow)];
+                        segment.tile = tile;
+                        tile.myShipSegment = segment;
+                    }
                 }
             }
         }
     }
+     // TODO health
+    
+//    if (_tilesOccupied) {
+//        _tilesOccupied.myShip = nil;
+//        [_tilesOccupied setClear];
+//    }
+//    
+//    for (NSArray *column in _gameContainer.tiles) {
+//        for (Tile *tile in column) {
+//            if (tile.col == _baseColumn && tile.row == _baseRow) {
+//                _tilesOccupied = tile;
+//                tile.myShip = self;
+//                NSLog(@"At row: %d, col: %d, life: %d", tile.row, tile.col, _health);
+//                if (_health == 0) {
+//                    [tile setDestroyed];
+//                } else if (_health == 1) {
+//                    [tile setDamaged];
+//                }
+//            }
+//        }
+//    }
 }
 
 

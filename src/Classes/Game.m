@@ -10,6 +10,7 @@
 #import "ShipCommandBar.h"
 #import "Tile.h"
 #import "GameManagerViewController.h"
+#import "ShipSegment.h"
 
 @interface Game () {
 	bool isGrabbed;
@@ -200,6 +201,8 @@
         [_myShips addObject:newShip];
         Tile *myTile = [[_tiles objectAtIndex:newShip.baseColumn] objectAtIndex:newShip.baseRow];
         myTile.myShip = newShip;
+        
+        
         [myTile fogOfWar:NO];
         
         [_gridContainer addChild:newShip];
@@ -222,9 +225,16 @@
         newShip.dir = ([(NSNumber *)[shipAttrs objectAtIndex:2] intValue]);
         newShip.health = ([(NSNumber *)[shipAttrs objectAtIndex:4] intValue]);
         [_enemyShips addObject:newShip];
-        Tile *myTile = [[_tiles objectAtIndex:newShip.baseColumn] objectAtIndex:newShip.baseRow];
-        myTile.myShip = newShip;
-        [myTile fogOfWar:NO];
+//        Tile *myTile = [[_tiles objectAtIndex:newShip.baseColumn] objectAtIndex:newShip.baseRow];
+//        myTile.myShip = newShip;
+//        [myTile fogOfWar:NO];
+        
+        
+        [newShip updateTilesOccupied];
+        for (ShipSegment *segment in newShip.shipSegments) {
+            [segment.tile fogOfWar:NO];
+        }
+
         
         [_gridContainer addChild:newShip];
         [newShip setIsEnemyShip:YES];

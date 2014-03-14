@@ -69,4 +69,7 @@ typedef NSInteger WeaponType;
 - (void)hitByCannon;
 @property (nonatomic, assign) int health; // integer ==> destroyed = 0, damaged = 1, intact = 2.
 
+@property (nonatomic, strong) NSMutableArray *shipSegments;
+- (void)updateTilesOccupied;
+
 @end
