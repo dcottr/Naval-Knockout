@@ -907,6 +907,17 @@ static BOOL shipTypeMapsInitialized = NO;
   
 }
 
+-(Tile *)shouldMove:(NSArray *)tileList
+{
+  for (Tile *t in tileList){
+	if (t.reef){
+	  [t notifyEvent];
+	  return t;
+	}
+  }
+  return nil;
+}
+
 
 
 @end
