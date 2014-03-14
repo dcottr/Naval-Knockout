@@ -115,7 +115,6 @@
             newShip.baseColumn = 28;
             newShip.dir = Left;
             [_myShips addObject:newShip];
-            
             [_gridContainer addChild:newShip];
             [newShip positionedShip];
             
@@ -197,14 +196,13 @@
         newShip.dir = ([(NSNumber *)[shipAttrs objectAtIndex:2] intValue]);
         newShip.health = ([(NSNumber *)[shipAttrs objectAtIndex:4] intValue]);
         [_myShips addObject:newShip];
+        Tile *myTile = [[_tiles objectAtIndex:newShip.baseColumn] objectAtIndex:newShip.baseRow];
+        myTile.myShip = newShip;
+        [myTile fogOfWar:NO];
         
         [_gridContainer addChild:newShip];
         [newShip positionedShip];
         [newShip updateLocation];
-		
-		// affect visibility of surrounding tiles
-//		[newShip setSurroundingTilesVisible];
-        
     }
 }
 
@@ -222,6 +220,9 @@
         newShip.dir = ([(NSNumber *)[shipAttrs objectAtIndex:2] intValue]);
         newShip.health = ([(NSNumber *)[shipAttrs objectAtIndex:4] intValue]);
         [_enemyShips addObject:newShip];
+        Tile *myTile = [[_tiles objectAtIndex:newShip.baseColumn] objectAtIndex:newShip.baseRow];
+        myTile.myShip = newShip;
+        [myTile fogOfWar:NO];
         
         [_gridContainer addChild:newShip];
         [newShip setIsEnemyShip:YES];

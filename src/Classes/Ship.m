@@ -229,11 +229,10 @@ static BOOL shipTypeMapsInitialized = NO;
         self.y = _baseRow * tileSize + tileSize/2;
         self.x = _baseColumn * tileSize - k + tileSize/2;
     }
-    [self updateTilesOccupied];
     if (!_isEnemyShip) {
         [self setSurroundingTilesVisible];
     }
-    
+    [self updateTilesOccupied];
 }
 
 - (void)updateTilesOccupied
@@ -300,6 +299,9 @@ static BOOL shipTypeMapsInitialized = NO;
     }
     
     [self updateLocation];
+    if (!_isEnemyShip) {
+        [self setSurroundingTilesVisible];
+    }
     return;
     
     // Test for collisions
@@ -340,6 +342,9 @@ static BOOL shipTypeMapsInitialized = NO;
     }
     
     [self updateLocation];
+    if (!_isEnemyShip) {
+        [self setSurroundingTilesVisible];
+    }
 }
 
 - (void)positionedShip
@@ -595,8 +600,10 @@ static BOOL shipTypeMapsInitialized = NO;
     [tween animateProperty:@"y" targetValue:self.y - yChange * tileSize];
     [tween animateProperty:@"x" targetValue:self.x - xChange * tileSize];
     [_gameContainer.shipJuggler addObject:tween];
+    if (!_isEnemyShip) {
+        [self setSurroundingTilesVisible];
+    }
     [self updateTilesOccupied];
-    
 }
 
 - (void)setIsEnemyShip:(BOOL)isEnemyShip
@@ -610,16 +617,15 @@ static BOOL shipTypeMapsInitialized = NO;
 }
 
 
-
 -(void)setSurroundingTilesVisible
 {
     // get values for length + width of ship type
     NSArray *radarSize = [shipRadarDimensions objectForKey:num(_shipType)];
     // do cases on directions to get tiles of radar range
-    int semiwidth =  [[radarSize objectAtIndex:0] intValue] - 2; // half the width ; is odd so -1
-    
+    int semiwidth =  ([[radarSize objectAtIndex:0] intValue] - 1)/2; // half the width ; is odd so -1
     int length  = [[radarSize objectAtIndex:1] intValue]; // length is long side
     NSLog(@"semiwidth : %d , length : %d", semiwidth, length);
+    [[[_gameContainer.tiles objectAtIndex:_baseColumn] objectAtIndex:_baseRow] fogOfWar:YES];
     switch (_dir) {
         case Down:  // swap length + width
             for ( int i = _baseRow +1; i <= _baseRow +1 + length && i<_gameContainer.tileCount && i>=0; i++){
@@ -632,7 +638,7 @@ static BOOL shipTypeMapsInitialized = NO;
             break;
             
         case Up: // swap l + w, face downward
-            for ( int i = _baseRow -1; i <= _baseRow -1 - length  && i<_gameContainer.tileCount && i>=0; i--){
+            for ( int i = _baseRow - 1; i >= _baseRow -1 - length && i<_gameContainer.tileCount && i>=0; i--){
                 for ( int j = _baseColumn - semiwidth; j<= semiwidth + _baseColumn && j<_gameContainer.tileCount && j>=0; j++ ){
                     Tile *t= [[_gameContainer.tiles objectAtIndex:j] objectAtIndex:i];
                     [t fogOfWar:YES];
@@ -642,7 +648,7 @@ static BOOL shipTypeMapsInitialized = NO;
             break;
             
         case Left:
-            for ( int i = _baseColumn	-1; i <= _baseColumn -1 - length && i<_gameContainer.tileCount && i>=0; i--){
+            for ( int i = _baseColumn	-1; i >= _baseColumn -1 - length && i<_gameContainer.tileCount && i>=0; i--){
                 for ( int j = _baseRow - semiwidth; j<= semiwidth + _baseRow && j<_gameContainer.tileCount && j>=0; j++ ){
                     Tile *t= [[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j];
                     [t fogOfWar:YES];
