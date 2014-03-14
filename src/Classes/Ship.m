@@ -541,4 +541,21 @@ static BOOL shipTypeMapsInitialized = NO;
     }
 }
 
+- (void)setSurroundingTilesVisible
+{
+  NSMutableSet * radarArea = [self radarRangeFor:_shipType];
+  
+  for (NSMutableSet *rows in radarArea){
+	for (Tile *t in rows){
+	  
+	}
+  }
+}
+
+-(NSMutableSet *)radarRangeFor:(ShipType)t
+{
+  NSMutableSet *radarArea = [[NSMutableSet alloc] init];
+  return radarArea;
+}
+
 @end
