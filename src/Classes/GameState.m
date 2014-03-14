@@ -8,7 +8,10 @@
 
 #import "GameState.h"
 
+BOOL hadNotify = NO;
+
 @implementation GameState
+
 
 @synthesize playerKey;
 

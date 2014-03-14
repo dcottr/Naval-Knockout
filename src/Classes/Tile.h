@@ -18,5 +18,7 @@
 @property (nonatomic, assign) BOOL selectable;
 
 - (void)performMineAction;
+- (void)performCannonAction;
+- (void)displayCannonHit:(BOOL)display;
 
 @end

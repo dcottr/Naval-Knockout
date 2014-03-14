@@ -155,9 +155,10 @@ static NKMatchHelper *sharedHelper = nil;
 -(void)turnBasedMatchmakerViewController:
 (GKTurnBasedMatchmakerViewController *)viewController
 							didFindMatch:(GKTurnBasedMatch *)match {
+    self.currentMatch = match;
+    NSLog(@"Current match data: %@", match.matchData);
     [_presentingViewController dismissViewControllerAnimated:YES completion:nil]; // MAYBE
     [[[UIApplication sharedApplication] keyWindow] addSubview:((UIViewController *)_delegate).view];
-    self.currentMatch = match;
     GKTurnBasedParticipant *firstParticipant = [match.participants objectAtIndex:0];
     if (firstParticipant.lastTurnDate == NULL) {
         // It's a new game!

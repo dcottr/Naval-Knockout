@@ -17,6 +17,8 @@
 
 @property (nonatomic, strong) Mine *mine;
 
+@property (nonatomic, strong) SPQuad *collisionOverlay;
+
 @end
 
 @implementation Tile
@@ -57,5 +59,22 @@ static SPTexture *waterTexture = nil;
     _hasMine = YES;
     [self addChild:_mine];
 }
+
+- (void)displayCannonHit:(BOOL)display
+{
+    if (!_collisionOverlay) {
+        _collisionOverlay = [[SPQuad alloc] initWithWidth:_game.tileSize height:_game.tileSize color:0xff0000];
+        [self addChild:_collisionOverlay];
+    }
+    [_collisionOverlay setVisible:display];
+}
+
+- (void)performCannonAction
+{
+    [self displayCannonHit:YES];
+    [_game notifyCannonCollision:self];
+}
+
+// Yellow: 0xffff00
 
 @end
