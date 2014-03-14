@@ -13,17 +13,18 @@
 @interface Tile : SPSprite
 
 - (id)initWithGame:(Game *)game row:(int)r column:(int)c;
-@property (nonatomic, assign) int row;
-@property (nonatomic, assign) int col;
+@property (nonatomic, assign) int  row;
+@property (nonatomic, assign) int  col;
 @property (nonatomic, assign) BOOL hasMine;
 @property (nonatomic, assign) BOOL selectable;
-//@property (nonatomic, assign) BOOL visible;
+@property (nonatomic, assign) BOOL reef;
 
 @property (nonatomic, strong) Ship *myShip;
 
 - (void)performMineAction;
 - (void)performCannonAction;
 - (void)displayCannonHit:(BOOL)display;
+- (void)initReef;
 
 - (void)setDamaged;
 - (void)setDestroyed;
