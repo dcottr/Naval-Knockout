@@ -24,17 +24,23 @@
 @implementation Tile
 
 static SPTexture *waterTexture = nil;
+static NSDictionary *reefPositions = nil;
+
 - (id)initWithGame:(Game *)game row:(int)r column:(int)c
 {
     if (!waterTexture) {
         waterTexture = [SPTexture textureWithContentsOfFile:@"watertile.jpeg"];
     }
+	[self initReef];
     self = [super init];
     if (self) {
         _game = game;
         _row = r;
         _col = c;
-        
+	  // is this a reef?
+	  if( [[reefPositions objectForKey:num(r)] containsObject:num(c)] ){
+		_reef = YES;
+	  }
         SPImage *image = [[SPImage alloc] initWithTexture:waterTexture];
         image.width = _game.tileSize;
         image.height = _game.tileSize;
@@ -73,6 +79,24 @@ static SPTexture *waterTexture = nil;
 {
     [self displayCannonHit:YES];
     [_game notifyCannonCollision:self];
+}
+
+- (void)initReef
+{
+  if (!reefPositions){
+	reefPositions = @{num(6):@[num(10),num(11)], // reef space occupies rows 3 - 27, cols 10-20
+					  num(7):@[num(12),num(13)],
+					  num(8):@[num(10),num(11),num(12)],
+					  num(9):@[num(20)],
+					  num(10):@[num(19),num(18)],
+					  num(11):@[num(17),num(16)],
+					  num(12):@[num(13),num(14),num(15),num(16)],
+					  num(14):@[num(13),num(14),num(15),num(16)],
+					  num(16):@[num(11)],
+					  num(17):@[num(10)],
+					  num(24):@[num(19),num(20)],
+					  };
+  }
 }
 
 // Yellow: 0xffff00
