@@ -54,6 +54,7 @@
         for (Tile *tile in column) {
             [tile setClear];
             [tile displayCannonHit:NO];
+            [tile fogOfWar:NO];
         }
     }
     
