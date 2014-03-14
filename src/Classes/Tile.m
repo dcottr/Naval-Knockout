@@ -9,6 +9,7 @@
 #import "Tile.h"
 #import "Game.h"
 #import "Mine.h"
+#import "Ship.h"
 
 @interface Tile ()
 
@@ -18,6 +19,11 @@
 @property (nonatomic, strong) Mine *mine;
 
 @property (nonatomic, strong) SPQuad *collisionOverlay;
+
+@property (nonatomic, strong) SPQuad *damagedOverlay;
+@property (nonatomic, strong) SPQuad *sunkOverlay;
+
+
 
 @end
 
@@ -44,7 +50,24 @@ static NSDictionary *reefPositions = nil;
         SPImage *image = [[SPImage alloc] initWithTexture:waterTexture];
         image.width = _game.tileSize;
         image.height = _game.tileSize;
+        
+        
         [self addChild:image];
+        _damagedOverlay = [[SPQuad alloc] initWithWidth:_game.tileSize height:_game.tileSize color:0xffff00];
+        [self addChild:_damagedOverlay];
+        [_damagedOverlay setVisible:NO];
+        
+        _sunkOverlay = [[SPQuad alloc] initWithWidth:_game.tileSize height:_game.tileSize color:0x000000];
+        [self addChild:_sunkOverlay];
+        [_sunkOverlay setVisible:NO];
+        
+        _collisionOverlay = [[SPQuad alloc] initWithWidth:_game.tileSize - 7.0f height:_game.tileSize - 7.0f color:0xff0000];
+        [self addChild:_collisionOverlay];
+        [_collisionOverlay setVisible:NO];
+        
+        _selectableOverlay = [[SPQuad alloc] initWithWidth:_game.tileSize height:_game.tileSize color:0x00FF00];
+        [self addChild:_selectableOverlay];
+        [_selectableOverlay setVisible:NO];
     }
     return self;
 }
@@ -52,10 +75,6 @@ static NSDictionary *reefPositions = nil;
 
 - (void)setSelectable:(BOOL)selectable
 {
-    if (!_selectableOverlay) {
-        _selectableOverlay = [[SPQuad alloc] initWithWidth:_game.tileSize height:_game.tileSize color:0x00FF00];
-        [self addChild:_selectableOverlay];
-    }
     [_selectableOverlay setVisible:selectable];
 }
 
@@ -68,18 +87,19 @@ static NSDictionary *reefPositions = nil;
 
 - (void)displayCannonHit:(BOOL)display
 {
-    if (!_collisionOverlay) {
-        _collisionOverlay = [[SPQuad alloc] initWithWidth:_game.tileSize height:_game.tileSize color:0xff0000];
-        [self addChild:_collisionOverlay];
-    }
     [_collisionOverlay setVisible:display];
 }
 
 - (void)performCannonAction
 {
+    if (_myShip) {
+        NSLog(@"Hit at row: %d, col: %d with ship: %@", _row, _col, _myShip);
+        [_myShip hitByCannon];
+    }
     [self displayCannonHit:YES];
     [_game notifyCannonCollision:self];
 }
+
 
 - (void)initReef
 {
@@ -98,6 +118,26 @@ static NSDictionary *reefPositions = nil;
 					  };
   }
 }
+
+- (void)setDamaged
+{
+    [_damagedOverlay setVisible:YES];
+}
+- (void)setDestroyed
+{
+    [_sunkOverlay setVisible:YES];
+}
+- (void)setClear
+{
+    if (_sunkOverlay) {
+        [_sunkOverlay setVisible:NO];
+    }
+    if (_damagedOverlay) {
+        [_damagedOverlay setVisible:NO];
+    }
+}
+
+
 
 // Yellow: 0xffff00
 

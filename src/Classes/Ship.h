@@ -66,4 +66,7 @@ typedef NSInteger WeaponType;
 
 @property (nonatomic, assign) BOOL isEnemyShip;
 
+- (void)hitByCannon;
+@property (nonatomic, assign) int health; // integer ==> destroyed = 0, damaged = 1, intact = 2.
+
 @end

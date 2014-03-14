@@ -8,8 +8,6 @@
 
 #import "GameState.h"
 
-BOOL hadNotify = NO;
-
 @implementation GameState
 
 
@@ -26,8 +24,6 @@ BOOL hadNotify = NO;
 
 -(NSMutableDictionary *) updateState:(NSDictionary *) board
 {
-    
-    
     
     if(![board valueForKey:[GKLocalPlayer localPlayer].playerID]){
         // Init Game: Got their game state , local player's is absent. add it:
