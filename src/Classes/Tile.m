@@ -128,8 +128,13 @@ static NSDictionary *reefPositions = nil;
         NSLog(@"Hit at row: %d, col: %d with ship: %@", _row, _col, _myShip);
         [_myShip hitByCannon];
     }
-    [self displayCannonHit:YES];
-    [_game notifyCannonCollision:self];
+  [self notifyEvent];
+}
+
+- (void)notifyEvent
+{
+  [self displayCannonHit:YES];
+  [_game notifyCannonCollision:self];
 }
 
 

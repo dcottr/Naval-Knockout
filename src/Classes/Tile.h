@@ -27,6 +27,8 @@
 - (void)performCannonAction;
 - (void)displayCannonHit:(BOOL)display;
 - (void)initReef;
+- (void)notifyEvent;
+
 
 - (void)setDamaged;
 - (void)setDestroyed;

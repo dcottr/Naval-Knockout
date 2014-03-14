@@ -336,34 +336,42 @@ static BOOL shipTypeMapsInitialized = NO;
 
 - (void)turnRight
 {
-    switch (_dir) {
+	Direction tempdir = _dir;
+  float temprotation;
+    switch (tempdir) {
         case Up:
-            self.rotation = M_PI/2.0;
-            _dir = Right;
+            temprotation = M_PI/2.0;
+            tempdir = Right;
             break;
         case Right:
-            self.rotation = M_PI;
-            _dir = Down;
+            temprotation = M_PI;
+            tempdir = Down;
             break;
         case Down:
-            self.rotation = 3 * M_PI/2;
-            _dir = Left;
+            temprotation = 3 * M_PI/2;
+            tempdir= Left;
             break;
         case Left:
-            self.rotation = 0;
-            _dir = Up;
+            temprotation = 0;
+            tempdir = Up;
             break;
         default:
             break;
     }
-    
-    [self updateLocation];
-    if (!_isEnemyShip) {
-        [self setSurroundingTilesVisible];
-    }
-    return;
-    
-    // Test for collisions
+	NSArray *tileList = [self rotateTileList:tempdir];
+	Tile *hit = [self  shouldMove:tileList];
+	if(hit){
+	  return;
+	}
+	
+	else{
+	  self.rotation = temprotation;
+	  _dir = tempdir;
+	  [self updateLocation];
+	  if (!_isEnemyShip) {
+		  [self setSurroundingTilesVisible];
+	  }
+  }
 }
 
 - (void)setHealth:(int)health
@@ -379,31 +387,43 @@ static BOOL shipTypeMapsInitialized = NO;
 
 - (void)turnLeft
 {
-    switch (_dir) {
+  Direction tempdir  = _dir;
+  float temprotation;
+    switch (tempdir) {
+		
         case Up:
-            self.rotation = 3.0f * M_PI/2;
-            _dir = Left;
+            temprotation = 3.0f * M_PI/2;
+            tempdir= Left;
             break;
         case Right:
-            self.rotation = 0.0f;
-            _dir = Up;
+            temprotation = 0.0f;
+            tempdir= Up;
             break;
         case Down:
-            self.rotation = M_PI/2;
-            _dir = Right;
+            temprotation = M_PI/2;
+            tempdir = Right;
             break;
         case Left:
-            self.rotation = M_PI;
-            _dir = Down;
+            temprotation = M_PI;
+            tempdir= Down;
             break;
         default:
             break;
     }
-    
-    [self updateLocation];
-    if (!_isEnemyShip) {
-        [self setSurroundingTilesVisible];
-    }
+  NSArray *tileList = [self rotateTileList:tempdir];
+  Tile *hit = [self  shouldMove:tileList];
+  if(hit){
+	return;
+  }
+  
+  else{
+	self.rotation = temprotation;
+	_dir = tempdir;
+	[self updateLocation];
+	if (!_isEnemyShip) {
+	  [self setSurroundingTilesVisible];
+	}
+  }
 }
 
 - (void)positionedShip
@@ -608,7 +628,12 @@ static BOOL shipTypeMapsInitialized = NO;
 #pragma mark("TODO: Check for collision")
 - (void)performMoveActionTo:(Tile *)tile
 {
-    [self move:tile];
+  /*Tile *destination;
+  if( tile.col > [])
+  
+  }*/
+	[self move:tile];
+	
 }
 
 
@@ -905,6 +930,20 @@ static BOOL shipTypeMapsInitialized = NO;
 	 
   return tiles;
   
+}
+
+-(Tile *)shouldMove:(NSArray *)tileList
+{
+  if(tileList){
+	for (Tile *t in tileList){
+	  if (t.reef){
+		NSLog(@"you hit a reef at %d : %d", t.row,t.col);
+		[t notifyEvent];
+		return t;
+	  }
+	}
+  }
+  return nil;
 }
 
 

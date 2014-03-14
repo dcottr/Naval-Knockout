@@ -56,7 +56,7 @@ typedef NSInteger WeaponType;
 - (NSSet *)validShootCannonTiles;
 - (void)updateLocation;
 - (void)performMoveActionTo:(Tile *)tile;
-- (Tile *)rotateTileList:(Direction) newdir;
+- (NSArray *)rotateTileList:(Direction) newdir;
 
 @property (nonatomic, assign) ShipType shipType;
 @property (nonatomic, assign) Direction dir;
