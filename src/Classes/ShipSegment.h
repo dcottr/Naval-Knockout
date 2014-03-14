@@ -14,5 +14,6 @@
 @property (nonatomic, weak) Tile *tile;
 
 - (void)setFogOfWar:(BOOL)foggy;
+@property (nonatomic, assign) BOOL selectable;
 
 @end

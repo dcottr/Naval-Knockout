@@ -101,6 +101,9 @@ static NSDictionary *reefPositions = nil;
 - (void)setSelectable:(BOOL)selectable
 {
     [_selectableOverlay setVisible:selectable];
+    if (_myShipSegment) {
+        [_myShipSegment setSelectable:selectable];
+    }
 }
 
 - (void)performMineAction

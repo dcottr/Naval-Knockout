@@ -7,10 +7,12 @@
 //
 
 #import "ShipSegment.h"
+#import "Tile.h"
 
 @interface ShipSegment ()
 
 @property (nonatomic, strong) SPImage *overlayImage;
+@property (nonatomic, strong) SPQuad *selectableOverlay;
 
 @end
 
@@ -29,9 +31,11 @@ static SPTexture *waterTexture = nil;
         _overlayImage = [[SPImage alloc] initWithTexture:waterTexture];
         [self addChild:_overlayImage];
         [_overlayImage setVisible:NO];
-//        quad.x = 5;
-//        quad.y = 5;
-//        [self setVisible:YES];
+        
+        _selectableOverlay = [[SPQuad alloc] initWithWidth:self.width height:self.height color:0x00FF00];
+        _selectableOverlay.alpha = 0.5f;
+        [self addChild:_selectableOverlay];
+        [_selectableOverlay setVisible:NO];
     }
     return self;
 }
@@ -39,6 +43,11 @@ static SPTexture *waterTexture = nil;
 - (void)setFogOfWar:(BOOL)foggy
 {
     [_overlayImage setVisible:!foggy];
+}
+
+- (void)setSelectable:(BOOL)selectable
+{
+    [_selectableOverlay setVisible:selectable];
 }
 
 @end

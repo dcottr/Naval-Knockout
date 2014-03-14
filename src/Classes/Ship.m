@@ -296,25 +296,25 @@ static BOOL shipTypeMapsInitialized = NO;
     }
      // TODO health
     
-//    if (_tilesOccupied) {
-//        _tilesOccupied.myShip = nil;
-//        [_tilesOccupied setClear];
-//    }
-//    
-//    for (NSArray *column in _gameContainer.tiles) {
-//        for (Tile *tile in column) {
-//            if (tile.col == _baseColumn && tile.row == _baseRow) {
-//                _tilesOccupied = tile;
-//                tile.myShip = self;
-//                NSLog(@"At row: %d, col: %d, life: %d", tile.row, tile.col, _health);
-//                if (_health == 0) {
-//                    [tile setDestroyed];
-//                } else if (_health == 1) {
-//                    [tile setDamaged];
-//                }
-//            }
-//        }
-//    }
+    if (_tilesOccupied) {
+        _tilesOccupied.myShip = nil;
+        [_tilesOccupied setClear];
+    }
+    
+    for (NSArray *column in _gameContainer.tiles) {
+        for (Tile *tile in column) {
+            if (tile.col == _baseColumn && tile.row == _baseRow) {
+                _tilesOccupied = tile;
+                tile.myShip = self;
+                NSLog(@"At row: %d, col: %d, life: %d", tile.row, tile.col, _health);
+                if (_health == 0) {
+                    [tile setDestroyed];
+                } else if (_health == 1) {
+                    [tile setDamaged];
+                }
+            }
+        }
+    }
 }
 
 

@@ -225,8 +225,8 @@
         newShip.dir = ([(NSNumber *)[shipAttrs objectAtIndex:2] intValue]);
         newShip.health = ([(NSNumber *)[shipAttrs objectAtIndex:4] intValue]);
         [_enemyShips addObject:newShip];
-//        Tile *myTile = [[_tiles objectAtIndex:newShip.baseColumn] objectAtIndex:newShip.baseRow];
-//        myTile.myShip = newShip;
+        Tile *myTile = [[_tiles objectAtIndex:newShip.baseColumn] objectAtIndex:newShip.baseRow];
+        myTile.myShip = newShip;
 //        [myTile fogOfWar:NO];
         
         
