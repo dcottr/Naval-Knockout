@@ -628,12 +628,18 @@ static BOOL shipTypeMapsInitialized = NO;
 #pragma mark("TODO: Check for collision")
 - (void)performMoveActionTo:(Tile *)tile
 {
-  /*Tile *destination;
-  if( tile.col > [])
-  
-  }*/
+  /*
+  Tile *destination;
+  NSMutableArray *tileList = [[NSMutableArray alloc] init];
+  if( tile.col > _baseRow){ // move north
+	for (int i = _baseRow+1; i<tile.col; i ++){
+	  [tilelist addObject:[_gameContainer.tile objectAtIndex:i] objectAtIndex: ]
+	}
+  }
+  */
+
 	[self move:tile];
-	
+
 }
 
 
@@ -888,7 +894,7 @@ static BOOL shipTypeMapsInitialized = NO;
   if ( (_dir == Right && newdir == Down) || (_dir == Down && newdir == Right)){
 	int k =0;
 	for(int i = _baseRow ; i>_baseRow-length; i--){
-	  for (int j= _baseColumn; j<=_baseColumn + length - k; j++ ){
+	  for (int j= _baseColumn -k + length; j>=_baseColumn; j-- ){
 		@try{
 		  [tiles addObject:[[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j]];
 		}
@@ -910,7 +916,7 @@ static BOOL shipTypeMapsInitialized = NO;
   if( (_dir == Down && newdir == Left) || (_dir == Left && newdir == Down) ){
 	int k = 0;
 	for(int i = _baseRow - length +1; i <= _baseRow; i++){
-	  for(int j= _baseColumn; j<=_baseColumn -k; j-- ){
+	  for(int j= _baseColumn; j>=_baseColumn -k; j-- ){
 		@try{
 		  [tiles addObject:[[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j]];
 		}
