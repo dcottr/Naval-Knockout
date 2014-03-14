@@ -690,7 +690,7 @@ static BOOL shipTypeMapsInitialized = NO;
             break;
             
         case Up: // swap l + w, face downward
-            for ( int i = _baseRow +offset; i <= _baseRow +offset - length  && i<_gameContainer.tileCount && i>=0; i--){
+            for ( int i = _baseRow +offset; i >= _baseRow +offset - length  && i<_gameContainer.tileCount && i>=0; i--){
                 for ( int j = _baseColumn - semiwidth; j<= semiwidth + _baseColumn && j<_gameContainer.tileCount && j>=0; j++ ){
                     [validTiles addObject: [[_gameContainer.tiles objectAtIndex:j] objectAtIndex:i]];
                     
@@ -699,7 +699,7 @@ static BOOL shipTypeMapsInitialized = NO;
             break;
             
         case Left:
-            for ( int i = _baseColumn	+ offset; i <= _baseColumn +offset+ length && i<_gameContainer.tileCount && i>=0; i--){
+            for ( int i = _baseColumn	+ offset; i >= _baseColumn +offset- length && i<_gameContainer.tileCount && i>=0; i--){
                 for ( int j = _baseRow - semiwidth; j<= semiwidth + _baseRow && j<_gameContainer.tileCount && j>=0; j++ ){
                     [validTiles addObject: [[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j]];
                     

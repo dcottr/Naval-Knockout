@@ -147,10 +147,6 @@
             [_cannonCollisionTile displayCannonHit:NO];
             _cannonCollisionTile = nil;
         }
-
-        // Load my ships
-        NSArray *myShips = [state objectForKey:myId];
-        [self setupMyShips:myShips];
         
         // Load enemy ships
         NSArray *enemyShips;
@@ -164,6 +160,12 @@
         if (enemyShips) {
             [self setupEnemyShips:enemyShips];
         }
+
+        
+        // Load my ships
+        NSArray *myShips = [state objectForKey:myId];
+        [self setupMyShips:myShips];
+        
         // Collision notify tile
         NSArray *notify = [state objectForKey:@"notify"];
         if (notify && [notify count] != 0) {

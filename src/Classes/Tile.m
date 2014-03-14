@@ -112,6 +112,9 @@ static NSDictionary *reefPositions = nil;
 - (void)displayCannonHit:(BOOL)display
 {
     [_collisionOverlay setVisible:display];
+    if (display) {
+        [self fogOfWar:YES];
+    }
 }
 
 - (void)performCannonAction
