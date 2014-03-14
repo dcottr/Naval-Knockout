@@ -8,6 +8,7 @@
 
 #import "SPSprite.h"
 
+
 enum {
     Up,
     Right,
