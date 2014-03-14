@@ -9,6 +9,7 @@
 #import "SPSprite.h"
 #import "Game.h"
 
+@class Ship;
 @interface Tile : SPSprite
 
 - (id)initWithGame:(Game *)game row:(int)r column:(int)c;
@@ -18,8 +19,14 @@
 @property (nonatomic, assign) BOOL selectable;
 @property (nonatomic, assign) BOOL visible;
 
+@property (nonatomic, strong) Ship *myShip;
+
 - (void)performMineAction;
 - (void)performCannonAction;
 - (void)displayCannonHit:(BOOL)display;
+
+- (void)setDamaged;
+- (void)setDestroyed;
+- (void)setClear;
 
 @end

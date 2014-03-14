@@ -50,6 +50,13 @@
     NSLog(@"My id: %@", myId);
     NSLog(@"newState with state: %@", state);
     
+    for (NSArray *column in _tiles) {
+        for (Tile *tile in column) {
+            [tile setClear];
+            [tile displayCannonHit:NO];
+        }
+    }
+    
     if (state == nil) {
         // Setup ships on left
 
@@ -66,7 +73,7 @@
             [newShip positionedShip];
             [newShip updateLocation];
             
-            [newShip setSurroundingTilesVisible];
+//            [newShip setSurroundingTilesVisible];
         }
         
         // CheckButton stuff
@@ -110,9 +117,13 @@
             
             [_gridContainer addChild:newShip];
             [newShip positionedShip];
+            
             [newShip updateLocation];
             
-            [newShip setSurroundingTilesVisible];
+//            [newShip setSurroundingTilesVisible];
+        }
+        if(_shipCommandBar) {
+            [_shipCommandBar deselect];
         }
         
         // CheckButton stuff
@@ -183,6 +194,7 @@
         newShip.baseRow = ([(NSNumber *)[shipAttrs objectAtIndex:0] intValue]);
         newShip.baseColumn = ([(NSNumber *)[shipAttrs objectAtIndex:1] intValue]);
         newShip.dir = ([(NSNumber *)[shipAttrs objectAtIndex:2] intValue]);
+        newShip.health = ([(NSNumber *)[shipAttrs objectAtIndex:4] intValue]);
         [_myShips addObject:newShip];
         
         [_gridContainer addChild:newShip];
@@ -190,7 +202,7 @@
         [newShip updateLocation];
 		
 		// affect visibility of surrounding tiles
-		[newShip setSurroundingTilesVisible];
+//		[newShip setSurroundingTilesVisible];
         
     }
 }
@@ -207,6 +219,7 @@
         newShip.baseRow = ([(NSNumber *)[shipAttrs objectAtIndex:0] intValue]);
         newShip.baseColumn = ([(NSNumber *)[shipAttrs objectAtIndex:1] intValue]);
         newShip.dir = ([(NSNumber *)[shipAttrs objectAtIndex:2] intValue]);
+        newShip.health = ([(NSNumber *)[shipAttrs objectAtIndex:4] intValue]);
         [_enemyShips addObject:newShip];
         
         [_gridContainer addChild:newShip];
@@ -222,13 +235,13 @@
     
     NSMutableArray *myShips = [[NSMutableArray alloc] init];
     for (Ship *ship in _myShips) {
-        NSArray *shipAttrs = [NSArray arrayWithObjects:num(ship.baseRow), num(ship.baseColumn), num(ship.dir), num(ship.shipType), nil];
+        NSArray *shipAttrs = [NSArray arrayWithObjects:num(ship.baseRow), num(ship.baseColumn), num(ship.dir), num(ship.shipType), num(ship.health), nil];
         [myShips addObject:shipAttrs];
     }
     
     NSMutableArray *enemyShips = [[NSMutableArray alloc] init];
     for (Ship *ship in _enemyShips) {
-        NSArray *shipAttrs = [NSArray arrayWithObjects:num(ship.baseRow), num(ship.baseColumn), num(ship.dir), num(ship.shipType), nil];
+        NSArray *shipAttrs = [NSArray arrayWithObjects:num(ship.baseRow), num(ship.baseColumn), num(ship.dir), num(ship.shipType), num(ship.health), nil];
         [enemyShips addObject:shipAttrs];
     }
     

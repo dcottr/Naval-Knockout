@@ -33,6 +33,8 @@
 @property (nonatomic, assign) int shipSpeed;
 @property (nonatomic, assign) ArmourType shipArmour;
 
+@property (nonatomic, strong) Tile *tilesOccupied; // base of ship tile the ship is sitting on.
+
 
 @end
 
@@ -56,7 +58,6 @@ static BOOL shipTypeMapsInitialized = NO;
         shipWeaponsMap = @{num(Cruiser): @[num(WeaponHeavyCannon)], num(Destroyer): @[num(WeaponCannon), num(WeaponTorpedo)], num(Torpedo): @[num(WeaponCannon), num(WeaponTorpedo)], num(Miner): @[num(WeaponCannon), num(WeaponMine)], num(Radar): @[num(WeaponCannon)]};
         shipTypeMapsInitialized = YES;
 		shipRadarDimensions =@{num(Cruiser): @[num(3),num(10)], num(Destroyer):@[num(3),num(8)], num(Torpedo):@[num(3),num(6)], num(Miner):@[num(6),num(5)] , num(Radar):@[num(6),num(3)]};
-		shipCannonDimensions
     }
 }
 
@@ -75,7 +76,7 @@ static BOOL shipTypeMapsInitialized = NO;
         _shipSpeed = [[shipSpeedMap objectForKey:num(type)] intValue];
         _shipArmour = [[shipArmourMap objectForKey:num(type)] intValue];
         _shipWeapons = [shipWeaponsMap objectForKey:num(type)];
-        
+        _health = 2;
         _shipImage = [[SPImage alloc] initWithTexture:shipTexture];
         
         
@@ -226,6 +227,48 @@ static BOOL shipTypeMapsInitialized = NO;
         self.y = _baseRow * tileSize + tileSize/2;
         self.x = _baseColumn * tileSize - k + tileSize/2;
     }
+    [self updateTilesOccupied];
+
+}
+
+- (void)updateTilesOccupied
+{
+    if (_tilesOccupied) {
+        _tilesOccupied.myShip = nil;
+        [_tilesOccupied setClear];
+    }
+    
+    for (NSArray *column in _gameContainer.tiles) {
+        for (Tile *tile in column) {
+            if (tile.col == _baseColumn && tile.row == _baseRow) {
+                _tilesOccupied = tile;
+                tile.myShip = self;
+                NSLog(@"At row: %d, col: %d, life: %d", tile.row, tile.col, _health);
+                if (_health == 0) {
+                    [tile setDestroyed];
+                } else if (_health == 1) {
+                    [tile setDamaged];
+                }
+            }
+        }
+    }
+}
+
+
+- (void)hitByCannon
+{
+    if (_health == 2) {
+        if (_shipArmour == ArmourHeavy) {
+            _health = 1;
+            [self updateTilesOccupied];
+            return;
+        }
+    }
+    
+    NSLog(@"Hit by cannon, new health: %d", _health);
+    _health = 0;
+    [self updateTilesOccupied];
+    return;
 }
 
 - (void)turnRight
@@ -255,6 +298,16 @@ static BOOL shipTypeMapsInitialized = NO;
     return;
     
     // Test for collisions
+}
+
+- (void)setHealth:(int)health
+{
+    if (health == 0) {
+        _shipSpeed = ([[shipSpeedMap objectForKey:num(_shipType)] intValue] *(_shipLength - 1) / _shipLength);
+    } else {
+        _shipSpeed = [[shipSpeedMap objectForKey:num(_shipType)] intValue];
+    }
+    _health = health;
 }
 
 
@@ -537,6 +590,8 @@ static BOOL shipTypeMapsInitialized = NO;
     [tween animateProperty:@"y" targetValue:self.y - yChange * tileSize];
     [tween animateProperty:@"x" targetValue:self.x - xChange * tileSize];
     [_gameContainer.shipJuggler addObject:tween];
+    [self updateTilesOccupied];
+
 }
 
 - (void)setIsEnemyShip:(BOOL)isEnemyShip
