@@ -48,6 +48,7 @@ typedef NSInteger WeaponType;
 
 - (void)turnRight;
 - (void)turnLeft;
+- (void)setSurroundingTilesVisible;
 
 - (NSSet *)validMoveTiles;
 - (NSSet *)validDropMineTiles;
