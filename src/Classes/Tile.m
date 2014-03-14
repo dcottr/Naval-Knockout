@@ -162,6 +162,7 @@ static NSDictionary *reefPositions = nil;
 - (void)fogOfWar:(BOOL)visible
 {
     if (_myShip) {
+        NSLog(@"Ship should be invisible");
         [_myShip setVisible:visible];
     }
     [_content setVisible:visible];

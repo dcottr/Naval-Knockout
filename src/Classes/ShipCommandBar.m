@@ -107,7 +107,8 @@ static SPTexture *buttonTexture = nil;
     _validTileSelects = [ship validMoveTiles];
     if (_ship.shipType == Miner) {
         [_dropMineButton setVisible:YES];
-    } else if ([_ship.shipWeapons indexOfObject:num(WeaponCannon)] != NSNotFound) {
+    }
+    if ([_ship.shipWeapons indexOfObject:num(WeaponCannon)] != NSNotFound) {
         [_cannonButton setVisible:YES];
     }
     [self setSelectableTiles];
