@@ -52,13 +52,13 @@ static SPTexture *trayBarTexture = nil;
         ship.y = 10.0f + ship.height/2;
         [self addChild:ship];
         [_trayedShips addObject:ship];
-        [_game.myShips addObject:ship];
     }
 }
 
 - (void)removedShip:(Ship *)ship
 {
     [_trayedShips removeObject:ship];
+    [_game.myShips addObject:ship];
     if ([_trayedShips count] <= 0) {
         [self allShipsPlaced];
     }

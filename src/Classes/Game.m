@@ -35,7 +35,7 @@
         _tileSize = 32.0f;
         _tileCount = 32;
         _myShips = [[NSMutableSet alloc] init];
-        _enemyShips = [[NSMutableSet alloc] init];        
+        _enemyShips = [[NSMutableSet alloc] init];
         [self setup];
         [((AppDelegate *)[UIApplication sharedApplication].delegate) setGame:self];
     }
@@ -51,13 +51,18 @@
     if (state == nil || [state objectForKey:myId] == nil || [((NSDictionary *)[state objectForKey:myId]) count] == 0) {
         NSLog(@"Setup phase");
         
-        
-        int gameHeight = Sparrow.stage.height;
-        _shipsTray = [[ShipsTray alloc] initWithGame:self];
-        _shipsTray.y = gameHeight - 100.0f;
-        _shipsTray.x = 0.0f;
-        [self addChild:_shipsTray];
-        
+        if (!_shipsTray) {
+            int gameHeight = Sparrow.stage.height;
+            _shipsTray = [[ShipsTray alloc] initWithGame:self];
+            _shipsTray.y = gameHeight - 100.0f;
+            _shipsTray.x = 0.0f;
+            [self addChild:_shipsTray];
+            
+            for (Ship *ship in _myShips) {
+                [ship removeFromParent];
+            }
+        }
+
         
         NSArray *ships = [NSArray arrayWithObjects:num(Torpedo), num(Miner), nil];
         [_shipsTray presentShips:ships];
@@ -236,11 +241,13 @@
     [self addEventListener:@selector(advanceJugglers:) atObject:self forType:SP_EVENT_TYPE_ENTER_FRAME];
     
     
-    int gameHeight = Sparrow.stage.height;
-    _shipsTray = [[ShipsTray alloc] initWithGame:self];
-    _shipsTray.y = gameHeight - 100.0f;
-    _shipsTray.x = 0.0f;
-    [self addChild:_shipsTray];
+    if (!_shipsTray) {
+        int gameHeight = Sparrow.stage.height;
+        _shipsTray = [[ShipsTray alloc] initWithGame:self];
+        _shipsTray.y = gameHeight - 100.0f;
+        _shipsTray.x = 0.0f;
+        [self addChild:_shipsTray];
+    }
     
     
     NSArray *ships = [NSArray arrayWithObjects:num(Torpedo), num(Miner), nil];
