@@ -33,7 +33,7 @@
 {
     if ((self = [super init])) {
         _tileSize = 32.0f;
-        _tileCount = 32;
+        _tileCount = 30;
         _myShips = [[NSMutableSet alloc] init];
         _enemyShips = [[NSMutableSet alloc] init];
         [self setup];
@@ -47,6 +47,12 @@
 {
     NSString *myId = [GKLocalPlayer localPlayer].playerID;
     NSLog(@"My id: %@", myId);
+    
+    if (state == nil) {
+        // Setup ships on left
+    } else if ([state objectForKey:myId] == nil || [((NSDictionary *)[state objectForKey:myId]) count] == 0) {
+        // Setup ships on right
+    }
     
     if (state == nil || [state objectForKey:myId] == nil || [((NSDictionary *)[state objectForKey:myId]) count] == 0) {
         NSLog(@"Setup phase");
