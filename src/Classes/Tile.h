@@ -16,6 +16,7 @@
 @property (nonatomic, assign) int col;
 @property (nonatomic, assign) BOOL hasMine;
 @property (nonatomic, assign) BOOL selectable;
+@property (nonatomic, assign) BOOL visible;
 
 - (void)performMineAction;
 
