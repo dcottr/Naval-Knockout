@@ -65,7 +65,7 @@ static BOOL shipTypeMapsInitialized = NO;
 
 - (id)initWithGame:(Game *)game type:(ShipType)type
 {
-  
+    
     if (!shipTexture)
         shipTexture = [SPTexture textureWithContentsOfFile:@"ship_small_body.png"];
     
@@ -230,7 +230,10 @@ static BOOL shipTypeMapsInitialized = NO;
         self.x = _baseColumn * tileSize - k + tileSize/2;
     }
     [self updateTilesOccupied];
-
+    if (!_isEnemyShip) {
+        [self setSurroundingTilesVisible];
+    }
+    
 }
 
 - (void)updateTilesOccupied
@@ -593,7 +596,7 @@ static BOOL shipTypeMapsInitialized = NO;
     [tween animateProperty:@"x" targetValue:self.x - xChange * tileSize];
     [_gameContainer.shipJuggler addObject:tween];
     [self updateTilesOccupied];
-
+    
 }
 
 - (void)setIsEnemyShip:(BOOL)isEnemyShip
@@ -610,131 +613,135 @@ static BOOL shipTypeMapsInitialized = NO;
 
 -(void)setSurroundingTilesVisible
 {
-  // get values for length + width of ship type
-  NSArray *radarSize = [shipRadarDimensions objectForKey:num(_shipType)];
-  // do cases on directions to get tiles of radar range
-  int semiwidth =  [[radarSize objectAtIndex:0] intValue] - 2; // half the width ; is odd so -1
-
-  int length  = [[radarSize objectAtIndex:1] intValue]; // length is long side
-  NSLog(@"semiwidth : %d , length : %d", semiwidth, length);
-  switch (_dir) {
-	case Down:  // swap length + width
-	  for ( int i = _baseRow +1; i <= _baseRow +1 + length && i<_gameContainer.tileCount && i>=0; i++){
-		for ( int j = _baseColumn - semiwidth; j<= semiwidth + _baseColumn && j<_gameContainer.tileCount && j>=0; j++ ){
-		  Tile *t= [[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j];
-		  t.visible =YES;
-		}
-	  }
-	  break;
-	  
-	case Up: // swap l + w, face downward
-	  for ( int i = _baseRow -1; i <= _baseRow -1 - length  && i<_gameContainer.tileCount && i>=0; i--){
-		for ( int j = _baseColumn - semiwidth; j<= semiwidth + _baseColumn && j<_gameContainer.tileCount && j>=0; j++ ){
-		  Tile *t= [[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j];
-		  t.visible =YES;
-		}
-	  }
-	  break;
-	  
-	case Left:
-	  for ( int i = _baseColumn	-1; i <= _baseColumn -1 + length && i<_gameContainer.tileCount && i>=0; i--){
-		for ( int j = _baseRow - semiwidth; j<= semiwidth + _baseRow && j<_gameContainer.tileCount && j>=0; j++ ){
-		  Tile *t= [[_gameContainer.tiles objectAtIndex:j] objectAtIndex:i];
-		  t.visible =YES;
-		}
-	  }
-	  break;
-	  
-	default:  // object is facing right
-	  for ( int i = _baseColumn	+1; i <= _baseColumn +1 + length && i<_gameContainer.tileCount && i>=0; i++){
-		for ( int j = _baseRow - semiwidth; j<= semiwidth + _baseRow && j<_gameContainer.tileCount && j>=0; j++ ){
-		  Tile *t= [[_gameContainer.tiles objectAtIndex:j] objectAtIndex:i];
-		  t.visible =YES;
-		}
-	  }
-	  break;
-  }
+    // get values for length + width of ship type
+    NSArray *radarSize = [shipRadarDimensions objectForKey:num(_shipType)];
+    // do cases on directions to get tiles of radar range
+    int semiwidth =  [[radarSize objectAtIndex:0] intValue] - 2; // half the width ; is odd so -1
+    
+    int length  = [[radarSize objectAtIndex:1] intValue]; // length is long side
+    NSLog(@"semiwidth : %d , length : %d", semiwidth, length);
+    switch (_dir) {
+        case Down:  // swap length + width
+            for ( int i = _baseRow +1; i <= _baseRow +1 + length && i<_gameContainer.tileCount && i>=0; i++){
+                for ( int j = _baseColumn - semiwidth; j<= semiwidth + _baseColumn && j<_gameContainer.tileCount && j>=0; j++ ){
+                    Tile *t= [[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j];
+                    [t fogOfWar:YES];
+                    //		  t.visible =YES;
+                }
+            }
+            break;
+            
+        case Up: // swap l + w, face downward
+            for ( int i = _baseRow -1; i <= _baseRow -1 - length  && i<_gameContainer.tileCount && i>=0; i--){
+                for ( int j = _baseColumn - semiwidth; j<= semiwidth + _baseColumn && j<_gameContainer.tileCount && j>=0; j++ ){
+                    Tile *t= [[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j];
+                    [t fogOfWar:YES];
+                    //		  t.visible =YES;
+                }
+            }
+            break;
+            
+        case Left:
+            for ( int i = _baseColumn	-1; i <= _baseColumn -1 + length && i<_gameContainer.tileCount && i>=0; i--){
+                for ( int j = _baseRow - semiwidth; j<= semiwidth + _baseRow && j<_gameContainer.tileCount && j>=0; j++ ){
+                    Tile *t= [[_gameContainer.tiles objectAtIndex:j] objectAtIndex:i];
+                    [t fogOfWar:YES];
+                    //		  t.visible =YES;
+                }
+            }
+            break;
+            
+        default:  // object is facing right
+            for ( int i = _baseColumn	+1; i <= _baseColumn +1 + length && i<_gameContainer.tileCount && i>=0; i++){
+                for ( int j = _baseRow - semiwidth; j<= semiwidth + _baseRow && j<_gameContainer.tileCount && j>=0; j++ ){
+                    Tile *t= [[_gameContainer.tiles objectAtIndex:j] objectAtIndex:i];
+                    [t fogOfWar:YES];
+                    //		  t.visible =YES;
+                }
+            }
+            break;
+    }
 }
 
 
 - (NSSet *)validShootCannonTiles
 {
-  NSMutableSet *validTiles = [[NSMutableSet alloc] init];
-  
-  NSArray *cannonSize = [shipCannonDimensions objectForKey:num(_shipType)];
-  int semiwidth =  ([[cannonSize objectAtIndex:0] intValue] - 1)/2; // half the width
-  int length  = [[cannonSize objectAtIndex:1] intValue]; // length is long side
-  int offset = [[cannonSize objectAtIndex:2] intValue];
-  // unfortunately obj-c doesn't do factory well so we repeat a lot of logic
-
-  switch (_dir) {
-	case Down:  // swap length + width
-	  for ( int i = _baseRow -offset; i <= _baseRow -offset + length && i<_gameContainer.tileCount && i>=0; i++){
-		for ( int j = _baseColumn - semiwidth; j<= semiwidth + _baseColumn && j<_gameContainer.tileCount && j>=0; j++ ){
-		  [validTiles addObject:[[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j]];
-		}
-	  }
-	  break;
-	  
-	case Up: // swap l + w, face downward
-	  for ( int i = _baseRow +offset; i <= _baseRow +offset - length  && i<_gameContainer.tileCount && i>=0; i--){
-		for ( int j = _baseColumn - semiwidth; j<= semiwidth + _baseColumn && j<_gameContainer.tileCount && j>=0; j++ ){
-		  [validTiles addObject: [[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j]];
-		  
-		}
-	  }
-	  break;
-	  
-	case Left:
-	  for ( int i = _baseColumn	+ offset; i <= _baseColumn +offset+ length && i<_gameContainer.tileCount && i>=0; i--){
-		for ( int j = _baseRow - semiwidth; j<= semiwidth + _baseRow && j<_gameContainer.tileCount && j>=0; j++ ){
-		  [validTiles addObject: [[_gameContainer.tiles objectAtIndex:j] objectAtIndex:i]];
-		 
-		}
-	  }
-	  break;
-	  
-	default:  // object is facing right
-	  for ( int i = _baseColumn	-offset; i <= _baseColumn -offset+ length && i<_gameContainer.tileCount && i>=0; i++){
-		for ( int j = _baseRow - semiwidth; j<= semiwidth + _baseRow && j<_gameContainer.tileCount && j>=0; j++ ){
-		  [validTiles addObject:[[_gameContainer.tiles objectAtIndex:j] objectAtIndex:i]];
-		}
-	  }
-	  break;
-  }
-
-	
-  /*  original code for destroyers
-    for (NSArray *column in _gameContainer.tiles) {
-        for (Tile *tile in column) {
-            if (_dir == Up ) {
-                if (tile.row >= _baseRow - 7 && tile.row <= _baseRow + 4) {
-                    if (tile.col >= _baseColumn - 4 && tile.col <= _baseColumn + 4) {
-                        [validTiles addObject:tile];
-                    }
-                }
-            } else if (_dir == Down) {
-                if (tile.row >= _baseRow - 4 && tile.row <= _baseRow + 7) {
-                    if (tile.col >= _baseColumn - 4 && tile.col <= _baseColumn + 4) {
-                        [validTiles addObject:tile];
-                    }
-                }
-            } else if (_dir == Left) {
-                if (tile.col >= _baseColumn - 7 && tile.col <= _baseColumn + 4) {
-                    if (tile.row >= _baseRow - 4 && tile.row <= _baseRow + 4) {
-                        [validTiles addObject:tile];
-                    }
-                }
-            } else if (_dir == Right) {
-                if (tile.col >= _baseColumn - 4 && tile.col <= _baseColumn + 7) {
-                    if (tile.row >= _baseRow - 4 && tile.row <= _baseRow + 4) {
-                        [validTiles addObject:tile];
-                    }
+    NSMutableSet *validTiles = [[NSMutableSet alloc] init];
+    
+    NSArray *cannonSize = [shipCannonDimensions objectForKey:num(_shipType)];
+    int semiwidth =  ([[cannonSize objectAtIndex:0] intValue] - 1)/2; // half the width
+    int length  = [[cannonSize objectAtIndex:1] intValue]; // length is long side
+    int offset = [[cannonSize objectAtIndex:2] intValue];
+    // unfortunately obj-c doesn't do factory well so we repeat a lot of logic
+    
+    switch (_dir) {
+        case Down:  // swap length + width
+            for ( int i = _baseRow -offset; i <= _baseRow -offset + length && i<_gameContainer.tileCount && i>=0; i++){
+                for ( int j = _baseColumn - semiwidth; j<= semiwidth + _baseColumn && j<_gameContainer.tileCount && j>=0; j++ ){
+                    [validTiles addObject:[[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j]];
                 }
             }
-        }
+            break;
+            
+        case Up: // swap l + w, face downward
+            for ( int i = _baseRow +offset; i <= _baseRow +offset - length  && i<_gameContainer.tileCount && i>=0; i--){
+                for ( int j = _baseColumn - semiwidth; j<= semiwidth + _baseColumn && j<_gameContainer.tileCount && j>=0; j++ ){
+                    [validTiles addObject: [[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j]];
+                    
+                }
+            }
+            break;
+            
+        case Left:
+            for ( int i = _baseColumn	+ offset; i <= _baseColumn +offset+ length && i<_gameContainer.tileCount && i>=0; i--){
+                for ( int j = _baseRow - semiwidth; j<= semiwidth + _baseRow && j<_gameContainer.tileCount && j>=0; j++ ){
+                    [validTiles addObject: [[_gameContainer.tiles objectAtIndex:j] objectAtIndex:i]];
+                    
+                }
+            }
+            break;
+            
+        default:  // object is facing right
+            for ( int i = _baseColumn	-offset; i <= _baseColumn -offset+ length && i<_gameContainer.tileCount && i>=0; i++){
+                for ( int j = _baseRow - semiwidth; j<= semiwidth + _baseRow && j<_gameContainer.tileCount && j>=0; j++ ){
+                    [validTiles addObject:[[_gameContainer.tiles objectAtIndex:j] objectAtIndex:i]];
+                }
+            }
+            break;
     }
-   */
+    
+	
+    /*  original code for destroyers
+     for (NSArray *column in _gameContainer.tiles) {
+     for (Tile *tile in column) {
+     if (_dir == Up ) {
+     if (tile.row >= _baseRow - 7 && tile.row <= _baseRow + 4) {
+     if (tile.col >= _baseColumn - 4 && tile.col <= _baseColumn + 4) {
+     [validTiles addObject:tile];
+     }
+     }
+     } else if (_dir == Down) {
+     if (tile.row >= _baseRow - 4 && tile.row <= _baseRow + 7) {
+     if (tile.col >= _baseColumn - 4 && tile.col <= _baseColumn + 4) {
+     [validTiles addObject:tile];
+     }
+     }
+     } else if (_dir == Left) {
+     if (tile.col >= _baseColumn - 7 && tile.col <= _baseColumn + 4) {
+     if (tile.row >= _baseRow - 4 && tile.row <= _baseRow + 4) {
+     [validTiles addObject:tile];
+     }
+     }
+     } else if (_dir == Right) {
+     if (tile.col >= _baseColumn - 4 && tile.col <= _baseColumn + 7) {
+     if (tile.row >= _baseRow - 4 && tile.row <= _baseRow + 4) {
+     [validTiles addObject:tile];
+     }
+     }
+     }
+     }
+     }
+     */
     return validTiles;
 }
 

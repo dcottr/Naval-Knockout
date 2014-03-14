@@ -17,7 +17,7 @@
 @property (nonatomic, assign) int col;
 @property (nonatomic, assign) BOOL hasMine;
 @property (nonatomic, assign) BOOL selectable;
-@property (nonatomic, assign) BOOL visible;
+//@property (nonatomic, assign) BOOL visible;
 
 @property (nonatomic, strong) Ship *myShip;
 
@@ -28,5 +28,7 @@
 - (void)setDamaged;
 - (void)setDestroyed;
 - (void)setClear;
+
+- (void)fogOfWar:(BOOL)visible;
 
 @end

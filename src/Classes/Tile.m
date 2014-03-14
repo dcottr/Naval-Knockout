@@ -23,6 +23,9 @@
 @property (nonatomic, strong) SPQuad *damagedOverlay;
 @property (nonatomic, strong) SPQuad *sunkOverlay;
 
+@property (nonatomic, assign) BOOL fogOfWarVisibility;
+
+@property (nonatomic, strong) SPSprite *content;
 
 
 @end
@@ -40,24 +43,29 @@ static SPTexture *waterTexture = nil;
         _game = game;
         _row = r;
         _col = c;
-        
+        _fogOfWarVisibility = NO;
         SPImage *image = [[SPImage alloc] initWithTexture:waterTexture];
         image.width = _game.tileSize;
         image.height = _game.tileSize;
-        
-        
         [self addChild:image];
+        
+        _content = [[SPSprite alloc] init];
+        _content.width = _game.tileSize;
+        _content.height = _game.tileSize;
+        [self addChild:_content];
+        [_content setVisible:_fogOfWarVisibility];
+        
         _damagedOverlay = [[SPQuad alloc] initWithWidth:_game.tileSize height:_game.tileSize color:0xffff00];
-        [self addChild:_damagedOverlay];
+        [_content addChild:_damagedOverlay];
         [_damagedOverlay setVisible:NO];
         
         _sunkOverlay = [[SPQuad alloc] initWithWidth:_game.tileSize height:_game.tileSize color:0x000000];
-        [self addChild:_sunkOverlay];
+        [_content addChild:_sunkOverlay];
         [_sunkOverlay setVisible:NO];
         
         _collisionOverlay = [[SPQuad alloc] initWithWidth:_game.tileSize - 7.0f height:_game.tileSize - 7.0f color:0xff0000];
-        [self addChild:_collisionOverlay];
-        [_collisionOverlay setVisible:NO];
+        [_content addChild:_collisionOverlay];
+        [_collisionOverlay setVisible:YES];
         
         _selectableOverlay = [[SPQuad alloc] initWithWidth:_game.tileSize height:_game.tileSize color:0x00FF00];
         [self addChild:_selectableOverlay];
@@ -65,7 +73,6 @@ static SPTexture *waterTexture = nil;
     }
     return self;
 }
-
 
 - (void)setSelectable:(BOOL)selectable
 {
@@ -81,11 +88,12 @@ static SPTexture *waterTexture = nil;
 
 - (void)displayCannonHit:(BOOL)display
 {
-    [_collisionOverlay setVisible:display];
+//    [_collisionOverlay setVisible:display];
 }
 
 - (void)performCannonAction
 {
+    [_content setVisible:YES];
     if (_myShip) {
         NSLog(@"Hit at row: %d, col: %d with ship: %@", _row, _col, _myShip);
         [_myShip hitByCannon];
@@ -113,6 +121,14 @@ static SPTexture *waterTexture = nil;
 }
 
 
-// Yellow: 0xffff00
+- (void)fogOfWar:(BOOL)visible
+{
+    if (_myShip) {
+        [_myShip setVisible:visible];
+    }
+    [_content setVisible:visible];
+    
+}
+
 
 @end
