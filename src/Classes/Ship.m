@@ -42,6 +42,7 @@ static NSDictionary *shipSpeedMap = nil;
 static NSDictionary *shipArmourMap = nil;
 static NSDictionary *shipWeaponsMap = nil;
 static NSDictionary *shipRadarDimensions =  nil;
+static NSDictionary *shipCannonDimensions = nil;
 static BOOL shipTypeMapsInitialized = NO;
 
 
@@ -56,7 +57,7 @@ static BOOL shipTypeMapsInitialized = NO;
         shipWeaponsMap = @{num(Cruiser): @[num(WeaponHeavyCannon)], num(Destroyer): @[num(WeaponCannon), num(WeaponTorpedo)], num(Torpedo): @[num(WeaponCannon), num(WeaponTorpedo)], num(Miner): @[num(WeaponCannon), num(WeaponMine)], num(Radar): @[num(WeaponCannon)]};
         shipTypeMapsInitialized = YES;
 		shipRadarDimensions =@{num(Cruiser): @[num(3),num(10)], num(Destroyer):@[num(3),num(8)], num(Torpedo):@[num(3),num(6)], num(Miner):@[num(6),num(5)] , num(Radar):@[num(6),num(3)]};
-		shipCannonDimensions
+		shipCannonDimensions = @{num(Cruiser): @[num(11), num(15), num(5)], num(Destroyer):@[num(9),num(12),num(4)], num(Torpedo):@[num(5),num(5), num(0)], num(Miner):@[num(5),num(4),num(1)], num(Radar):@[num(3),num(5),num(1)]};
     }
 }
 
@@ -559,8 +560,57 @@ static BOOL shipTypeMapsInitialized = NO;
   int semiwidth = (int) [radarSize objectAtIndex:0] - 2; // half the width ; is odd so -1
   int length  = (int) [radarSize objectAtIndex:1]; // length is long side
   switch (_dir) {
+	case Down:  // swap length + width
+	  for ( int i = _baseRow +1; i < _baseRow +1 + length || i<32; i++){
+		for ( int j = _baseColumn - semiwidth; j< semiwidth + _baseColumn || j<32; j++ ){
+		  Tile *t= [[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j];
+		  t.visible =YES;
+		}
+	  }
+	  break;
+	  
+	case Up: // swap l + w, face downward
+	  for ( int i = _baseRow -1; i < _baseRow -1 - length  || i > 0; i--){
+		for ( int j = _baseColumn - semiwidth; j< semiwidth + _baseColumn || j <32; j++ ){
+		  Tile *t= [[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j];
+		  t.visible =YES;
+		}
+	  }
+	  break;
+	  
+	case Left:
+	  for ( int i = _baseColumn	-1; i < _baseColumn -1 + length || i>0; i--){
+		for ( int j = _baseRow - semiwidth; j< semiwidth + _baseRow || j <32; j++ ){
+		  Tile *t= [[_gameContainer.tiles objectAtIndex:j] objectAtIndex:i];
+		  t.visible =YES;
+		}
+	  }
+	  break;
+	  
+	default:  // object is facing right
+	  for ( int i = _baseColumn	+1; i < _baseColumn +1 + length || i < 32; i++){
+		for ( int j = _baseRow - semiwidth; j< semiwidth + _baseRow || j<32; j++ ){
+		  Tile *t= [[_gameContainer.tiles objectAtIndex:j] objectAtIndex:i];
+		  t.visible =YES;
+		}
+	  }
+	  break;
+  }
+}
+
+
+- (NSSet *)validShootCannonTiles
+{
+  NSMutableSet *validTiles = [[NSMutableSet alloc] init];
+  NSArray *cannonSize = [shipCannonDimensions objectForKey:num(_shipType)];
+  int semiwidth = ((int) [cannonSize objectAtIndex:0] - 1)/2; // half the width
+  int length  = (int) [cannonSize objectAtIndex:1]; // length is long side
+  int offset = (int) [cannonSize objectAtIndex:2];
+  // unfortunately obj-c doesn't do factory well so we repeat a lot of logic
+
+  switch (_dir) {
 	case Up:  // swap length + width
-	  for ( int i = _baseRow +1; i < _baseRow +1 + length; i++){
+	  for ( int i = _baseRow - offset; i < _baseRow +1 + length; i++){
 		for ( int j = _baseColumn - semiwidth; j< semiwidth + _baseColumn; j++ ){
 		  Tile *t= [[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j];
 		  t.visible =YES;
@@ -595,18 +645,9 @@ static BOOL shipTypeMapsInitialized = NO;
 	  }
 	  break;
   }
-}
 
--(NSMutableArray *)tilesUnderFire
-{
-  
-  
-  
-}
-
-- (NSSet *)validShootCannonTiles
-{
-    NSMutableSet *validTiles = [[NSMutableSet alloc] init];
+	
+  /*
     for (NSArray *column in _gameContainer.tiles) {
         for (Tile *tile in column) {
             if (_dir == Up ) {
@@ -636,8 +677,11 @@ static BOOL shipTypeMapsInitialized = NO;
             }
         }
     }
+   */
     return validTiles;
 }
+
+
 
 
 @end
