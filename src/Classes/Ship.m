@@ -616,7 +616,7 @@ static BOOL shipTypeMapsInitialized = NO;
     // get values for length + width of ship type
     NSArray *radarSize = [shipRadarDimensions objectForKey:num(_shipType)];
     // do cases on directions to get tiles of radar range
-    int semiwidth =  [[radarSize objectAtIndex:0] intValue] - 2; // half the width ; is odd so -1
+    int semiwidth =  ([[radarSize objectAtIndex:0] intValue] - 1)/2; // half the width ; is odd so -1
     
     int length  = [[radarSize objectAtIndex:1] intValue]; // length is long side
     NSLog(@"semiwidth : %d , length : %d", semiwidth, length);
