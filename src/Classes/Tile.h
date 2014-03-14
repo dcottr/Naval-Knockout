@@ -19,5 +19,7 @@
 @property (nonatomic, assign) BOOL visible;
 
 - (void)performMineAction;
+- (void)performCannonAction;
+- (void)displayCannonHit:(BOOL)display;
 
 @end

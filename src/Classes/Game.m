@@ -20,8 +20,9 @@
 }
 
 - (void)setup;
+@property (nonatomic, strong) SPButton *checkButton;
 
-
+@property (nonatomic, strong) Tile *cannonCollisionTile; // Tile which suffered from collision THIS turn.
 
 @end
 
@@ -33,7 +34,7 @@
 {
     if ((self = [super init])) {
         _tileSize = 32.0f;
-        _tileCount = 32;
+        _tileCount = 30;
         _myShips = [[NSMutableSet alloc] init];
         _enemyShips = [[NSMutableSet alloc] init];
         [self setup];
@@ -47,66 +48,46 @@
 {
     NSString *myId = [GKLocalPlayer localPlayer].playerID;
     NSLog(@"My id: %@", myId);
+    NSLog(@"newState with state: %@", state);
     
-    if (state == nil || [state objectForKey:myId] == nil || [((NSDictionary *)[state objectForKey:myId]) count] == 0) {
-        NSLog(@"Setup phase");
-        
-        if (!_shipsTray) {
-            int gameHeight = Sparrow.stage.height;
-            _shipsTray = [[ShipsTray alloc] initWithGame:self];
-            _shipsTray.y = gameHeight - 100.0f;
-            _shipsTray.x = 0.0f;
-            [self addChild:_shipsTray];
+    if (state == nil) {
+        // Setup ships on left
+
+        NSArray *shipTypes = [NSArray arrayWithObjects:num(Torpedo), num(Miner), num(Cruiser), num(Destroyer), nil];
+        _myShips = [[NSMutableSet alloc] init];
+        for (NSNumber *shipType in shipTypes) {
+            Ship *newShip = [[Ship alloc] initWithGame:self type:[shipType intValue]];
+            newShip.baseRow = [shipTypes indexOfObject:shipType] * 3 + 10;
+            newShip.baseColumn = 2;
+            newShip.dir = Right;
+            [_myShips addObject:newShip];
             
-            for (Ship *ship in _myShips) {
-                [ship removeFromParent];
-            }
-        }
-
-        
-        NSArray *ships = [NSArray arrayWithObjects:num(Torpedo), num(Miner), nil];
-        [_shipsTray presentShips:ships];
-
-        
-        if (state) {
-            NSArray *enemyShips;
-            for (NSString *enemyId in [state allKeys]) {
-                if (![enemyId isEqualToString:@"Mines"] && ![enemyId isEqualToString:myId]) {
-                    NSLog(@"enemyKey: %@", enemyId);
-                    enemyShips = [state objectForKey:enemyId];
-                    break;
-                }
-            }
-            if (enemyShips) {
-                [self setupEnemyShips:enemyShips];
-            }
-        }
-    } else {
-        NSLog(@"Not setup phase");
-        
-        // Need to position ships onto tiles
-        // Need to create and drop ships
-        
-        if (!_shipsTray) {
-            NSLog(@"shipsTray not initialized");
-        } else {
-            [self removeChild:_shipsTray];
-            _shipsTray = nil;
-        }
-        if (_shipCommandBar) {
-            [_shipCommandBar deselect];
-        } else {
-            _shipCommandBar = [[ShipCommandBar alloc] init];
-            _shipCommandBar.y = Sparrow.stage.height - 100.0f;
-            _shipCommandBar.x = 0.0f;
-            [self addChild:_shipCommandBar];
+            [_gridContainer addChild:newShip];
+            [newShip positionedShip];
+            [newShip updateLocation];
+            
+            [newShip setSurroundingTilesVisible];
         }
         
+        // CheckButton stuff
+        SPTexture *checkButtonTexture = [SPTexture textureWithContentsOfFile:@"green_checkmark.png"];
+        _checkButton = _checkButton = [[SPButton alloc] initWithUpState:checkButtonTexture];
+        _checkButton.x = Sparrow.stage.width - _checkButton.width - 30.0f;
+        _checkButton.y = (self.height - _checkButton.height)/2;
+        [self addChild:_checkButton];
         
-        // position enemy ships before local to check for visibility later
-		NSArray *enemyShips;
+        [_checkButton addEventListener:@selector(doneSetup:) atObject:self forType:SP_EVENT_TYPE_TOUCH];
+        if (_cannonCollisionTile) {
+            [_cannonCollisionTile displayCannonHit:NO];
+            _cannonCollisionTile = nil;
+        }
+        
+    } else if ([state objectForKey:myId] == nil || [((NSDictionary *)[state objectForKey:myId]) count] == 0) {
+        
+        // Load enemy ships
+        NSArray *enemyShips;
         for (NSString *enemyId in [state allKeys]) {
-            if (![enemyId isEqualToString:@"Mines"] && ![enemyId isEqualToString:myId]) {
+            if (![enemyId isEqualToString:@"Mines"] && ![enemyId isEqualToString:@"notify"] && ![enemyId isEqualToString:myId]) {
                 NSLog(@"enemyKey: %@", enemyId);
                 enemyShips = [state objectForKey:enemyId];
                 break;
@@ -115,15 +96,79 @@
         if (enemyShips) {
             [self setupEnemyShips:enemyShips];
         }
-      
-	  // [self setMines:mines];
-	  
-	  NSArray *myShips = [state objectForKey:myId];
-	  [self setupMyShips:myShips];
-	  
+        
 
+        // Setup ships on right
+        NSArray *shipTypes = [NSArray arrayWithObjects:num(Torpedo), num(Miner), num(Cruiser), nil];
+        _myShips = [[NSMutableSet alloc] init];
+        for (NSNumber *shipType in shipTypes) {
+            Ship *newShip = [[Ship alloc] initWithGame:self type:[shipType intValue]];
+            newShip.baseRow = [shipTypes indexOfObject:shipType] * 3 + 10;
+            newShip.baseColumn = 28;
+            newShip.dir = Left;
+            [_myShips addObject:newShip];
+            
+            [_gridContainer addChild:newShip];
+            [newShip positionedShip];
+            [newShip updateLocation];
+            
+            [newShip setSurroundingTilesVisible];
+        }
+        
+        // CheckButton stuff
+        SPTexture *checkButtonTexture = [SPTexture textureWithContentsOfFile:@"green_checkmark.png"];
+        _checkButton = _checkButton = [[SPButton alloc] initWithUpState:checkButtonTexture];
+        _checkButton.x = Sparrow.stage.width - _checkButton.width - 30.0f;
+        _checkButton.y = (self.height - _checkButton.height)/2;
+        [self addChild:_checkButton];
+        
+        [_checkButton addEventListener:@selector(doneSetup:) atObject:self forType:SP_EVENT_TYPE_TOUCH];
+        
+        if (_cannonCollisionTile) {
+            [_cannonCollisionTile displayCannonHit:NO];
+            _cannonCollisionTile = nil;
+        }
+
+    } else {
+        // Load everyone's ships.
+        
+        if (_cannonCollisionTile) {
+            [_cannonCollisionTile displayCannonHit:NO];
+            _cannonCollisionTile = nil;
+        }
+
+        // Load my ships
+        NSArray *myShips = [state objectForKey:myId];
+        [self setupMyShips:myShips];
+        
+        // Load enemy ships
+        NSArray *enemyShips;
+        for (NSString *enemyId in [state allKeys]) {
+            if (![enemyId isEqualToString:@"Mines"] && ![enemyId isEqualToString:@"notify"] && ![enemyId isEqualToString:myId]) {
+                NSLog(@"enemyKey: %@", enemyId);
+                enemyShips = [state objectForKey:enemyId];
+                break;
+            }
+        }
+        if (enemyShips) {
+            [self setupEnemyShips:enemyShips];
+        }
+        // Collision notify tile
+        NSArray *notify = [state objectForKey:@"notify"];
+        if (notify && [notify count] != 0) {
+            NSInteger row = [[notify objectAtIndex:0] integerValue];
+            NSInteger col = [[notify objectAtIndex:1] integerValue];
+            Tile *tile = [[_tiles objectAtIndex:col] objectAtIndex:row];
+            [tile displayCannonHit:YES];
+        }
     }
+}
 
+- (void)doneSetup:(SPTouchEvent *)event
+{
+    [_checkButton removeEventListener:@selector(doneSetup:) atObject:self forType:SP_EVENT_TYPE_TOUCH];
+    [_checkButton removeFromParent];
+    [_delegate sendTurn];
 }
 
 - (void)setupMyShips:(NSArray *)myShips
@@ -187,7 +232,13 @@
         [enemyShips addObject:shipAttrs];
     }
     
-    NSDictionary *result = [[NSDictionary alloc] initWithObjectsAndKeys:myShips, myID, enemyShips, oppID, nil];
+    NSMutableDictionary *result = [[NSMutableDictionary alloc] initWithObjectsAndKeys:myShips, myID, enemyShips, oppID, nil];
+
+    if (_cannonCollisionTile) {
+        NSArray *notifyTile = [NSArray arrayWithObjects:num(_cannonCollisionTile.row), num(_cannonCollisionTile.col), nil];
+        [result setObject:notifyTile forKey:@"notify"];
+    }
+    
     return result;
     
     
@@ -204,6 +255,18 @@
     
     
 }
+
+- (void)performedAction
+{
+    [_delegate sendTurn];
+}
+
+
+- (void)notifyCannonCollision:(Tile *)tile
+{
+    _cannonCollisionTile = tile;
+}
+
 
 - (void)dealloc
 {
@@ -247,17 +310,10 @@
     [self addEventListener:@selector(advanceJugglers:) atObject:self forType:SP_EVENT_TYPE_ENTER_FRAME];
     
     
-    if (!_shipsTray) {
-        int gameHeight = Sparrow.stage.height;
-        _shipsTray = [[ShipsTray alloc] initWithGame:self];
-        _shipsTray.y = gameHeight - 100.0f;
-        _shipsTray.x = 0.0f;
-        [self addChild:_shipsTray];
-    }
-    
-    
-    NSArray *ships = [NSArray arrayWithObjects:num(Torpedo), num(Miner), nil];
-    [_shipsTray presentShips:ships];
+    _shipCommandBar = [[ShipCommandBar alloc] initWithGame:self];
+    _shipCommandBar.y = Sparrow.stage.height - 100.0f;
+    _shipCommandBar.x = 0.0f;
+    [self addChild:_shipCommandBar];
 
     [_gridContainer addEventListener:@selector(scrollGrid:) atObject:self forType:SP_EVENT_TYPE_TOUCH];
 }
@@ -369,5 +425,6 @@
     }
     [_delegate sendTurn];
 }
+
 
 @end

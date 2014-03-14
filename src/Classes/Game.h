@@ -6,7 +6,7 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIDevice.h>
 #import "GameState.h"
-@class ShipsTray, ShipCommandBar, GameManagerViewController;
+@class ShipsTray, ShipCommandBar, GameManagerViewController, Tile;
 
 @interface Game : SPSprite
 
@@ -35,5 +35,8 @@
 - (NSDictionary *)getDataDictWithMyID:(NSString *)myID opponentID:(NSString *)oppID;
 
 - (void)newState:(NSDictionary *)state;
+
+- (void)performedAction;
+- (void)notifyCannonCollision:(Tile *)tile;
 
 @end

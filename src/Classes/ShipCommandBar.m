@@ -27,6 +27,8 @@ typedef NSInteger Action;
 @property (nonatomic, strong) SPButton *lButton;
 @property (nonatomic, strong) SPButton *rButton;
 @property (nonatomic, strong) SPButton *dropMineButton;
+@property (nonatomic, strong) SPButton *cannonButton;
+
 
 @property (nonatomic, strong) Ship *ship;
 
@@ -34,13 +36,15 @@ typedef NSInteger Action;
 
 @property (nonatomic, assign) Action selectedAction;
 
+@property (nonatomic, weak) Game *game;
+
 @end
 
 @implementation ShipCommandBar
 
 static SPTexture *commandBarTexture = nil;
 
-- (id)init
+- (id)initWithGame:(Game *)game
 {
     if (!commandBarTexture)
         commandBarTexture = [SPTexture textureWithContentsOfFile:@"Glossy08.png"];
@@ -49,6 +53,7 @@ static SPTexture *commandBarTexture = nil;
     }
     self = [super init];
     if (self) {
+        _game = game;
         _commandBar = [[SPImage alloc] initWithTexture:commandBarTexture];
         _commandBar.width = Sparrow.stage.width;
         _commandBar.height = 100.0f;
@@ -76,6 +81,14 @@ static SPTexture *commandBarTexture = nil;
         [self addChild:_dropMineButton];
         [_dropMineButton setVisible:NO];
         
+        _cannonButton = [[SPButton alloc] initWithUpState:buttonTexture text:@"Cannon"];
+        [_cannonButton addEventListener:@selector(shootCannon:) atObject:self forType:SP_EVENT_TYPE_TRIGGERED];
+        _cannonButton.x = 30.0f * 2 + _lButton.width;
+        _cannonButton.y = 5.0f + _lButton.y + _lButton.height;
+        [self addChild:_cannonButton];
+        [_cannonButton setVisible:NO];
+
+        
     }
     return self;
 }
@@ -83,6 +96,7 @@ static SPTexture *commandBarTexture = nil;
 static SPTexture *buttonTexture = nil;
 - (void)setSelected:(Ship *)ship
 {
+    
     [self deselect];
     _ship = ship;
     [_commandBar setVisible:YES];
@@ -93,6 +107,8 @@ static SPTexture *buttonTexture = nil;
     _validTileSelects = [ship validMoveTiles];
     if (_ship.shipType == Miner) {
         [_dropMineButton setVisible:YES];
+    } else if ([_ship.shipWeapons indexOfObject:num(WeaponCannon)] != NSNotFound) {
+        [_cannonButton setVisible:YES];
     }
     [self setSelectableTiles];
 }
@@ -104,6 +120,7 @@ static SPTexture *buttonTexture = nil;
     [_lButton setVisible:NO];
     [_rButton setVisible:NO];
     [_dropMineButton setVisible:NO];
+    [_cannonButton setVisible:NO];
     _ship = nil;
 }
 
@@ -132,6 +149,7 @@ static SPTexture *buttonTexture = nil;
     
     [_ship turnRight];
     [self setSelected:_ship];
+    [self didPerformAction];
 }
 
 - (void)turnLeft:(SPEvent *)event
@@ -143,6 +161,7 @@ static SPTexture *buttonTexture = nil;
     
     [_ship turnLeft];
     [self setSelected:_ship];
+    [self didPerformAction];
 }
 
 - (void)dropMine:(SPEvent *)event
@@ -157,6 +176,21 @@ static SPTexture *buttonTexture = nil;
     _selectedAction = ActionMine;
 }
 
+- (void)shootCannon:(SPEvent *)event
+{
+    if (_selectedAction == ActionCanon) {
+        [self setSelected:_ship];
+        return;
+    }
+    
+    [self deselectTiles];
+    
+    _validTileSelects = [_ship validShootCannonTiles];
+    [self setSelectableTiles];
+    _selectedAction = ActionCanon;
+
+}
+
 - (void)selectTile:(Tile *)tile
 {
     if (!_validTileSelects) {
@@ -169,13 +203,20 @@ static SPTexture *buttonTexture = nil;
             [_ship performMoveActionTo:tile];
         } else if (_selectedAction == ActionMine) {
             [tile performMineAction];
+        } else if (_selectedAction == ActionCanon) {
+            [tile performCannonAction];
         }
-        
-        // Refreshes GUI after operation
+        [self didPerformAction];
     }
+    
+    // Refreshes GUI after operation
     [self deselect];
 }
 
+- (void)didPerformAction
+{
+    [_game performedAction];
+}
 
 
 @end

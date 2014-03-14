@@ -22,6 +22,7 @@
 - (void)takeTurn:(GKTurnBasedMatch *)match;
 - (void)recieveEndGame:(GKTurnBasedMatch *)match;
 - (void)sendNotice:(NSString *)notice forMatch:(GKTurnBasedMatch *)match;
+
 @end
 
 

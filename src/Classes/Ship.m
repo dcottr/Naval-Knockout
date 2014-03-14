@@ -32,7 +32,6 @@
 @property (nonatomic, assign) int shipLength;
 @property (nonatomic, assign) int shipSpeed;
 @property (nonatomic, assign) ArmourType shipArmour;
-@property (nonatomic, strong) NSArray *shipWeapons;
 
 
 @end
@@ -100,6 +99,7 @@ static BOOL shipTypeMapsInitialized = NO;
     self.pivotY = self.height / 2.0f;
     
 }
+
 
 
 - (void)dragFromTray:(SPTouchEvent *)event
@@ -210,15 +210,19 @@ static BOOL shipTypeMapsInitialized = NO;
     float tileSize = _gameContainer.tileSize;
     int k = ((_shipLength - 1) * tileSize)/2;
     if (_dir == Up) {
+        self.rotation = 0;
         self.y = _baseRow * tileSize - k + tileSize/2;
         self.x = _baseColumn * tileSize + tileSize/2;
     } else if (_dir == Right) {
+        self.rotation = M_PI/2;
         self.y = _baseRow * tileSize + tileSize/2;
         self.x = _baseColumn * tileSize + k + tileSize/2;
     } else if (_dir == Down) {
+        self.rotation = M_PI;
         self.y = _baseRow * tileSize + k + tileSize/2;
         self.x = _baseColumn * tileSize + tileSize/2;
     } else if(_dir == Left) {
+        self.rotation = 3 * M_PI/2;
         self.y = _baseRow * tileSize + tileSize/2;
         self.x = _baseColumn * tileSize - k + tileSize/2;
     }
@@ -599,5 +603,41 @@ static BOOL shipTypeMapsInitialized = NO;
   
   
 }
+
+- (NSSet *)validShootCannonTiles
+{
+    NSMutableSet *validTiles = [[NSMutableSet alloc] init];
+    for (NSArray *column in _gameContainer.tiles) {
+        for (Tile *tile in column) {
+            if (_dir == Up ) {
+                if (tile.row >= _baseRow - 7 && tile.row <= _baseRow + 4) {
+                    if (tile.col >= _baseColumn - 4 && tile.col <= _baseColumn + 4) {
+                        [validTiles addObject:tile];
+                    }
+                }
+            } else if (_dir == Down) {
+                if (tile.row >= _baseRow - 4 && tile.row <= _baseRow + 7) {
+                    if (tile.col >= _baseColumn - 4 && tile.col <= _baseColumn + 4) {
+                        [validTiles addObject:tile];
+                    }
+                }
+            } else if (_dir == Left) {
+                if (tile.col >= _baseColumn - 7 && tile.col <= _baseColumn + 4) {
+                    if (tile.row >= _baseRow - 4 && tile.row <= _baseRow + 4) {
+                        [validTiles addObject:tile];
+                    }
+                }
+            } else if (_dir == Right) {
+                if (tile.col >= _baseColumn - 4 && tile.col <= _baseColumn + 7) {
+                    if (tile.row >= _baseRow - 4 && tile.row <= _baseRow + 4) {
+                        [validTiles addObject:tile];
+                    }
+                }
+            }
+        }
+    }
+    return validTiles;
+}
+
 
 @end

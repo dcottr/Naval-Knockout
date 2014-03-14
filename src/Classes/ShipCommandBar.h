@@ -8,7 +8,7 @@
 
 #import "SPSprite.h"
 
-@class Ship, Tile;
+@class Ship, Tile, Game;
 @interface ShipCommandBar : SPSprite
 
 
@@ -17,4 +17,5 @@
 
 - (void)selectTile:(Tile *)tile;
 
+- (id)initWithGame:(Game *)game;
 @end

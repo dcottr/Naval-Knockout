@@ -34,6 +34,7 @@
                                                  selector:@selector(gameInitialized)
                                                      name:@"GameInitialized" object:nil];
         [self startWithRoot:[Game class] supportHighResolutions:YES];
+        
     }
     return self;
 }
