@@ -98,22 +98,25 @@
         }
         
         
-        
-        NSArray *myShips = [state objectForKey:myId];
-        [self setupMyShips:myShips];
-        
-        NSArray *enemyShips;
+        // position enemy ships before local to check for visibility later
+		NSArray *enemyShips;
         for (NSString *enemyId in [state allKeys]) {
             if (![enemyId isEqualToString:@"Mines"] && ![enemyId isEqualToString:myId]) {
                 NSLog(@"enemyKey: %@", enemyId);
                 enemyShips = [state objectForKey:enemyId];
-                break;;
+                break;
             }
         }
         if (enemyShips) {
             [self setupEnemyShips:enemyShips];
         }
-        
+      
+	  // [self setMines:mines];
+	  
+	  NSArray *myShips = [state objectForKey:myId];
+	  [self setupMyShips:myShips];
+	  
+
     }
 
 }
@@ -135,6 +138,9 @@
         [_gridContainer addChild:newShip];
         [newShip positionedShip];
         [newShip updateLocation];
+		
+		// affect visibility of surrounding tiles
+		[newShip setSurroundingTilesVisible];
         
     }
 }
