@@ -230,7 +230,7 @@ static BOOL shipTypeMapsInitialized = NO;
         self.x = _baseColumn * tileSize - k + tileSize/2;
     }
     [self updateTilesOccupied];
-    if (!_isEnemyShip) {
+    if (!_isEnemyShip && self.shipType == Torpedo) {
         [self setSurroundingTilesVisible];
     }
     
