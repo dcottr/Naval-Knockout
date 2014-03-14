@@ -230,7 +230,7 @@ static BOOL shipTypeMapsInitialized = NO;
         self.x = _baseColumn * tileSize - k + tileSize/2;
     }
     [self updateTilesOccupied];
-    if (!_isEnemyShip && self.shipType == Torpedo) {
+    if (!_isEnemyShip) {
         [self setSurroundingTilesVisible];
     }
     
@@ -489,7 +489,7 @@ static BOOL shipTypeMapsInitialized = NO;
     return validTiles;
 }
 
-- (NSSet *)validDropMineTiles:
+- (NSSet *)validDropMineTiles
 {
     NSMutableSet *validTiles = [[NSMutableSet alloc] init];
     for (NSArray *column in _gameContainer.tiles) {
