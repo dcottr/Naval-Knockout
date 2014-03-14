@@ -810,6 +810,102 @@ static BOOL shipTypeMapsInitialized = NO;
     return validTiles;
 }
 
+-(NSArray *)rotateTileList:(Direction)newdir
+{
+  NSMutableArray *tiles =[[NSMutableArray alloc] init];
+  int length = [[shipLengthMap objectForKey:num(_shipType)] intValue];
+ 
+	 // Upper Left
+	if( (_dir == Left && newdir == Up) || (_dir == Up && newdir == Left) ){
+	  int k =1;
+	  for(int j= _baseRow; j<=_baseRow + length; j++){
+		for(int i = _baseColumn - length +k; i <= _baseColumn; i++){
+		  @try{
+			[tiles addObject:[[_gameContainer.tiles objectAtIndex:j] objectAtIndex:i]];
+		  }
+		  @catch (NSException *e){
+			NSLog(@"you tried to rotate from row %d", _baseRow );
+			return nil; // tried to rotate through edge of map: no dice
+		  }
+		}
+		k++;
+	  }
+	  if (_dir == Up) // send the reverse of what we just calculated
+	  {
+		return [[tiles reverseObjectEnumerator] allObjects];
+	  }
+	}
+  
+  // Upper right
+  if ( (_dir == Up && newdir == Right) || (_dir == Right && newdir == Up)){
+	int k =1;
+	for(int i = _baseColumn; i<=_baseColumn +length -1; i++){
+	  for (int j= _baseRow + length -k; j>=_baseRow; j--){
+		@try{
+		  [tiles addObject:[[_gameContainer.tiles objectAtIndex:j] objectAtIndex:i]];
+		  
+		}
+		@catch (NSException *e){
+		  NSLog(@"you tried to rotate from column %d", _baseColumn );
+		  return nil;
+		}
+	  }
+	  k++;
+	}
+	if (_dir == Right) // send the reverse of what we just calculated
+	{
+	  return [[tiles reverseObjectEnumerator] allObjects];
+	}
+  }
+  
+  // Lower Right
+  
+  if ( (_dir == Right && newdir == Down) || (_dir == Down && newdir == Right)){
+	int k =0;
+	for(int i = _baseRow ; i>_baseRow-length; i--){
+	  for (int j= _baseColumn; j<=_baseColumn + length - k; j++ ){
+		@try{
+		  [tiles addObject:[[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j]];
+		}
+		@catch (NSException *e){
+		  NSLog(@"you tried to rotate from  %d", _baseColumn );
+		  return nil;
+		}
+	  }
+	  k++;
+	}
+	if (_dir == Down) // send the reverse of what we just calculated
+	{
+	  return [[tiles reverseObjectEnumerator] allObjects];
+	}
+  }
+  
+  // Lower left
+  
+  if( (_dir == Down && newdir == Left) || (_dir == Left && newdir == Down) ){
+	int k = 0;
+	for(int i = _baseRow - length +1; i <= _baseRow; i++){
+	  for(int j= _baseColumn; j<=_baseColumn -k; j-- ){
+		@try{
+		  [tiles addObject:[[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j]];
+		}
+		@catch (NSException *e){
+		  NSLog(@"you tried to rotate from row %d", _baseRow );
+		  return nil; // tried to rotate through edge of map: no dice
+		}
+	  }
+	  k++;
+	}
+	if (_dir == Left) // send the reverse of what we just calculated
+	{
+	  return [[tiles reverseObjectEnumerator] allObjects];
+	}
+  }
+  
+	 
+  return tiles;
+  
+}
 
 
 
