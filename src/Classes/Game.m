@@ -62,7 +62,7 @@
     if (state == nil) {
         // Setup ships on left
 
-        NSArray *shipTypes = [NSArray arrayWithObjects:num(Torpedo), num(Miner), num(Cruiser), num(Destroyer), nil];
+        NSArray *shipTypes = [NSArray arrayWithObjects:num(Torpedo), num(Miner), num(Cruiser), num(Destroyer), num(Radar), nil];
         _myShips = [[NSMutableSet alloc] init];
         for (NSNumber *shipType in shipTypes) {
             Ship *newShip = [[Ship alloc] initWithGame:self type:[shipType intValue]];
@@ -108,7 +108,7 @@
         
 
         // Setup ships on right
-        NSArray *shipTypes = [NSArray arrayWithObjects:num(Torpedo), num(Miner), num(Cruiser), nil];
+        NSArray *shipTypes = [NSArray arrayWithObjects:num(Torpedo), num(Miner), num(Cruiser), num(Destroyer), num(Radar), nil];
         _myShips = [[NSMutableSet alloc] init];
         for (NSNumber *shipType in shipTypes) {
             Ship *newShip = [[Ship alloc] initWithGame:self type:[shipType intValue]];
