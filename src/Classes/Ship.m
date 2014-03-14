@@ -489,7 +489,7 @@ static BOOL shipTypeMapsInitialized = NO;
     return validTiles;
 }
 
-- (NSSet *)validDropMineTiles
+- (NSSet *)validDropMineTiles:
 {
     NSMutableSet *validTiles = [[NSMutableSet alloc] init];
     for (NSArray *column in _gameContainer.tiles) {
@@ -624,7 +624,7 @@ static BOOL shipTypeMapsInitialized = NO;
         case Down:  // swap length + width
             for ( int i = _baseRow +1; i <= _baseRow +1 + length && i<_gameContainer.tileCount && i>=0; i++){
                 for ( int j = _baseColumn - semiwidth; j<= semiwidth + _baseColumn && j<_gameContainer.tileCount && j>=0; j++ ){
-                    Tile *t= [[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j];
+                    Tile *t= [[_gameContainer.tiles objectAtIndex:j] objectAtIndex:i];
                     [t fogOfWar:YES];
                     //		  t.visible =YES;
                 }
@@ -634,7 +634,7 @@ static BOOL shipTypeMapsInitialized = NO;
         case Up: // swap l + w, face downward
             for ( int i = _baseRow -1; i <= _baseRow -1 - length  && i<_gameContainer.tileCount && i>=0; i--){
                 for ( int j = _baseColumn - semiwidth; j<= semiwidth + _baseColumn && j<_gameContainer.tileCount && j>=0; j++ ){
-                    Tile *t= [[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j];
+                    Tile *t= [[_gameContainer.tiles objectAtIndex:j] objectAtIndex:i];
                     [t fogOfWar:YES];
                     //		  t.visible =YES;
                 }
@@ -644,7 +644,7 @@ static BOOL shipTypeMapsInitialized = NO;
         case Left:
             for ( int i = _baseColumn	-1; i <= _baseColumn -1 + length && i<_gameContainer.tileCount && i>=0; i--){
                 for ( int j = _baseRow - semiwidth; j<= semiwidth + _baseRow && j<_gameContainer.tileCount && j>=0; j++ ){
-                    Tile *t= [[_gameContainer.tiles objectAtIndex:j] objectAtIndex:i];
+                    Tile *t= [[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j];
                     [t fogOfWar:YES];
                     //		  t.visible =YES;
                 }
@@ -654,7 +654,7 @@ static BOOL shipTypeMapsInitialized = NO;
         default:  // object is facing right
             for ( int i = _baseColumn	+1; i <= _baseColumn +1 + length && i<_gameContainer.tileCount && i>=0; i++){
                 for ( int j = _baseRow - semiwidth; j<= semiwidth + _baseRow && j<_gameContainer.tileCount && j>=0; j++ ){
-                    Tile *t= [[_gameContainer.tiles objectAtIndex:j] objectAtIndex:i];
+                    Tile *t= [[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j];
                     [t fogOfWar:YES];
                     //		  t.visible =YES;
                 }
