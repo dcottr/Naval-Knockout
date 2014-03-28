@@ -345,11 +345,6 @@
     [_gridContainer addEventListener:@selector(scrollGrid:) atObject:self forType:SP_EVENT_TYPE_TOUCH];
 }
 
-//- (void)setupShipsTray
-//{
-//
-//}
-
 - (void)scrollGrid:(SPTouchEvent *)event
 {
     NSArray *touches = [[event touchesWithTarget:_gridContainer andPhase:SPTouchPhaseMoved] allObjects];
