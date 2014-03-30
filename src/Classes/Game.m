@@ -54,7 +54,7 @@
         CGFloat screenWidth = screenRect.size.width;
         CGFloat screenHeight = screenRect.size.height;
         
-        _matchMakerController = [[MenuViewController alloc] init];
+        _matchMakerController = [[MenuViewController alloc] initWithGame:self];
         _matchMakerController.view.frame = CGRectMake(0.0, 0.0, screenHeight, screenWidth);
     }
     

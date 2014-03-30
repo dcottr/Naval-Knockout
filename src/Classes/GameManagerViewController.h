@@ -13,5 +13,6 @@
 
 
 - (void)sendTurn;
+- (id)initWithGame:(Game *)game;
 
 @end

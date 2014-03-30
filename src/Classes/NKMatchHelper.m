@@ -159,15 +159,11 @@ static NKMatchHelper *sharedHelper = nil;
 							didFindMatch:(GKTurnBasedMatch *)match {
     self.currentMatch = match;
     NSLog(@"Current match data: %@", match.matchData);
-    NSLog(@"CurrentController: %@", Sparrow.currentController);
-    [_menuViewController dismissViewControllerAnimated:YES completion:^{
-//        [Sparrow.currentController dismissViewControllerAnimated:YES completion:nil];
-    }]; // MAYBE
+    
+    [_menuViewController dismissViewControllerAnimated:YES completion:nil]; // MAYBE
     [_menuViewController.view removeFromSuperview];
     [_menuViewController removeFromParentViewController];
     
-//    [Sparrow.currentController dismissModalViewControllerAnimated:YES];
-//    [[[UIApplication sharedApplication] keyWindow] addSubview:((UIViewController *)_delegate).view];
     GKTurnBasedParticipant *firstParticipant = [match.participants objectAtIndex:0];
     if (firstParticipant.lastTurnDate == NULL) {
         // It's a new game!

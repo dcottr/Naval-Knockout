@@ -9,21 +9,25 @@
 #import "MenuViewController.h"
 #import "NKMatchHelper.h"
 #import "GameManagerViewController.h"
+#import "Game.h"
 
 @interface MenuViewController ()
+
+@property (nonatomic, strong) Game *game;
 
 @end
 
 @implementation MenuViewController
 
 
-- (id)init
+- (id)initWithGame:(Game *)game
 {
-  self = [super initWithNibName:@"MenuViewController" bundle:nil];
-  if (self) {
-      //
-  }
-  return self;
+    self = [super initWithNibName:@"MenuViewController" bundle:nil];
+    if (self) {
+        //
+        _game = game;
+    }
+    return self;
 }
 
 - (void)viewDidLoad
@@ -34,12 +38,14 @@
 
 - (void)viewDidAppear:(BOOL)animated
 {
-  [super viewDidAppear:animated];
-  NKMatchHelper *helper = [NKMatchHelper sharedInstance];
-  helper.menuViewController = self;
-  helper.delegate = [[GameManagerViewController alloc] init];
-  [[NKMatchHelper sharedInstance] authenticateLocalPlayer];
-//  [[NKMatchHelper sharedInstance] findMatchWithMinPlayers:2 maxPlayers:2 viewController:self];
+    [super viewDidAppear:animated];
+    NKMatchHelper *helper = [NKMatchHelper sharedInstance];
+    helper.menuViewController = self;
+    GameManagerViewController *gameManager = [[GameManagerViewController alloc] initWithGame:_game];
+    helper.delegate = gameManager;
+    _game.delegate = gameManager;
+    [[NKMatchHelper sharedInstance] authenticateLocalPlayer];
+    //  [[NKMatchHelper sharedInstance] findMatchWithMinPlayers:2 maxPlayers:2 viewController:self];
 }
 
 - (void)didReceiveMemoryWarning
@@ -50,7 +56,7 @@
 
 - (IBAction)loadGame:(id)sender
 {
-  [[NKMatchHelper sharedInstance] findMatchWithMinPlayers:2 maxPlayers:2 viewController:self];
+    [[NKMatchHelper sharedInstance] findMatchWithMinPlayers:2 maxPlayers:2 viewController:self];
 }
 
 @end

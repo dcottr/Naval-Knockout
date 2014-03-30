@@ -7,7 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-
+@class Game;
 @interface MenuViewController : UIViewController
+
+- (id)initWithGame:(Game *)game;
 
 @end

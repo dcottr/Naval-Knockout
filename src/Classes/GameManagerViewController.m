@@ -21,41 +21,20 @@
 
 @implementation GameManagerViewController
 
-- (id)init
+- (id)initWithGame:(Game *)game
 {
     self = [super init];
     if (self) {
         _gameState = [[GameState alloc] init];
-        
-//        self.showStats = YES;
-//        self.multitouchEnabled = YES;
-//        self.preferredFramesPerSecond = 60;
-//        [self startWithRoot:[Game class] supportHighResolutions:YES];
-        
+        _game = game;
     }
     return self;
 }
 
-// Called when Sparrow Game object is finished loading.
-//- (void)gameInitialized
-//{
-//    _game = ((AppDelegate *)[UIApplication sharedApplication].delegate).game;
-//    [_game setDelegate:self];
-//    NSLog(@"Game: %@", _game);
-////    if (_gameState.state) {
-////        [_game newState:_gameState.state];
-////    } else {
-////        [_game newState:nil];
-////    }
-//}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
-//    [self rotateToInterfaceOrientation:orientation animationTime:0];
-    
-    NSLog(@"MAtch DATa: %@", _gameState.state);
+    NSLog(@"Match Data: %@", _gameState.state);
     
 	// Do any additional setup after loading the view.
 }
@@ -65,6 +44,9 @@
     // Initiate game state setup?
     [_gameState DataToState:match.matchData];
     NSLog(@"Entering game");
+    if (_game) {
+        [_game newState:_gameState.state];
+    }
 }
 
 // It's not your turn, just display the game state.  (Seems buggy, test-test-test!)

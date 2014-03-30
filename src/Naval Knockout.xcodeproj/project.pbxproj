@@ -275,6 +275,8 @@
 			children = (
 				30C4967C18CD670300FCA0CC /* GameManagerViewController.h */,
 				30C4967D18CD670300FCA0CC /* GameManagerViewController.m */,
+				3056882618D128EF00285CD6 /* GameState.h */,
+				3056882718D128EF00285CD6 /* GameState.m */,
 			);
 			name = GameManager;
 			sourceTree = "<group>";
@@ -335,8 +337,6 @@
 				630F253C18D0CB83007301A4 /* Mine.m */,
 				DE4F80D414E153E600655D44 /* Media.h */,
 				DE4F80D514E153E600655D44 /* Media.m */,
-				3056882618D128EF00285CD6 /* GameState.h */,
-				3056882718D128EF00285CD6 /* GameState.m */,
 			);
 			name = Game;
 			sourceTree = "<group>";
