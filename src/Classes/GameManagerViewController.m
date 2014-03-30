@@ -27,17 +27,27 @@
     if (self) {
         _gameState = [[GameState alloc] init];
         
-        self.showStats = YES;
-        self.multitouchEnabled = YES;
-        self.preferredFramesPerSecond = 60;
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(gameInitialized)
-                                                     name:@"GameInitialized" object:nil];
-        [self startWithRoot:[Game class] supportHighResolutions:YES];
+//        self.showStats = YES;
+//        self.multitouchEnabled = YES;
+//        self.preferredFramesPerSecond = 60;
+//        [self startWithRoot:[Game class] supportHighResolutions:YES];
         
     }
     return self;
 }
+
+// Called when Sparrow Game object is finished loading.
+//- (void)gameInitialized
+//{
+//    _game = ((AppDelegate *)[UIApplication sharedApplication].delegate).game;
+//    [_game setDelegate:self];
+//    NSLog(@"Game: %@", _game);
+////    if (_gameState.state) {
+////        [_game newState:_gameState.state];
+////    } else {
+////        [_game newState:nil];
+////    }
+//}
 
 - (void)viewDidLoad
 {
@@ -48,19 +58,6 @@
     NSLog(@"MAtch DATa: %@", _gameState.state);
     
 	// Do any additional setup after loading the view.
-}
-
-// Called when Sparrow Game object is finished loading.
-- (void)gameInitialized
-{
-    _game = ((AppDelegate *)[UIApplication sharedApplication].delegate).game;
-    [_game setDelegate:self];
-    NSLog(@"Game: %@", _game);
-//    if (_gameState.state) {
-//        [_game newState:_gameState.state];
-//    } else {
-//        [_game newState:nil];
-//    }
 }
 
 - (void)enterNewGame:(GKTurnBasedMatch *)match

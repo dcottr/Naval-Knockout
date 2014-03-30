@@ -26,9 +26,10 @@
 @end
 
 
+@class MenuViewController;
 @interface NKMatchHelper : NSObject <GKTurnBasedMatchmakerViewControllerDelegate, GKLocalPlayerListener>
 
-@property (nonatomic, strong) UIViewController *presentingViewController;
+@property (nonatomic, strong) MenuViewController *menuViewController;
 @property (assign, readonly) BOOL gameCenterAvailable;
 @property (assign, readonly) BOOL userAuthenticated;
 @property (retain) GKTurnBasedMatch * currentMatch;
@@ -37,7 +38,7 @@
 
 - (void)findMatchWithMinPlayers:(int)minPlayers
 					 maxPlayers:(int)maxPlayers
-				 viewController:(UIViewController *)viewController;
+				 viewController:(MenuViewController *)viewController;
 
 + (NKMatchHelper *)sharedInstance;
 - (void)authenticateLocalPlayer;

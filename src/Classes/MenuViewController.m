@@ -6,22 +6,22 @@
 //
 //
 
-#import "MatchMakerViewController.h"
+#import "MenuViewController.h"
 #import "NKMatchHelper.h"
 #import "GameManagerViewController.h"
 
-@interface MatchMakerViewController ()
+@interface MenuViewController ()
 
 @end
 
-@implementation MatchMakerViewController
+@implementation MenuViewController
 
 
 - (id)init
 {
-  self = [super initWithNibName:@"MatchMakerViewController" bundle:nil];
+  self = [super initWithNibName:@"MenuViewController" bundle:nil];
   if (self) {
-	//
+      //
   }
   return self;
 }
@@ -36,7 +36,7 @@
 {
   [super viewDidAppear:animated];
   NKMatchHelper *helper = [NKMatchHelper sharedInstance];
-  helper.presentingViewController = self;
+  helper.menuViewController = self;
   helper.delegate = [[GameManagerViewController alloc] init];
   [[NKMatchHelper sharedInstance] authenticateLocalPlayer];
 //  [[NKMatchHelper sharedInstance] findMatchWithMinPlayers:2 maxPlayers:2 viewController:self];

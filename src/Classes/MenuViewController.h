@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface MatchMakerViewController : UIViewController
+@interface MenuViewController : UIViewController
 
 @end

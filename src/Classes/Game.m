@@ -11,6 +11,7 @@
 #import "Tile.h"
 #import "GameManagerViewController.h"
 #import "ShipSegment.h"
+#import "MenuViewController.h"
 
 @interface Game () {
 	bool isGrabbed;
@@ -24,6 +25,8 @@
 @property (nonatomic, strong) SPButton *checkButton;
 
 @property (nonatomic, strong) Tile *cannonCollisionTile; // Tile which suffered from collision THIS turn.
+
+@property (nonatomic, strong) MenuViewController *matchMakerController;
 
 @end
 
@@ -39,11 +42,25 @@
         _myShips = [[NSMutableSet alloc] init];
         _enemyShips = [[NSMutableSet alloc] init];
         [self setup];
-        [((AppDelegate *)[UIApplication sharedApplication].delegate) setGame:self];
+        [self presentMenu];
     }
     return self;
 }
 
+- (void)presentMenu
+{
+    if (!_matchMakerController) {
+        CGRect screenRect = [[UIScreen mainScreen] bounds];
+        CGFloat screenWidth = screenRect.size.width;
+        CGFloat screenHeight = screenRect.size.height;
+        
+        _matchMakerController = [[MenuViewController alloc] init];
+        _matchMakerController.view.frame = CGRectMake(0.0, 0.0, screenHeight, screenWidth);
+    }
+    
+    [Sparrow.currentController addChildViewController:_matchMakerController];
+    [Sparrow.currentController.view addSubview:_matchMakerController.view];
+}
 
 - (void)newState:(NSDictionary *)state
 {
@@ -61,12 +78,11 @@
     
     if (state == nil) {
         // Setup ships on left
-
         NSArray *shipTypes = [NSArray arrayWithObjects:num(Torpedo), num(Miner), num(Cruiser), num(Destroyer), num(Radar), nil];
         _myShips = [[NSMutableSet alloc] init];
         for (NSNumber *shipType in shipTypes) {
             Ship *newShip = [[Ship alloc] initWithGame:self type:[shipType intValue]];
-            newShip.baseRow = [shipTypes indexOfObject:shipType] * 3 + 10;
+            newShip.baseRow = (int)[shipTypes indexOfObject:shipType] * 3 + 10;
             newShip.baseColumn = 2;
             newShip.dir = Right;
             [_myShips addObject:newShip];
@@ -112,7 +128,7 @@
         _myShips = [[NSMutableSet alloc] init];
         for (NSNumber *shipType in shipTypes) {
             Ship *newShip = [[Ship alloc] initWithGame:self type:[shipType intValue]];
-            newShip.baseRow = [shipTypes indexOfObject:shipType] * 3 + 10;
+            newShip.baseRow = (int)[shipTypes indexOfObject:shipType] * 3 + 10;
             newShip.baseColumn = 28;
             newShip.dir = Left;
             [_myShips addObject:newShip];
@@ -288,12 +304,10 @@
     [_delegate sendTurn];
 }
 
-
 - (void)notifyCannonCollision:(Tile *)tile
 {
     _cannonCollisionTile = tile;
 }
-
 
 - (void)dealloc
 {

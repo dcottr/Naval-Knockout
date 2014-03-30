@@ -7,6 +7,7 @@
 //
 
 #import "NKMatchHelper.h"
+#import "MenuViewController.h"
 
 
 @interface NKMatchHelper ()
@@ -82,12 +83,12 @@ static NKMatchHelper *sharedHelper = nil;
         NSLog(@"Authenticated with error: %@", error);
         if (viewController != nil)
         {
-            [_presentingViewController presentViewController:viewController animated:YES completion:nil];
+            [_menuViewController presentViewController:viewController animated:YES completion:nil];
         }
         else if (localPlayer.isAuthenticated)
         {
 #pragma mark("TODO: If no active game")
-//            [[NKMatchHelper sharedInstance] findMatchWithMinPlayers:2 maxPlayers:2 viewController:_presentingViewController];
+//            [[NKMatchHelper sharedInstance] findMatchWithMinPlayers:2 maxPlayers:2 viewController:_menuViewController];
         }
         else
         {
@@ -114,9 +115,10 @@ static NKMatchHelper *sharedHelper = nil;
 
 - (void)findMatchWithMinPlayers:(int)minPlayers
 					 maxPlayers:(int)maxPlayers
-				 viewController:(UIViewController *)viewController {
+				 viewController:(MenuViewController *)viewController {
     if (!_gameCenterAvailable) return;
-    _presentingViewController = viewController;
+    
+    _menuViewController = viewController;
     
     GKMatchRequest *request = [[GKMatchRequest alloc] init];
     request.minPlayers = minPlayers;
@@ -128,19 +130,19 @@ static NKMatchHelper *sharedHelper = nil;
     mmvc.turnBasedMatchmakerDelegate = self;
     mmvc.showExistingMatches = YES;
     
-    [_presentingViewController presentViewController:mmvc animated:YES completion:nil];
+    [_menuViewController presentViewController:mmvc animated:YES completion:nil];
 }
 
 
 -(void)turnBasedMatchmakerViewControllerWasCancelled:
 (GKTurnBasedMatchmakerViewController *)viewController {
-    [_presentingViewController
+    [_menuViewController
      dismissViewControllerAnimated:YES completion:nil];
     NSLog(@"has cancelled");
 }
 
 - (void)turnBasedMatchmakerViewController:(GKTurnBasedMatchmakerViewController *)viewController didFailWithError:(NSError *)error {
-    [_presentingViewController
+    [_menuViewController
      dismissViewControllerAnimated:YES completion:nil];
     NSLog(@"Error finding match: %@", error.localizedDescription);
 }
@@ -157,8 +159,15 @@ static NKMatchHelper *sharedHelper = nil;
 							didFindMatch:(GKTurnBasedMatch *)match {
     self.currentMatch = match;
     NSLog(@"Current match data: %@", match.matchData);
-    [_presentingViewController dismissViewControllerAnimated:YES completion:nil]; // MAYBE
-    [[[UIApplication sharedApplication] keyWindow] addSubview:((UIViewController *)_delegate).view];
+    NSLog(@"CurrentController: %@", Sparrow.currentController);
+    [_menuViewController dismissViewControllerAnimated:YES completion:^{
+//        [Sparrow.currentController dismissViewControllerAnimated:YES completion:nil];
+    }]; // MAYBE
+    [_menuViewController.view removeFromSuperview];
+    [_menuViewController removeFromParentViewController];
+    
+//    [Sparrow.currentController dismissModalViewControllerAnimated:YES];
+//    [[[UIApplication sharedApplication] keyWindow] addSubview:((UIViewController *)_delegate).view];
     GKTurnBasedParticipant *firstParticipant = [match.participants objectAtIndex:0];
     if (firstParticipant.lastTurnDate == NULL) {
         // It's a new game!
@@ -177,12 +186,11 @@ static NKMatchHelper *sharedHelper = nil;
 }
 
 
-
 #pragma mark GKLocalPlayerListener
 
 -(void)handleInviteFromGameCenter:(NSArray *)playersToInvite {
     NSLog(@"Handling invite from friend");
-    [_presentingViewController dismissModalViewControllerAnimated:YES];
+    [_menuViewController dismissModalViewControllerAnimated:YES];
     GKMatchRequest *request = [[GKMatchRequest alloc] init];
     request.playersToInvite = playersToInvite;
     request.maxPlayers = 2;
@@ -191,7 +199,7 @@ static NKMatchHelper *sharedHelper = nil;
     [[GKTurnBasedMatchmakerViewController alloc] initWithMatchRequest:request];
     viewController.showExistingMatches = NO;
     viewController.turnBasedMatchmakerDelegate = self;
-    [_presentingViewController presentModalViewController:viewController animated:YES];
+    [_menuViewController presentModalViewController:viewController animated:YES];
 }
 
 - (void)handleTurnEventForMatch:(GKTurnBasedMatch *)match didBecomeActive:(BOOL)didBecomeActive {
