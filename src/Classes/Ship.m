@@ -179,6 +179,7 @@ static BOOL shipTypeMapsInitialized = NO;
         }
     } else if (touchUp) {
         if (isDragged) {
+            
             SPPoint *touchUpPosition = [touchUp locationInSpace:_gridContainer];
             [_gridContainer addChild:self];
             self.x = touchUpPosition.x;
@@ -315,6 +316,8 @@ static BOOL shipTypeMapsInitialized = NO;
             }
         }
     }
+    
+    
 }
 
 
@@ -419,8 +422,19 @@ static BOOL shipTypeMapsInitialized = NO;
 
 - (void)selectShip:(SPTouchEvent *)event
 {
-    SPTouch *touchUp = [[event touchesWithTarget:self andPhase:SPTouchPhaseEnded] anyObject];
+    NSLog(@"Ended phase: %d", SPTouchPhaseEnded);
+    NSLog(@"touched: %@", [event touches]);
+    SPTouch *touchUp;
+    for (SPTouch *touch in [event touches]) {
+        if (touch.phase == SPTouchPhaseEnded) {
+            NSLog(@"Here");
+            touchUp = touch;
+            break;
+        }
+    }
+    
     if (touchUp) {
+        NSLog(@"Selecting ship: %d", _shipType);
         [_gameContainer.shipCommandBar setSelected:self];
     }
 }

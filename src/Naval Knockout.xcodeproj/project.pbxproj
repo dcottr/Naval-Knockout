@@ -19,7 +19,6 @@
 		631C23F518C52640009EA080 /* ShipsTray.m in Sources */ = {isa = PBXBuildFile; fileRef = 631C23F418C52640009EA080 /* ShipsTray.m */; };
 		631C23F818C53E64009EA080 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 631C23F718C53E64009EA080 /* Images.xcassets */; };
 		63371EA018C56E2C00AA3FAE /* ShipCommandBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 63371E9F18C56E2C00AA3FAE /* ShipCommandBar.m */; };
-		63471E4A18E63403005F5E44 /* GameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 63471E4918E63403005F5E44 /* GameViewController.m */; };
 		6354EDFA18C6391300BC257E /* green_button06.png in Resources */ = {isa = PBXBuildFile; fileRef = 6354EDF918C6391300BC257E /* green_button06.png */; };
 		6354EDFD18C6391800BC257E /* green_checkmark.png in Resources */ = {isa = PBXBuildFile; fileRef = 6354EDFC18C6391800BC257E /* green_checkmark.png */; };
 		6354EDFF18C659AE00BC257E /* Glossy08.png in Resources */ = {isa = PBXBuildFile; fileRef = 6354EDFE18C659AE00BC257E /* Glossy08.png */; };
@@ -114,8 +113,6 @@
 		631C23F718C53E64009EA080 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Scaffold/Images.xcassets; sourceTree = "<group>"; };
 		63371E9E18C56E2C00AA3FAE /* ShipCommandBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShipCommandBar.h; sourceTree = "<group>"; };
 		63371E9F18C56E2C00AA3FAE /* ShipCommandBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShipCommandBar.m; sourceTree = "<group>"; };
-		63471E4818E63403005F5E44 /* GameViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameViewController.h; sourceTree = "<group>"; };
-		63471E4918E63403005F5E44 /* GameViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameViewController.m; sourceTree = "<group>"; };
 		6354EDF918C6391300BC257E /* green_button06.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = green_button06.png; sourceTree = "<group>"; };
 		6354EDFC18C6391800BC257E /* green_checkmark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = green_checkmark.png; sourceTree = "<group>"; };
 		6354EDFE18C659AE00BC257E /* Glossy08.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Glossy08.png; sourceTree = "<group>"; };
@@ -204,8 +201,6 @@
 				DE4F80D714E153EA00655D44 /* Game */,
 				1D3623240D0F684500981E51 /* AppDelegate.h */,
 				1D3623250D0F684500981E51 /* AppDelegate.m */,
-				63471E4818E63403005F5E44 /* GameViewController.h */,
-				63471E4918E63403005F5E44 /* GameViewController.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -524,7 +519,6 @@
 				3056882818D128EF00285CD6 /* GameState.m in Sources */,
 				631C23F518C52640009EA080 /* ShipsTray.m in Sources */,
 				DE4A3DE510FFB2AF00FDA492 /* Game.m in Sources */,
-				63471E4A18E63403005F5E44 /* GameViewController.m in Sources */,
 				DE4F80D614E153E600655D44 /* Media.m in Sources */,
 				63615BD318CD5C42006ACB25 /* NKMatchHelper.m in Sources */,
 				63AB936718C817B00055E77B /* Tile.m in Sources */,

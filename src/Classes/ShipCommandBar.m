@@ -100,6 +100,9 @@ static SPTexture *buttonTexture = nil;
     [self deselect];
     _ship = ship;
     [_commandBar setVisible:YES];
+    
+    
+    
     [_lButton setVisible:YES];
     [_rButton setVisible:YES];
     // Set validTileSelections Likes

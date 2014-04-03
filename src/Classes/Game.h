@@ -39,4 +39,6 @@
 - (void)performedAction;
 - (void)notifyCannonCollision:(Tile *)tile;
 
+- (void)newGame;
+
 @end

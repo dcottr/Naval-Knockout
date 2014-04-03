@@ -243,10 +243,10 @@ static NKMatchHelper *sharedHelper = nil;
 
 - (void)player:(GKPlayer *)player receivedTurnEventForMatch:(GKTurnBasedMatch *)match didBecomeActive:(BOOL)didBecomeActive
 {
+    // Need to upload with htis match object.
     NSLog(@"In receivedTurnEvent active: %hhd", didBecomeActive);
     
     if (didBecomeActive) {
-        [[[UIApplication sharedApplication] keyWindow] addSubview:((UIViewController *)_delegate).view];
         self.currentMatch = match;
     }
     

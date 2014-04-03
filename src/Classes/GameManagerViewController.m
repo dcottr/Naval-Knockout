@@ -31,13 +31,13 @@
     return self;
 }
 
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    NSLog(@"Match Data: %@", _gameState.state);
-    
-	// Do any additional setup after loading the view.
-}
+//- (void)viewDidLoad
+//{
+//    [super viewDidLoad];
+//    NSLog(@"Match Data: %@", _gameState.state);
+//    
+//	// Do any additional setup after loading the view.
+//}
 
 - (void)enterNewGame:(GKTurnBasedMatch *)match
 {
@@ -45,7 +45,8 @@
     [_gameState DataToState:match.matchData];
     NSLog(@"Entering game");
     if (_game) {
-        [_game newState:_gameState.state];
+        [_game newGame];
+//        [_game newState:_gameState.state];
     }
 }
 
@@ -55,9 +56,9 @@
     [_gameState DataToState:match.matchData];
     NSLog(@"LayoutMatch: %@", _gameState.state);
 //    [_gameState DataToState:match.matchData];
-//    if (_game) {
-//        [_game newState:_gameState.state];
-//    }
+    if (_game) {
+        [_game newState:_gameState.state];
+    }
 }
 
 - (void)takeTurn:(GKTurnBasedMatch *)match
@@ -108,7 +109,7 @@
             NSLog(@"nex part %@", nextParticipant);
         }
     }
-    NSLog(@"data length: %d", [data length]);
+    NSLog(@"data length: %lu", [data length]);
     if ([data length] > 8 * 1024) {
         NSLog(@"Data more than 3,800 so ending match");
         for (GKTurnBasedParticipant *part in currentMatch.participants) {
