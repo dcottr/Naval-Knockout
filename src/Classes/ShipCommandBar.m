@@ -119,6 +119,7 @@ static SPTexture *buttonTexture = nil;
 
 - (void)deselect
 {
+    
     [self deselectTiles];
     [_commandBar setVisible:NO];
     [_lButton setVisible:NO];
@@ -126,6 +127,14 @@ static SPTexture *buttonTexture = nil;
     [_dropMineButton setVisible:NO];
     [_cannonButton setVisible:NO];
     _ship = nil;
+}
+
+// Refresh GUI
+- (void)reselect
+{
+    Ship *ship = _ship;
+    [self deselect];
+    [self setSelected:ship];
 }
 
 // Hides visual of valid selectable tiles

@@ -452,11 +452,19 @@
 - (void)tapGrid:(SPTouch *)touchUp
 {
     SPPoint *touchPosition = [touchUp locationInSpace:_gridContainer];
+    
     // Get i, j of tile
     int i = floor(touchPosition.x / _tileSize);
     int j = floor(touchPosition.y / _tileSize);
-    
     Tile *tile = [[_tiles objectAtIndex:i] objectAtIndex:j];
+    if (tile.myShipSegment && !tile.myShipSegment.ship.isEnemyShip) {
+        return;
+    }
+    if (tile.myShip && !tile.myShip.isEnemyShip) {
+        return;
+    }
+
+    
     if (_shipCommandBar) {
         [_shipCommandBar selectTile:tile];
     }

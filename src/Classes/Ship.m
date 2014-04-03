@@ -265,6 +265,7 @@ static BOOL shipTypeMapsInitialized = NO;
                     if (tile.row <= _baseRow && tile.row > _baseRow - _shipLength) {
                         ShipSegment *segment = [_shipSegments objectAtIndex:( (_baseRow - tile.row))];
                         segment.tile = tile;
+                        tile.myShip = self;
                         tile.myShipSegment = segment;
                     }
                 }
@@ -273,6 +274,7 @@ static BOOL shipTypeMapsInitialized = NO;
                     if (tile.col <= _baseColumn && tile.col > _baseColumn - _shipLength) {
                         ShipSegment *segment = [_shipSegments objectAtIndex:((_baseColumn - tile.col))];
                         segment.tile = tile;
+                        tile.myShip = self;
                         tile.myShipSegment = segment;
                     }
                 }
@@ -281,6 +283,7 @@ static BOOL shipTypeMapsInitialized = NO;
                     if (tile.col >= _baseColumn && tile.col < _baseColumn + _shipLength) {
                         ShipSegment *segment = [_shipSegments objectAtIndex:(tile.col - _baseColumn)];
                         segment.tile = tile;
+                        tile.myShip = self;
                         tile.myShipSegment = segment;
                     }
                 }
@@ -289,6 +292,7 @@ static BOOL shipTypeMapsInitialized = NO;
                     if (tile.row >= _baseRow && tile.row < _baseRow + _shipLength) {
                         ShipSegment *segment = [_shipSegments objectAtIndex:(tile.row - _baseRow)];
                         segment.tile = tile;
+                        tile.myShip = self;
                         tile.myShipSegment = segment;
                     }
                 }
