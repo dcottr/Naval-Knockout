@@ -9,6 +9,7 @@
 #import "Base.h"
 #import "Tile.h"
 #import "Game.h"
+#import "Ship.h"
 
 @interface Base ()
 
@@ -45,6 +46,7 @@ static Base * enemyTail = nil;
  change sprite on hit
  assign tail on init
  
+ health: 2 is full life 0 is dead
 */
 
 
@@ -57,7 +59,10 @@ static Base * enemyTail = nil;
   if (!baseTexture){
 	baseTexture = healthyBase;
   }
-  self = [[Base alloc] initwithGame:game type:type];
+  self = [[Base alloc] initWithGame:game type:Base_Type];
+  self.shipImage = [[SPImage alloc] initWithTexture:baseTexture];
+  [self removeEventListenersAtObject:self forType:SP_EVENT_TYPE_TOUCH];
+  return self;
 }
 
 - (void) setIsEnemyShip:(BOOL)isEnemyShip{
@@ -92,7 +97,10 @@ static Base * enemyTail = nil;
   if (self.health ==2){
 	self.health = 1;
 	[self updateTilesOccupied];
+#pragma message(" needs to deal with shipsegments, left incomplete")
   }
+  NSLog(@" Base hit by cannon");
+  
 }
 
 //	this should only change the health sprites
@@ -113,10 +121,10 @@ static Base * enemyTail = nil;
 //	and set visibility
 //	of everything around it
 -(void)setSurroundingTilesVisible{
-  [Base setSurroundingTilesVisible:self.tail];
+  return;
 }
   
-+(void)setSurroundingTilesVisible:(Base *) base{
+/*+(void)setSurroundingTilesVisible:(Base *) base{
   Tile *t = base.tail.myTile;
   Game *gc=[base gameContainer];
   // only set the base tiles themselves visibile if enemy
@@ -145,7 +153,7 @@ static Base * enemyTail = nil;
   }
 }
 
-
+*/
 
 
 

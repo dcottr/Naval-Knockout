@@ -15,7 +15,7 @@
 
 -(void)setVisible:(BOOL)visible;
 -(BOOL)healShip:(Ship *)ship;
-+(void)setSurroundingTilesVisible:(Base *) tail;
+
 
 
 @property (nonatomic, assign) BOOL healthy;
