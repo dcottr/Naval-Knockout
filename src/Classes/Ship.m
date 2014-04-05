@@ -252,7 +252,7 @@ static BOOL shipTypeMapsInitialized = NO;
 {
     for (ShipSegment *segment in _shipSegments) {
         // Clear damage
-        [segment.tile cleanTile];
+        [segment.tile setClear];
     }
     
     for (NSArray *column in _gameContainer.tiles) {
