@@ -242,7 +242,13 @@
         newShip.baseRow = ([(NSNumber *)[shipAttrs objectAtIndex:0] intValue]);
         newShip.baseColumn = ([(NSNumber *)[shipAttrs objectAtIndex:1] intValue]);
         newShip.dir = ([(NSNumber *)[shipAttrs objectAtIndex:2] intValue]);
-        newShip.health = ([(NSNumber *)[shipAttrs objectAtIndex:4] intValue]);
+        
+        NSArray *health = [shipAttrs objectAtIndex:4];
+        for (int i = 0; i < newShip.shipSegments.count; i++) {
+            ShipSegment *segment = [newShip.shipSegments objectAtIndex:i];
+            segment.health = ([(NSNumber *)[health objectAtIndex:i] intValue]);
+        }
+        
         [_myShips addObject:newShip];
         Tile *myTile = [[_tiles objectAtIndex:newShip.baseColumn] objectAtIndex:newShip.baseRow];
         myTile.myShip = newShip;
@@ -268,13 +274,14 @@
         newShip.baseRow = ([(NSNumber *)[shipAttrs objectAtIndex:0] intValue]);
         newShip.baseColumn = ([(NSNumber *)[shipAttrs objectAtIndex:1] intValue]);
         newShip.dir = ([(NSNumber *)[shipAttrs objectAtIndex:2] intValue]);
-        newShip.health = ([(NSNumber *)[shipAttrs objectAtIndex:4] intValue]);
+        NSArray *health = [shipAttrs objectAtIndex:4];
+        for (int i = 0; i < newShip.shipSegments.count; i++) {
+            ShipSegment *segment = [newShip.shipSegments objectAtIndex:i];
+            segment.health = ([(NSNumber *)[health objectAtIndex:i] intValue]);
+        }
         [_enemyShips addObject:newShip];
         Tile *myTile = [[_tiles objectAtIndex:newShip.baseColumn] objectAtIndex:newShip.baseRow];
         myTile.myShip = newShip;
-        //        [myTile fogOfWar:NO];
-        
-        
         [newShip updateTilesOccupied];
         for (ShipSegment *segment in newShip.shipSegments) {
             [segment.tile fogOfWar:NO];
@@ -294,13 +301,23 @@
     
     NSMutableArray *myShips = [[NSMutableArray alloc] init];
     for (Ship *ship in _myShips) {
-        NSArray *shipAttrs = [NSArray arrayWithObjects:num(ship.baseRow), num(ship.baseColumn), num(ship.dir), num(ship.shipType), num(ship.health), nil];
+        NSMutableArray *health = [[NSMutableArray alloc] init];
+        for (ShipSegment *segment in ship.shipSegments) {
+            [health addObject:num(segment.health)];
+        }
+        
+        NSArray *shipAttrs = [NSArray arrayWithObjects:num(ship.baseRow), num(ship.baseColumn), num(ship.dir), num(ship.shipType), [NSArray arrayWithArray:health], nil];
         [myShips addObject:shipAttrs];
     }
     
     NSMutableArray *enemyShips = [[NSMutableArray alloc] init];
     for (Ship *ship in _enemyShips) {
-        NSArray *shipAttrs = [NSArray arrayWithObjects:num(ship.baseRow), num(ship.baseColumn), num(ship.dir), num(ship.shipType), num(ship.health), nil];
+        NSMutableArray *health = [[NSMutableArray alloc] init];
+        for (ShipSegment *segment in ship.shipSegments) {
+            [health addObject:num(segment.health)];
+        }
+
+        NSArray *shipAttrs = [NSArray arrayWithObjects:num(ship.baseRow), num(ship.baseColumn), num(ship.dir), num(ship.shipType), [NSArray arrayWithArray:health], nil];
         [enemyShips addObject:shipAttrs];
     }
     
