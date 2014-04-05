@@ -37,6 +37,7 @@ static SPTexture *waterTexture = nil;
         _selectableOverlay.alpha = 0.5f;
         [self addChild:_selectableOverlay];
         [_selectableOverlay setVisible:NO];
+        _health = 2;
     }
     return self;
 }
@@ -76,5 +77,33 @@ static SPTexture *waterTexture = nil;
 {
     [_selectableOverlay setVisible:selectable];
 }
+
+- (void)hitByCannon
+{
+    if (_health == 2) {
+        if (_ship.shipArmour == ArmourHeavy) {
+            _health = 1;
+            [self updateTileDamage];
+            return;
+        }
+    }
+    
+    NSLog(@"Hit by cannon, new health: %d", _health);
+    _health = 0;
+    [self updateTileDamage];
+    return;
+}
+
+- (void)updateTileDamage
+{
+    if(_health == 0) {
+        [_tile setDestroyed];
+    } else if (_health == 1) {
+        [_tile setDamaged];
+    } else {
+        [_tile setClear];
+    }
+}
+
 
 @end

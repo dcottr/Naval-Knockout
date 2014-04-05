@@ -136,9 +136,9 @@ static NSDictionary *reefPositions = nil;
 - (void)performCannonAction
 {
     [_content setVisible:YES];
-    if (_myShip) {
+    if (_myShipSegment) {
         NSLog(@"Hit at row: %d, col: %d with ship: %@", _row, _col, _myShip);
-        [_myShip hitByCannon];
+        [_myShipSegment hitByCannon];
     }
   [self notifyEvent];
 }

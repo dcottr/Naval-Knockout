@@ -61,16 +61,13 @@ typedef NSInteger WeaponType;
 - (NSArray *)rotateTileList:(Direction) newdir;
 
 @property (nonatomic, assign) ShipType shipType;
+@property (nonatomic, assign) ArmourType shipArmour;
 @property (nonatomic, assign) Direction dir;
 @property (nonatomic, assign) int baseRow;
 @property (nonatomic, assign) int baseColumn;
 @property (nonatomic, strong) NSArray *shipWeapons;
 
-
 @property (nonatomic, assign) BOOL isEnemyShip;
-
-- (void)hitByCannon;
-@property (nonatomic, assign) int health; // integer ==> destroyed = 0, damaged = 1, intact = 2.
 
 @property (nonatomic, strong) NSMutableArray *shipSegments;
 - (void)updateTilesOccupied;
