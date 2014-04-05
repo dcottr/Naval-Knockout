@@ -207,12 +207,16 @@ static SPTexture *buttonTexture = nil;
 - (void)selectTile:(Tile *)tile
 {
     if (!_validTileSelects) {
+        
+        
         [self deselect];
         return;
     }
     
     if ([_validTileSelects containsObject:tile]) {
         if (_selectedAction == ActionMove) {
+            
+            
             [_ship performMoveActionTo:tile];
         } else if (_selectedAction == ActionMine) {
             [tile performMineAction];

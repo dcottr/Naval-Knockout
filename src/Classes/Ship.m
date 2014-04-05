@@ -97,6 +97,7 @@ static BOOL shipTypeMapsInitialized = NO;
             [shipSegments addObject:shipSegment];
             shipSegment.width = 32;
             shipSegment.height = 32;
+            shipSegment.ship = self;
             [self addChild:shipSegment];
             shipSegment.x = 0;
             shipSegment.y = (_shipLength - 1 - i) * 32;

@@ -93,6 +93,7 @@ static NSDictionary *reefPositions = nil;
         
         _selectableOverlay = [[SPQuad alloc] initWithWidth:_game.tileSize height:_game.tileSize color:0x00FF00];
         [self addChild:_selectableOverlay];
+        _selectableOverlay.alpha = 0.5f;
         [_selectableOverlay setVisible:NO];
     }
     return self;

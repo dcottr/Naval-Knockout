@@ -65,50 +65,69 @@ static NKMatchHelper *sharedHelper = nil;
         !_userAuthenticated) {
         NSLog(@"Authentication changed: player authenticated.");
         _userAuthenticated = TRUE;
-        [self installTurnBasedEventHandler];
+//        [self installTurnBasedEventHandler];
     } else if (![GKLocalPlayer localPlayer].isAuthenticated &&
                _userAuthenticated) {
         NSLog(@"Authentication changed: player not authenticated");
         _userAuthenticated = FALSE;
-        [self uninstallTurnBasedEventHandler];
+//        [self uninstallTurnBasedEventHandler];
     }
     
 }
 
 - (void)authenticateLocalPlayer
 {
-    GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
-    
-    localPlayer.authenticateHandler = ^(UIViewController *viewController, NSError *error){
-        NSLog(@"Authenticated with error: %@", error);
-        if (viewController != nil)
-        {
-            [_menuViewController presentViewController:viewController animated:YES completion:nil];
-        }
-        else if (localPlayer.isAuthenticated)
-        {
-#pragma mark("TODO: If no active game")
-//            [[NKMatchHelper sharedInstance] findMatchWithMinPlayers:2 maxPlayers:2 viewController:_menuViewController];
-        }
-        else
-        {
-            //[self disableGameCenter];
+    __weak GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
+    localPlayer.authenticateHandler = ^(UIViewController *viewController, NSError *error) {
+        if (viewController) {
+            [_menuViewController presentViewController:viewController animated:YES completion:^{
+                [localPlayer registerListener:self];
+                NSLog(@"Authenticated. Registering Turn Based Events listener");
+            }];
+        } else if (localPlayer.authenticated) {
+            [localPlayer registerListener:self];
+            NSLog(@"User Already Authenticated. Registering Turn Based Events listener");
+        } else {
+            NSLog(@"Unable to Authenticate with Game Center: %@", [error localizedDescription]);
         }
     };
-}
-
-- (void)installTurnBasedEventHandler
-{
-    NSLog(@"Listening for playerEvents");
-
-    [[GKLocalPlayer localPlayer] registerListener:self];
+    
+    
+    
+    
+//    GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
+//    
+//    localPlayer.authenticateHandler = ^(UIViewController *viewController, NSError *error){
+//        NSLog(@"Authenticated with error: %@", error);
+//        if (viewController != nil)
+//        {
+//            [_menuViewController presentViewController:viewController animated:YES completion:nil];
+//        }
+//        else if (localPlayer.isAuthenticated)
+//        {
+//#pragma mark("TODO: If no active game")
+////            [[NKMatchHelper sharedInstance] findMatchWithMinPlayers:2 maxPlayers:2 viewController:_menuViewController];
+//        }
+//        else
+//        {
+//            //[self disableGameCenter];
+//        }
+//    };
     
 }
 
-- (void)uninstallTurnBasedEventHandler
-{
-    [[GKLocalPlayer localPlayer] unregisterAllListeners];
-}
+//- (void)installTurnBasedEventHandler
+//{
+//    NSLog(@"Listening for playerEvents");
+//
+//    [[GKLocalPlayer localPlayer] registerListener:self];
+//    
+//}
+//
+//- (void)uninstallTurnBasedEventHandler
+//{
+//    [[GKLocalPlayer localPlayer] unregisterAllListeners];
+//}
 
 #pragma mark GKTurnBasedMatchmakerViewControllerDelegate
 
@@ -201,14 +220,13 @@ static NKMatchHelper *sharedHelper = nil;
 - (void)handleTurnEventForMatch:(GKTurnBasedMatch *)match didBecomeActive:(BOOL)didBecomeActive {
     NSLog(@"Turn has happened");
     if ([match.matchID isEqualToString:_currentMatch.matchID]) {
+        self.currentMatch = match;
         if ([match.currentParticipant.playerID isEqualToString:[GKLocalPlayer localPlayer].playerID]) {
             // it's the current match and it's our turn now
-            self.currentMatch = match;
             [_delegate takeTurn:match];
             
         } else {
             // it's the current match, but it's someone else's turn
-            self.currentMatch = match;
             [_delegate layoutMatch:match];
         }
     } else {
@@ -245,10 +263,11 @@ static NKMatchHelper *sharedHelper = nil;
 {
     // Need to upload with htis match object.
     NSLog(@"In receivedTurnEvent active: %hhd", didBecomeActive);
+    self.currentMatch = match;
     
-    if (didBecomeActive) {
-        self.currentMatch = match;
-    }
+//    if (didBecomeActive) {
+//        self.currentMatch = match;
+//    }
     
     [_delegate takeTurn:match];
 }

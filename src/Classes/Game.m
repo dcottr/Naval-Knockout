@@ -195,6 +195,8 @@
     for (NSArray *column in _tiles) {
         for (Tile *tile in column) {
             [tile setClear];
+            tile.myShipSegment = nil;
+            tile.myShip = nil;
             [tile displayCannonHit:NO];
             [tile fogOfWar:NO];
         }
@@ -457,11 +459,13 @@
     int i = floor(touchPosition.x / _tileSize);
     int j = floor(touchPosition.y / _tileSize);
     Tile *tile = [[_tiles objectAtIndex:i] objectAtIndex:j];
-    if (tile.myShipSegment && !tile.myShipSegment.ship.isEnemyShip) {
-        return;
-    }
-    if (tile.myShip && !tile.myShip.isEnemyShip) {
-        return;
+    if (!tile.selectable) {
+        if (tile.myShipSegment && !tile.myShipSegment.ship.isEnemyShip) {
+            return;
+        }
+        if (tile.myShip && !tile.myShip.isEnemyShip) {
+            return;
+        }
     }
 
     
