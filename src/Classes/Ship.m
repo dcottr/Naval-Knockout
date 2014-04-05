@@ -438,8 +438,8 @@ static BOOL shipTypeMapsInitialized = NO;
         }
     }
     
-    if (touchUp) {
-        NSLog(@"Selecting ship: %d", _shipType);
+    if (touchUp && _gameContainer.myTurn) {
+//        NSLog(@"Selecting ship: %d", _shipType);
         [_gameContainer.shipCommandBar setSelected:self];
     }
 }

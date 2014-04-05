@@ -29,6 +29,8 @@
 
 @property (nonatomic, weak) GameManagerViewController *delegate;
 
+@property (nonatomic, assign) BOOL myTurn;
+
 - (void)doneSettingShips;
 
 

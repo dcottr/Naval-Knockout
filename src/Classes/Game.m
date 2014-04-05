@@ -13,6 +13,7 @@
 #import "ShipSegment.h"
 #import "MenuViewController.h"
 
+
 @interface Game () {
 	bool isGrabbed;
     bool isPinched;
@@ -28,6 +29,10 @@
 
 @property (nonatomic, strong) MenuViewController *matchMakerController;
 
+@property (nonatomic, strong) SPImage *myTurnImage;
+@property (nonatomic, strong) SPImage *enemyTurnImage;
+
+
 @end
 
 
@@ -41,9 +46,9 @@
         _tileCount = 30;
         _myShips = [[NSMutableSet alloc] init];
         _enemyShips = [[NSMutableSet alloc] init];
+//        _myTurn = false;
         [self setup];
         [self presentMenu];
-        
         
         
     }
@@ -68,6 +73,7 @@
 - (void)newGame
 {
     [self clearMap];
+    self.myTurn = YES;
     // Setup ships on left
     NSArray *shipTypes = [NSArray arrayWithObjects:num(Torpedo), num(Miner), num(Cruiser), num(Destroyer), num(Radar), nil];
     _myShips = [[NSMutableSet alloc] init];
@@ -103,6 +109,14 @@
     NSString *myId = [GKLocalPlayer localPlayer].playerID;
     NSLog(@"My id: %@", myId);
     NSLog(@"newState with state: %@", state);
+    
+    // check whose turn.
+    GKTurnBasedMatch *currentMatch = [[NKMatchHelper sharedInstance] currentMatch];
+    if ([currentMatch.currentParticipant.playerID isEqualToString:myId]) {
+        self.myTurn = YES;
+    } else {
+        self.myTurn = NO;
+    }
     
     if ([state objectForKey:myId] == nil || [((NSDictionary *)[state objectForKey:myId]) count] == 0) {
         
@@ -323,6 +337,7 @@
 
 - (void)performedAction
 {
+    self.myTurn = NO;
     [_delegate sendTurn];
 }
 
@@ -338,6 +353,13 @@
     [Media releaseSound];
 }
 
+- (void)setMyTurn:(BOOL)myTurn
+{
+    _myTurn = myTurn;
+    [_myTurnImage setVisible:myTurn];
+    [_enemyTurnImage setVisible:!myTurn];
+}
+
 - (void)setup
 {
     
@@ -351,6 +373,8 @@
     
     
     [_content addChild:_gridContainer];
+    
+    
     
     NSMutableArray *tiles = [[NSMutableArray alloc] init];
     for (int i = 0; i < _tileCount; i++) {
@@ -381,7 +405,29 @@
     [_gridContainer addEventListener:@selector(scrollGrid:) atObject:self forType:SP_EVENT_TYPE_TOUCH];
     
     
+    // Turn notifier.
+    _myTurnImage = [[SPImage alloc] initWithContentsOfFile:@"green_circle.png"];
+    _enemyTurnImage = [[SPImage alloc] initWithContentsOfFile:@"grey_circle.png"];
+    _myTurnImage.x = Sparrow.stage.width - _myTurnImage.width - 10;
+    _myTurnImage.y = 10;
+    _myTurnImage.width = 20;
+    _myTurnImage.height = 20;
+    _enemyTurnImage.x = Sparrow.stage.width - _enemyTurnImage.width - 10;
+    _enemyTurnImage.y = 10;
+    _enemyTurnImage.width = 20;
+    _enemyTurnImage.height = 20;
+    [self addChild:_myTurnImage];
+    [self addChild:_enemyTurnImage];
+    [_enemyTurnImage setVisible:NO];
     
+    // Main Menu btn
+    SPTexture *menuTexture = [[SPTexture alloc] initWithContentsOfFile:@"blue_panel.png"];
+    SPButton *menu = [[SPButton alloc] initWithUpState:menuTexture text:@"Main Menu"];
+    menu.x = -3;
+    menu.y = -28;
+    menu.height = 64;
+    [menu addEventListener:@selector(presentMenu) atObject:self forType:SP_EVENT_TYPE_TRIGGERED];
+    [self addChild:menu];
 }
 
 - (void)scrollGrid:(SPTouchEvent *)event
@@ -469,7 +515,7 @@
     }
 
     
-    if (_shipCommandBar) {
+    if (_shipCommandBar && _myTurn) {
         [_shipCommandBar selectTile:tile];
     }
 }

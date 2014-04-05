@@ -161,7 +161,6 @@ static SPTexture *buttonTexture = nil;
     }
     
     [_ship turnRight];
-    [self setSelected:_ship];
     [self didPerformAction];
 }
 
@@ -173,7 +172,6 @@ static SPTexture *buttonTexture = nil;
     }
     
     [_ship turnLeft];
-    [self setSelected:_ship];
     [self didPerformAction];
 }
 
@@ -215,8 +213,6 @@ static SPTexture *buttonTexture = nil;
     
     if ([_validTileSelects containsObject:tile]) {
         if (_selectedAction == ActionMove) {
-            
-            
             [_ship performMoveActionTo:tile];
         } else if (_selectedAction == ActionMine) {
             [tile performMineAction];
@@ -233,6 +229,7 @@ static SPTexture *buttonTexture = nil;
 - (void)didPerformAction
 {
     [_game performedAction];
+    [self deselect];
 }
 
 

@@ -46,7 +46,7 @@ static SPTexture *waterTexture = nil;
     if (_ship) {
         NSLog(@"Ship Direction: %ld", (long)_ship.dir);
     }
-    NSLog(@"tile: %f, %f, overlay: %f, %f, self: %f, %f -- %f", _tile.width, _tile.scaleX, _overlayImage.width, _overlayImage.scaleX, self.width, self.scaleX, _overlayImage.width * self.scaleX);
+    
     _overlayImage.pivotX = _overlayImage.width/2.0f;
     _overlayImage.pivotY = _overlayImage.height/2.0f;
     _overlayImage.x = _overlayImage.width/2.0f;
