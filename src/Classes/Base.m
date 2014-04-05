@@ -9,6 +9,7 @@
 #import "Base.h"
 #import "Tile.h"
 #import "Game.h"
+#import "Ship.h"
 
 @interface Base ()
 
@@ -45,6 +46,7 @@ static Base * enemyTail = nil;
  change sprite on hit
  assign tail on init
  
+ health: 2 is full life 0 is dead
 */
 
 
@@ -57,21 +59,10 @@ static Base * enemyTail = nil;
   if (!baseTexture){
 	baseTexture = healthyBase;
   }
-  if ( self = [super init]){
-	//	set base in position
-	self.ShipType = type;
-	if (type == Opp_base){
-	  [self setIsEnemyShip:YES];
-	}
-	_shipImage = [[SPImage alloc] initWithTexture:baseTexture];
-	_shipImage.width = 32;
-	_shipImage.height= 32;
-	self.gameContainer = game;
-	self.gridContainer = game.content;
-	
-  }
+  self = [[Base alloc] initWithGame:game type:Base_Type];
+  self.shipImage = [[SPImage alloc] initWithTexture:baseTexture];
+  [self removeEventListenersAtObject:self forType:SP_EVENT_TYPE_TOUCH];
   return self;
-
 }
 
 - (void) setIsEnemyShip:(BOOL)isEnemyShip{
@@ -86,7 +77,7 @@ static Base * enemyTail = nil;
 -(BOOL)healShip:(Ship *)ship{
   if (!ship.isEnemyShip){
 	if (self.healthy && self.didHealThisTurn){
-	  ship.health = ship.health + 1;
+	  //ship.health = ship.health + 1;
 	  
 	  //  update tile overlay back to previous damage state
 	  //  animate healing
@@ -101,16 +92,19 @@ static Base * enemyTail = nil;
   return NO;
   
 }
-
+/*
 -(void)hitByCannon{
   if (self.health ==2){
-	self.health = 1;
+	 // self.health = 1;
 	[self updateTilesOccupied];
+#pragma message(" needs to deal with shipsegments, left incomplete")
   }
+  NSLog(@" Base hit by cannon");
+  
 }
-
+*/
 //	this should only change the health sprites
--(void)updateTilesOccupied{
+/*-(void)updateTilesOccupied{
   if (self.health ==1){
 	// change sprite to disabled, change ability to heal
 	self.health = 0;
@@ -122,15 +116,15 @@ static Base * enemyTail = nil;
 	
   }
 }
-
+*/
 //	take tail of a given player base (bottom tile)
 //	and set visibility
 //	of everything around it
 -(void)setSurroundingTilesVisible{
-  [Base setSurroundingTilesVisible:self.tail];
+  return;
 }
   
-+(void)setSurroundingTilesVisible:(Base *) base{
+/*+(void)setSurroundingTilesVisible:(Base *) base{
   Tile *t = base.tail.myTile;
   Game *gc=[base gameContainer];
   // only set the base tiles themselves visibile if enemy
@@ -159,7 +153,7 @@ static Base * enemyTail = nil;
   }
 }
 
-
+*/
 
 
 

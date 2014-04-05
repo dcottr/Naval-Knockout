@@ -12,6 +12,7 @@
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
+		305008A818F0709C00E5935E /* Base.m in Sources */ = {isa = PBXBuildFile; fileRef = 305008A718F0709C00E5935E /* Base.m */; };
 		3056882818D128EF00285CD6 /* GameState.m in Sources */ = {isa = PBXBuildFile; fileRef = 3056882718D128EF00285CD6 /* GameState.m */; };
 		30C4967E18CD670300FCA0CC /* GameManagerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 30C4967D18CD670300FCA0CC /* GameManagerViewController.m */; };
 		630F253D18D0CB83007301A4 /* Mine.m in Sources */ = {isa = PBXBuildFile; fileRef = 630F253C18D0CB83007301A4 /* Mine.m */; };
@@ -106,6 +107,8 @@
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		305008A618F0709C00E5935E /* Base.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Base.h; sourceTree = "<group>"; };
+		305008A718F0709C00E5935E /* Base.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Base.m; sourceTree = "<group>"; };
 		3056882618D128EF00285CD6 /* GameState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameState.h; sourceTree = "<group>"; };
 		3056882718D128EF00285CD6 /* GameState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameState.m; sourceTree = "<group>"; };
 		30C4967C18CD670300FCA0CC /* GameManagerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameManagerViewController.h; sourceTree = "<group>"; };
@@ -328,6 +331,8 @@
 		DE4F80D714E153EA00655D44 /* Game */ = {
 			isa = PBXGroup;
 			children = (
+				305008A618F0709C00E5935E /* Base.h */,
+				305008A718F0709C00E5935E /* Base.m */,
 				DE4A3DE310FFB2AF00FDA492 /* Game.h */,
 				DE4A3DE410FFB2AF00FDA492 /* Game.m */,
 				63AB936518C817AF0055E77B /* Tile.h */,
@@ -548,6 +553,7 @@
 				3056882818D128EF00285CD6 /* GameState.m in Sources */,
 				631C23F518C52640009EA080 /* ShipsTray.m in Sources */,
 				DE4A3DE510FFB2AF00FDA492 /* Game.m in Sources */,
+				305008A818F0709C00E5935E /* Base.m in Sources */,
 				DE4F80D614E153E600655D44 /* Media.m in Sources */,
 				63615BD318CD5C42006ACB25 /* NKMatchHelper.m in Sources */,
 				63AB936718C817B00055E77B /* Tile.m in Sources */,
