@@ -57,21 +57,7 @@ static Base * enemyTail = nil;
   if (!baseTexture){
 	baseTexture = healthyBase;
   }
-  if ( self = [super init]){
-	//	set base in position
-	self.ShipType = type;
-	if (type == Opp_base){
-	  [self setIsEnemyShip:YES];
-	}
-	_shipImage = [[SPImage alloc] initWithTexture:baseTexture];
-	_shipImage.width = 32;
-	_shipImage.height= 32;
-	self.gameContainer = game;
-	self.gridContainer = game.content;
-	
-  }
-  return self;
-
+  self = [[Base alloc] initwithGame:game type:type];
 }
 
 - (void) setIsEnemyShip:(BOOL)isEnemyShip{
