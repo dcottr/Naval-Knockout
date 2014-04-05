@@ -302,6 +302,19 @@ static BOOL shipTypeMapsInitialized = NO;
     for (ShipSegment *segment in _shipSegments) {
         [segment updateTileDamage];
     }
+    [self updateSpeed];
+}
+
+- (void)updateSpeed
+{
+    int liveSegmentCount = 0;
+    int originalSpeed = [[shipSpeedMap objectForKey:num(_shipType)] intValue];
+    for (ShipSegment *segment in _shipSegments) {
+        if (segment.health > 0) {
+            liveSegmentCount++;
+        }
+    }
+    _shipSpeed = liveSegmentCount * (int)(originalSpeed/_shipLength);
 }
 
 - (void)turnRight
@@ -335,18 +348,6 @@ static BOOL shipTypeMapsInitialized = NO;
         [self setSurroundingTilesVisible];
     }
 }
-
-#pragma mark("Change speed on lower health")
-//- (void)setHealth:(int)health
-//{
-//    if (health == 0) {
-//        _shipSpeed = ([[shipSpeedMap objectForKey:num(_shipType)] intValue] *(_shipLength - 1) / _shipLength);
-//    } else {
-//        _shipSpeed = [[shipSpeedMap objectForKey:num(_shipType)] intValue];
-//    }
-//    _health = health;
-//}
-
 
 - (void)turnLeft
 {

@@ -18,4 +18,4 @@
 #   define DLog(...)
 #endif
 
-#define num(fmt) [NSNumber numberWithInt:fmt]
+#define num(fmt) [NSNumber numberWithInt:(int)fmt]
