@@ -35,6 +35,7 @@
 
 @implementation Tile
 
+
 static SPTexture *waterTexture = nil;
 static SPTexture *reefTexture = nil;
 static SPTexture *visTexture = nil;
