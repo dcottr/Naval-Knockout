@@ -77,7 +77,7 @@ static Base * enemyTail = nil;
 -(BOOL)healShip:(Ship *)ship{
   if (!ship.isEnemyShip){
 	if (self.healthy && self.didHealThisTurn){
-	  ship.health = ship.health + 1;
+	  //ship.health = ship.health + 1;
 	  
 	  //  update tile overlay back to previous damage state
 	  //  animate healing
@@ -92,19 +92,19 @@ static Base * enemyTail = nil;
   return NO;
   
 }
-
+/*
 -(void)hitByCannon{
   if (self.health ==2){
-	self.health = 1;
+	 // self.health = 1;
 	[self updateTilesOccupied];
 #pragma message(" needs to deal with shipsegments, left incomplete")
   }
   NSLog(@" Base hit by cannon");
   
 }
-
+*/
 //	this should only change the health sprites
--(void)updateTilesOccupied{
+/*-(void)updateTilesOccupied{
   if (self.health ==1){
 	// change sprite to disabled, change ability to heal
 	self.health = 0;
@@ -116,7 +116,7 @@ static Base * enemyTail = nil;
 	
   }
 }
-
+*/
 //	take tail of a given player base (bottom tile)
 //	and set visibility
 //	of everything around it
