@@ -275,9 +275,12 @@
         newShip.baseColumn = ([(NSNumber *)[shipAttrs objectAtIndex:1] intValue]);
         newShip.dir = ([(NSNumber *)[shipAttrs objectAtIndex:2] intValue]);
         NSArray *health = [shipAttrs objectAtIndex:4];
-        for (int i = 0; i < newShip.shipSegments.count; i++) {
-            ShipSegment *segment = [newShip.shipSegments objectAtIndex:i];
-            segment.health = ([(NSNumber *)[health objectAtIndex:i] intValue]);
+        if (health) {
+            NSLog(@"health: %@", health);
+            for (int i = 0; i < newShip.shipSegments.count; i++) {
+                ShipSegment *segment = [newShip.shipSegments objectAtIndex:i];
+                segment.health = ([(NSNumber *)[health objectAtIndex:i] intValue]);
+            }
         }
         [_enemyShips addObject:newShip];
         Tile *myTile = [[_tiles objectAtIndex:newShip.baseColumn] objectAtIndex:newShip.baseRow];
