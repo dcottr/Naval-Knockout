@@ -99,6 +99,14 @@ static NSDictionary *reefPositions = nil;
     }
     return self;
 }
+- (void)cleanTile
+{
+    [self setClear];
+    _myShipSegment = nil;
+    _myShip = nil;
+    [self displayCannonHit:NO];
+    [self fogOfWar:NO];
+}
 
 - (void)setSelectable:(BOOL)selectable
 {

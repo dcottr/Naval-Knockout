@@ -208,11 +208,7 @@
 {
     for (NSArray *column in _tiles) {
         for (Tile *tile in column) {
-            [tile setClear];
-            tile.myShipSegment = nil;
-            tile.myShip = nil;
-            [tile displayCannonHit:NO];
-            [tile fogOfWar:NO];
+            [tile cleanTile];
         }
     }
 

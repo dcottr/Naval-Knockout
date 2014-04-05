@@ -22,6 +22,8 @@
 @property (nonatomic, strong) Ship *myShip; // Replace with myShipSegment
 @property (nonatomic, strong) ShipSegment *myShipSegment;
 
+- (void)cleanTile;
+
 
 - (void)performMineAction;
 - (void)performCannonAction;

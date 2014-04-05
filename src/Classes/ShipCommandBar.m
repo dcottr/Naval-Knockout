@@ -121,6 +121,7 @@ static SPTexture *buttonTexture = nil;
 {
     
     [self deselectTiles];
+    _validTileSelects = nil;
     [_commandBar setVisible:NO];
     [_lButton setVisible:NO];
     [_rButton setVisible:NO];
