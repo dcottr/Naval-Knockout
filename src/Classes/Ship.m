@@ -755,7 +755,7 @@ static BOOL shipTypeMapsInitialized = NO;
                 for ( int j = _baseRow - semiwidth; j<= semiwidth + _baseRow && j<_gameContainer.tileCount && j>=0; j++ ){
                     Tile *t= [[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j];
                     [t fogOfWar:YES];
-                    //		  t.visible =YES;
+                    // t.visible =YES;
                 }
             }
             break;

@@ -22,7 +22,9 @@ enum {
     Destroyer,
     Torpedo,
     Miner,
-    Radar
+    Radar,
+	My_Base,
+	Opp_base
 };
 typedef NSInteger ShipType;
 
