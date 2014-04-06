@@ -29,6 +29,7 @@
 
 @property (nonatomic, strong) SPImage *backgroundImage;
 
+@property (nonatomic, strong) SPImage *reefImage;
 
 @end
 
@@ -38,7 +39,6 @@
 static SPTexture *waterTexture = nil;
 static SPTexture *reefTexture = nil;
 static SPTexture *visTexture = nil;
-static NSDictionary *reefPositions = nil;
 
 - (id)initWithGame:(Game *)game row:(int)r column:(int)c
 {
@@ -52,7 +52,6 @@ static NSDictionary *reefPositions = nil;
         visTexture= [SPTexture textureWithContentsOfFile:@"visible.png"];
 	}
     
-	[self initReef];
     self = [super init];
     if (self) {
         _game = game;
@@ -60,18 +59,19 @@ static NSDictionary *reefPositions = nil;
         _col = c;
         _fogOfWarVisibility = NO;
         
-        // is this a reef?
-        if( [[reefPositions objectForKey:num(r)] containsObject:num(c)] ){
-            _reef = YES;
-            _backgroundImage = [[SPImage alloc] initWithTexture:reefTexture];
-        }
-        else{
-            _backgroundImage = [[SPImage alloc] initWithTexture:waterTexture];
-        }
-        
+        _backgroundImage = [[SPImage alloc] initWithTexture:waterTexture];
         _backgroundImage.width = _game.tileSize;
         _backgroundImage.height = _game.tileSize;
         [self addChild:_backgroundImage];
+        
+        _reefImage = [[SPImage alloc] initWithTexture:reefTexture];
+        _reefImage.width = _game.tileSize;
+        _reefImage.height = _game.tileSize;
+        _reefImage.x = 0;
+        _reefImage.y = 0;
+        [self addChild:_reefImage];
+        [_reefImage setVisible:NO];
+        _reef = NO;
         
         _content = [[SPSprite alloc] init];
         _content.width = _game.tileSize;
@@ -96,6 +96,7 @@ static NSDictionary *reefPositions = nil;
     _myShipSegment = nil;
     _myShip = nil;
     _sunk = NO;
+    [self setReef:NO];
     _backgroundImage.alpha = 1.0f;
     [self displayCannonHit:NO];
     [self fogOfWar:NO];
@@ -153,34 +154,6 @@ static NSDictionary *reefPositions = nil;
   [_game notifyCannonCollision:self];
 }
 
-
-- (void)initReef
-{
-    if (!reefPositions){
-        reefPositions = @{num(6):@[num(10),num(11)], // reef space occupies rows 3 - 26, cols 10-19
-                          num(7):@[num(12),num(13)],
-                          num(8):@[num(10),num(11),num(12)],
-                          num(9):@[num(20)],
-                          num(10):@[num(19),num(18)],
-                          num(11):@[num(17),num(16)],
-                          num(12):@[num(13),num(14),num(15),num(16)],
-                          num(14):@[num(14),num(15),num(16)],
-                          num(16):@[num(11)],
-                          num(17):@[num(10)],
-                          num(24):@[num(19),num(10),num(12)],
-                          };
-    }
-}
-
-//- (void)setDamaged
-//{
-//    [_damagedOverlay setVisible:YES];
-//}
-//- (void)setDestroyed
-//{
-//    [_destroyedOverlay setVisible:YES];
-//}
-
 - (void)setSunk
 {
     NSLog(@"Set sunk!");
@@ -188,11 +161,18 @@ static NSDictionary *reefPositions = nil;
     _sunk = YES;
 }
 
+- (void)setReef:(BOOL)reef
+{
+    if (reef == _reef) {
+        return;
+    }
+    _reef = reef;
+    [_reefImage setVisible:reef];
+}
 
 - (void)fogOfWar:(BOOL)visible
 {
     if (_myShipSegment) {
-        NSLog(@"Ship should be invisible");
         [_myShipSegment setFogOfWar:visible];
     }
     [_content setVisible:visible];
@@ -207,8 +187,5 @@ static NSDictionary *reefPositions = nil;
     
     _fogOfWarVisibility = visible;
 }
-
-
-// Yellow: 0xffff00
 
 @end

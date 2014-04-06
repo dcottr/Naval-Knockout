@@ -23,6 +23,7 @@
 		631C23F518C52640009EA080 /* ShipsTray.m in Sources */ = {isa = PBXBuildFile; fileRef = 631C23F418C52640009EA080 /* ShipsTray.m */; };
 		631C23F818C53E64009EA080 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 631C23F718C53E64009EA080 /* Images.xcassets */; };
 		63371EA018C56E2C00AA3FAE /* ShipCommandBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 63371E9F18C56E2C00AA3FAE /* ShipCommandBar.m */; };
+		63478A9F18F1CE6800E6F4FC /* red_cross.png in Resources */ = {isa = PBXBuildFile; fileRef = 63478A9E18F1CE6800E6F4FC /* red_cross.png */; };
 		6354EDFA18C6391300BC257E /* green_button06.png in Resources */ = {isa = PBXBuildFile; fileRef = 6354EDF918C6391300BC257E /* green_button06.png */; };
 		6354EDFD18C6391800BC257E /* green_checkmark.png in Resources */ = {isa = PBXBuildFile; fileRef = 6354EDFC18C6391800BC257E /* green_checkmark.png */; };
 		6354EDFF18C659AE00BC257E /* Glossy08.png in Resources */ = {isa = PBXBuildFile; fileRef = 6354EDFE18C659AE00BC257E /* Glossy08.png */; };
@@ -128,6 +129,7 @@
 		631C23F718C53E64009EA080 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Scaffold/Images.xcassets; sourceTree = "<group>"; };
 		63371E9E18C56E2C00AA3FAE /* ShipCommandBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShipCommandBar.h; sourceTree = "<group>"; };
 		63371E9F18C56E2C00AA3FAE /* ShipCommandBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShipCommandBar.m; sourceTree = "<group>"; };
+		63478A9E18F1CE6800E6F4FC /* red_cross.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = red_cross.png; sourceTree = "<group>"; };
 		6354EDF918C6391300BC257E /* green_button06.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = green_button06.png; sourceTree = "<group>"; };
 		6354EDFC18C6391800BC257E /* green_checkmark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = green_checkmark.png; sourceTree = "<group>"; };
 		6354EDFE18C659AE00BC257E /* Glossy08.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Glossy08.png; sourceTree = "<group>"; };
@@ -394,6 +396,7 @@
 				637FEB3C18D3023400265F74 /* reef.png */,
 				6354EDF918C6391300BC257E /* green_button06.png */,
 				6354EDFC18C6391800BC257E /* green_checkmark.png */,
+				63478A9E18F1CE6800E6F4FC /* red_cross.png */,
 				DE4F80DE14E1541400655D44 /* atlas.png */,
 				63BE1C4A18C2A0AF00D00F2D /* WaterTile1.png */,
 				DE4F80DF14E1541400655D44 /* atlas.xml */,
@@ -511,6 +514,7 @@
 				63BE1C4F18C2A70400D00F2D /* tank5.1.png in Resources */,
 				DE4F80EA14E1541400655D44 /* atlas.xml in Resources */,
 				631C23ED18C50587009EA080 /* watertile.jpeg in Resources */,
+				63478A9F18F1CE6800E6F4FC /* red_cross.png in Resources */,
 				63BE1C4D18C2A62500D00F2D /* button2.png in Resources */,
 				63A3EEE918F05D1B0099F2BF /* grey_circle.png in Resources */,
 				DE4F80ED14E1541400655D44 /* atlas@2x.png in Resources */,

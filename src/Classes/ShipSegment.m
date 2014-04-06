@@ -128,6 +128,12 @@ static SPTexture *frontShipTexture = nil;
     [_collisionOverlay setVisible:display];
 }
 
+- (void)setTile:(Tile *)tile
+{
+    _tile = tile;
+    [self displayCannonHit:NO];
+}
+
 - (void)updateSegmentDamage
 {
     [_destroyedOverlay setVisible:NO];

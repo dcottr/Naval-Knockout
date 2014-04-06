@@ -233,7 +233,6 @@ static BOOL shipTypeMapsInitialized = NO;
 
 - (void)updateLocation
 {
-    NSLog(@"Updating location at row: %d", _baseRow);
     float tileSize = _gameContainer.tileSize;
     int k = ((_shipLength - 1) * tileSize)/2;
     if (_dir == Up) {
@@ -454,22 +453,38 @@ static BOOL shipTypeMapsInitialized = NO;
     [self addEventListener:@selector(selectShip:) atObject:self forType:SP_EVENT_TYPE_TOUCH];
 }
 
+- (void)swapPositionWithShip:(Ship *)ship
+{
+    int tempBaseCol = ship.baseColumn;
+    int tempBaseRow = ship.baseRow;
+    ship.baseColumn = _baseColumn;
+    ship.baseRow = _baseRow;
+    _baseColumn = tempBaseCol;
+    _baseRow = tempBaseRow;
+    [ship updateLocation];
+    [self updateLocation];
+}
+
 - (void)selectShip:(SPTouchEvent *)event
 {
-    NSLog(@"Ended phase: %d", SPTouchPhaseEnded);
-    NSLog(@"touched: %@", [event touches]);
     SPTouch *touchUp;
     for (SPTouch *touch in [event touches]) {
         if (touch.phase == SPTouchPhaseEnded) {
-            NSLog(@"Here");
             touchUp = touch;
             break;
         }
     }
     
     if (touchUp && _gameContainer.myTurn) {
-        //        NSLog(@"Selecting ship: %d", _shipType);
-        [_gameContainer.shipCommandBar setSelected:self];
+        if (_gameContainer.currentStateType == StateTypePlay) {
+            [_gameContainer.shipCommandBar setSelected:self];
+        } else if ((_gameContainer.currentStateType == StateTypeShipSetupRight || _gameContainer.currentStateType == StateTypeShipSetupLeft)) {
+            if (_gameContainer.shipCommandBar.ship == nil) {
+                [_gameContainer.shipCommandBar setSelected:self];
+            } else {
+                [self swapPositionWithShip:_gameContainer.shipCommandBar.ship];
+            }
+        }
     }
 }
 
@@ -746,7 +761,6 @@ static BOOL shipTypeMapsInitialized = NO;
     // do cases on directions to get tiles of radar range
     int semiwidth =  ([[radarSize objectAtIndex:0] intValue] - 1)/2; // half the width ; is odd so -1
     int length  = [[radarSize objectAtIndex:1] intValue]; // length is long side
-    NSLog(@"semiwidth : %d , length : %d", semiwidth, length);
     [[[_gameContainer.tiles objectAtIndex:_baseColumn] objectAtIndex:_baseRow] fogOfWar:YES];
     switch (_dir) {
         case Down:  // swap length + width

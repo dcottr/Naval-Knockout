@@ -33,9 +33,6 @@ typedef NSInteger Action;
 @property (nonatomic, strong) SPButton *heavyCannonButton;
 @property (nonatomic, strong) SPButton *torpedo;
 
-
-@property (nonatomic, strong) Ship *ship;
-
 @property (nonatomic, strong) NSSet *validTileSelects;
 
 @property (nonatomic, assign) Action selectedAction;
@@ -124,17 +121,19 @@ static NSDictionary *shipNameMap = nil;
 
 - (void)setSelected:(Ship *)ship
 {
-    
     [self deselect];
     _ship = ship;
     [_commandBar setVisible:YES];
     [_background setVisible:YES];
-    
+    _shipName.text = [shipNameMap objectForKey:num(ship.shipType)];
+    [_shipName setVisible:YES];
+
+    if (_game.currentStateType == StateTypeShipSetupLeft || _game.currentStateType == StateTypeShipSetupRight) {
+        return;
+    }
     
     [_lButton setVisible:YES];
     [_rButton setVisible:YES];
-    _shipName.text = [shipNameMap objectForKey:num(ship.shipType)];
-    [_shipName setVisible:YES];
     // Set validTileSelections Likes
     _selectedAction = ActionMove;
     _validTileSelects = [ship validMoveTiles];

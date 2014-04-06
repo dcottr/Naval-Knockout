@@ -30,7 +30,6 @@
 - (void)performCannonAction;
 - (void)performHeavyCannonAction;
 - (void)displayCannonHit:(BOOL)display;
-- (void)initReef;
 - (void)notifyEvent;
 
 - (void)setSunk;

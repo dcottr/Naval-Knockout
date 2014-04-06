@@ -6,7 +6,20 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIDevice.h>
 #import "GameState.h"
-@class ShipsTray, ShipCommandBar, GameManager, Tile;
+
+
+enum {
+    StateTypeNone,
+    StateTypeReefProposal, // This is the state we begin with in newGame
+    StateTypeReefAccepting,
+    StateTypeShipSetupLeft,
+    StateTypeShipSetupRight,
+    StateTypePlay
+};
+typedef NSInteger StateType;
+
+
+@class shipTray, ShipCommandBar, GameManager, Tile;
 
 @interface Game : SPSprite <UIAlertViewDelegate>
 
@@ -14,7 +27,7 @@
 
 @property (nonatomic, strong) SPJuggler *shipJuggler;
 
-@property (nonatomic, strong) ShipsTray *shipsTray;
+@property (nonatomic, strong) shipTray *shipsTray;
 @property (nonatomic, strong) ShipCommandBar *shipCommandBar;
 
 // All ships
@@ -31,12 +44,14 @@
 
 @property (nonatomic, assign) BOOL myTurn;
 
+@property (nonatomic, readonly, assign) StateType currentStateType;
+
 - (void)doneSettingShips;
 
 
 - (NSDictionary *)getDataDictWithMyID:(NSString *)myID opponentID:(NSString *)oppID;
 - (BOOL)checkVictoryWithMyID:(NSString *)myID;
-- (void)newState:(NSDictionary *)state;
+- (void)receivedGame:(NSDictionary *)state;
 
 - (void)performedAction;
 - (void)notifyCannonCollision:(Tile *)tile;

@@ -22,8 +22,11 @@
     float shipOffsetY;
 }
 
-- (void)setup;
-@property (nonatomic, strong) SPButton *checkButton;
+
+@property (nonatomic, strong) SPButton *doneSetupBtn;
+@property (nonatomic, strong) SPButton *acceptReefBtn;
+@property (nonatomic, strong) SPButton *rejectReefBtn;
+
 
 @property (nonatomic, strong) Tile *cannonCollisionTile; // Tile which suffered from collision THIS turn.
 
@@ -35,6 +38,7 @@
 
 @end
 
+static NSArray *startShipTypes = nil;
 
 @implementation Game
 
@@ -46,10 +50,8 @@
         _tileCount = 30;
         _myShips = [[NSMutableSet alloc] init];
         _enemyShips = [[NSMutableSet alloc] init];
-        [self setup];
+        [self setupStage];
         [self presentMenu];
-        
-        
     }
     return self;
 }
@@ -71,8 +73,10 @@
 
 - (void)dismissMenu
 {
+    [_matchMakerController dismissViewControllerAnimated:NO completion:nil];
     [_matchMakerController.view removeFromSuperview];
     [_matchMakerController removeFromParentViewController];
+    
 }
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
@@ -83,44 +87,77 @@
 - (void)newGame
 {
     [self clearMap];
+    _currentStateType = StateTypeReefProposal;
     self.myTurn = YES;
-    // Setup ships on left
-    NSArray *shipTypes = [NSArray arrayWithObjects:num(Torpedo), num(Miner), num(Cruiser), num(Destroyer), num(Radar), nil];
-    _myShips = [[NSMutableSet alloc] init];
-    for (NSNumber *shipType in shipTypes) {
-        Ship *newShip = [[Ship alloc] initWithGame:self type:[shipType intValue]];
-        newShip.baseRow = (int)[shipTypes indexOfObject:shipType] * 3 + 10;
-        newShip.baseColumn = 2;
-        newShip.dir = Right;
-        [_myShips addObject:newShip];
-        
-        [_gridContainer addChild:newShip];
-        [newShip positionedShip];
-        [newShip updateLocation];
-    }
-    
-    // CheckButton stuff
-    SPTexture *checkButtonTexture = [SPTexture textureWithContentsOfFile:@"green_checkmark.png"];
-    _checkButton = _checkButton = [[SPButton alloc] initWithUpState:checkButtonTexture];
-    _checkButton.x = Sparrow.stage.width - _checkButton.width - 30.0f;
-    _checkButton.y = (self.height - _checkButton.height)/2;
-    [self addChild:_checkButton];
-    
-    [_checkButton addEventListener:@selector(doneSetup:) atObject:self forType:SP_EVENT_TYPE_TOUCH];
-    if (_cannonCollisionTile) {
-        [_cannonCollisionTile displayCannonHit:NO];
-        _cannonCollisionTile = nil;
+    [self handleState:nil type:StateTypeReefProposal];
+}
+
+- (void)generateRandomReef
+{
+    for (int col = 10; col < 20; col++) {
+        for (int row = 3; row < 27; row++) {
+            if(arc4random_uniform(100) > 90) {
+                [[[_tiles objectAtIndex:col] objectAtIndex:row] setReef:YES];
+            }
+        }
     }
 }
 
-- (void)newState:(NSDictionary *)state
+- (void)acceptReef
+{
+    [self performedAction];
+    [_acceptReefBtn setVisible:NO];
+    [_rejectReefBtn setVisible:NO];
+    [_shipCommandBar deselect];
+}
+
+- (void)rejectReef
 {
     [self clearMap];
-    NSString *myId = [GKLocalPlayer localPlayer].playerID;
-    NSLog(@"My id: %@", myId);
-    NSLog(@"newState with state: %@", state);
+    _currentStateType = StateTypeReefProposal;
+    [_rejectReefBtn setVisible:YES];
+    [_acceptReefBtn setVisible:YES];
+    [self generateRandomReef];
+}
+
+- (void)doneSetup
+{
+    [self performedAction];
+    [_doneSetupBtn setVisible:NO];
+}
+
+//  stateType is my state.
+- (void)handleState:(NSDictionary *)state type:(StateType)stateType
+{
+    _currentStateType = stateType;
+    if (stateType == StateTypeReefAccepting) {
+        [_rejectReefBtn setVisible:YES];
+        [_acceptReefBtn setVisible:YES];
+    } else if (stateType == StateTypeReefProposal) {
+        [self generateRandomReef];
+        [_rejectReefBtn setVisible:YES];
+        [_acceptReefBtn setVisible:YES];
+        return;
+    } else if (stateType == StateTypeShipSetupLeft) {
+        [self createShipsLeft:YES];
+    } else if (stateType == StateTypeShipSetupRight) {
+        [self loadState:state];
+        [self createShipsLeft:NO];
+    } else if (stateType == StateTypePlay) {
+        [self loadState:state];
+    }
+}
+
+- (void)receivedGame:(NSDictionary *)state
+{
+    if (!state) {
+        NSLog(@"Received game without any state");
+        [self presentMenu];
+        return;
+    }
     
-    // check whose turn.
+    [self clearMap];
+    NSString *myId = [GKLocalPlayer localPlayer].playerID;
     GKTurnBasedMatch *currentMatch = [[NKMatchHelper sharedInstance] currentMatch];
     if ([currentMatch.currentParticipant.playerID isEqualToString:myId]) {
         self.myTurn = YES;
@@ -128,91 +165,111 @@
         self.myTurn = NO;
     }
     
-    if ([state objectForKey:myId] == nil || [((NSDictionary *)[state objectForKey:myId]) count] == 0) {
-        
-        // Load enemy ships
-        NSArray *enemyShips;
-        for (NSString *enemyId in [state allKeys]) {
-            if (![enemyId isEqualToString:@"Mines"] && ![enemyId isEqualToString:@"notify"] && ![enemyId isEqualToString:myId]) {
-                NSLog(@"enemyKey: %@", enemyId);
-                enemyShips = [state objectForKey:enemyId];
+    [self setupReefs:[state objectForKey:@"reef"]];
+    
+    if (_myTurn) {
+        StateType opponentStateType = ((NSNumber *)[state objectForKey:@"stateType"]).intValue;
+        StateType myNewStateType;
+        NSLog(@"OpponentString: %ld", (long)opponentStateType);
+        switch (opponentStateType) {
+            case StateTypeReefProposal:
+                myNewStateType = StateTypeReefAccepting;
                 break;
-            }
+            case StateTypeReefAccepting:
+                myNewStateType = StateTypeShipSetupLeft;
+                break;
+            case StateTypeShipSetupLeft:
+                myNewStateType = StateTypeShipSetupRight;
+                break;
+            case StateTypeShipSetupRight:
+                myNewStateType = StateTypePlay;
+                break;
+                case StateTypePlay:
+                myNewStateType = StateTypePlay;
+                break;
+            default:
+                NSLog(@"Received game without the other player's info");
+                [self presentMenu];
+                return;
+                break;
         }
-        if (enemyShips) {
-            [self setupEnemyShips:enemyShips];
-        }
-        
-        
-        // Setup ships on right
-        NSArray *shipTypes = [NSArray arrayWithObjects:num(Torpedo), num(Miner), num(Cruiser), num(Destroyer), num(Radar), nil];
-        _myShips = [[NSMutableSet alloc] init];
-        for (NSNumber *shipType in shipTypes) {
-            Ship *newShip = [[Ship alloc] initWithGame:self type:[shipType intValue]];
-            newShip.baseRow = (int)[shipTypes indexOfObject:shipType] * 3 + 10;
-            newShip.baseColumn = 28;
-            newShip.dir = Left;
-            [_myShips addObject:newShip];
-            [_gridContainer addChild:newShip];
-            [newShip positionedShip];
-            
-            [newShip updateLocation];
-        }
-        
-        // CheckButton stuff
-        SPTexture *checkButtonTexture = [SPTexture textureWithContentsOfFile:@"green_checkmark.png"];
-        _checkButton = _checkButton = [[SPButton alloc] initWithUpState:checkButtonTexture];
-        _checkButton.x = Sparrow.stage.width - _checkButton.width - 30.0f;
-        _checkButton.y = (self.height - _checkButton.height)/2;
-        [self addChild:_checkButton];
-        
-        [_checkButton addEventListener:@selector(doneSetup:) atObject:self forType:SP_EVENT_TYPE_TOUCH];
-        
-        if (_cannonCollisionTile) {
-            [_cannonCollisionTile displayCannonHit:NO];
-            _cannonCollisionTile = nil;
-        }
-        
+        [self handleState:state type:myNewStateType];
     } else {
-        // Load everyone's ships.
-        
-        if (_cannonCollisionTile) {
-            [_cannonCollisionTile displayCannonHit:NO];
-            _cannonCollisionTile = nil;
-        }
-        
-        // Load enemy ships
-        NSArray *enemyShips;
-        for (NSString *enemyId in [state allKeys]) {
-            if (![enemyId isEqualToString:@"Mines"] && ![enemyId isEqualToString:@"notify"] && ![enemyId isEqualToString:myId]) {
-                NSLog(@"enemyKey: %@", enemyId);
-                enemyShips = [state objectForKey:enemyId];
-                break;
-            }
-        }
-        if (enemyShips) {
-            [self setupEnemyShips:enemyShips];
-        }
-        
-        
-        // Load my ships
-        NSArray *myShips = [state objectForKey:myId];
-        [self setupMyShips:myShips];
-        
-        // Collision notify tile
-        NSArray *notify = [state objectForKey:@"notify"];
-        if (notify && [notify count] > 1) {
-            NSInteger row = [[notify objectAtIndex:0] integerValue];
-            NSInteger col = [[notify objectAtIndex:1] integerValue];
-            Tile *tile = [[_tiles objectAtIndex:col] objectAtIndex:row];
-            [tile displayCannonHit:YES];
+        [self loadState:state];
+    }
+}
+
+- (void)loadState:(NSDictionary *)state
+{
+    // Remember, this can be called any time if it is not my turn, and only on play if it is my turn.
+    NSLog(@"LoadingState: %@", state);
+    NSString *myId = [GKLocalPlayer localPlayer].playerID;
+
+    // Old stuff
+    
+    if (_cannonCollisionTile) {
+        [_cannonCollisionTile displayCannonHit:NO];
+        _cannonCollisionTile = nil;
+    }
+    
+    // Load enemy ships
+    NSArray *enemyShips;
+    for (NSString *enemyId in [state allKeys]) {
+        if (![enemyId isEqualToString:@"Mines"] && ![enemyId isEqualToString:@"notify"] && ![enemyId isEqualToString:myId] && ![enemyId isEqualToString:@"reef"] && ![enemyId isEqualToString:@"stateType"]) {
+            enemyShips = [state objectForKey:enemyId];
+            break;
         }
     }
+    if (enemyShips) {
+        [self setupEnemyShips:enemyShips];
+    }
+    
+    
+    NSArray *myShips = [state objectForKey:myId];
+    [self setupMyShips:myShips];
+    
+    // Collision notify tile
+    NSArray *notify = [state objectForKey:@"notify"];
+    if (notify && [notify count] > 1) {
+        NSInteger row = [[notify objectAtIndex:0] integerValue];
+        NSInteger col = [[notify objectAtIndex:1] integerValue];
+        Tile *tile = [[_tiles objectAtIndex:col] objectAtIndex:row];
+        [tile displayCannonHit:YES];
+    }
+}
+
+#pragma message("TODO: set up bases here.")
+- (void)createShipsLeft:(BOOL)left
+{
+    _myShips = [[NSMutableSet alloc] init];
+    for (int i = 0; i < [startShipTypes count]; i++) {
+        NSNumber *shipType = [startShipTypes objectAtIndex:i];
+        Ship *newShip = [[Ship alloc] initWithGame:self type:[shipType intValue]];
+        newShip.baseRow = i + 10;
+        if (left) {
+            newShip.baseColumn = 1;
+            newShip.dir = Right;
+        } else {
+            newShip.baseColumn = 28;
+            newShip.dir = Left;
+        }
+        [_myShips addObject:newShip];
+        
+        [_gridContainer addChild:newShip];
+        [newShip positionedShip];
+        [newShip updateLocation];
+    }
+    
+    [_doneSetupBtn setVisible:YES];
 }
 
 - (void)clearMap
 {
     [self dismissMenu];
+    [_doneSetupBtn setVisible:NO];
+    [_acceptReefBtn setVisible:NO];
+    [_rejectReefBtn setVisible:NO];
+    
     for (NSArray *column in _tiles) {
         for (Tile *tile in column) {
             [tile cleanTile];
@@ -232,13 +289,7 @@
         [_shipCommandBar deselect];
     }
     
-}
-
-- (void)doneSetup:(SPTouchEvent *)event
-{
-    [_checkButton removeEventListener:@selector(doneSetup:) atObject:self forType:SP_EVENT_TYPE_TOUCH];
-    [_checkButton removeFromParent];
-    [_delegate sendTurn];
+    _currentStateType = StateTypeNone;
 }
 
 - (void)setupMyShips:(NSArray *)myShips
@@ -266,7 +317,7 @@
         }
         
         [_myShips addObject:newShip];
-
+        
         if (isSunk) {
             [newShip sinkShip];
         } else {
@@ -332,10 +383,24 @@
     }
 }
 
+- (void)setupReefs:(NSArray *)reefs
+{
+    if (!reefs) {
+        return;
+    }
+    
+    int row;
+    int col;
+    for (NSArray *reef in reefs) {
+        row = ([(NSNumber *)[reef objectAtIndex:0] intValue]);
+        col = ([(NSNumber *)[reef objectAtIndex:1] intValue]);
+        [[[_tiles objectAtIndex:col] objectAtIndex:row] setReef:YES];;
+    }
+    
+}
 
 - (NSDictionary *)getDataDictWithMyID:(NSString *)myID opponentID:(NSString *)oppID
 {
-    
     NSMutableArray *myShips = [[NSMutableArray alloc] init];
     for (Ship *ship in _myShips) {
         NSMutableArray *health = [[NSMutableArray alloc] init];
@@ -361,6 +426,7 @@
     if (!oppID) {
         oppID = @"-1";
     }
+    
     NSMutableDictionary *result = [[NSMutableDictionary alloc] initWithObjectsAndKeys:myShips, myID, enemyShips, oppID, nil];
     
     if (_cannonCollisionTile) {
@@ -368,7 +434,20 @@
         [result setObject:notifyTile forKey:@"notify"];
     }
     
-    return result;
+    NSMutableArray *reefs = [[NSMutableArray alloc] init];
+    for (NSArray *column in _tiles) {
+        for (Tile *tile in column) {
+            if (tile.reef) {
+                NSArray *position = [NSArray arrayWithObjects:num(tile.row), num(tile.col), nil];
+                [reefs addObject:position];
+            }
+        }
+    }
+    [result setObject:[NSArray arrayWithArray:reefs] forKey:@"reef"];
+    
+    [result setObject:num(_currentStateType) forKey:@"stateType"];
+    
+    return [NSDictionary dictionaryWithDictionary:result];
     
     
     // Mine stuff
@@ -427,10 +506,11 @@
     [_enemyTurnImage setVisible:!myTurn];
 }
 
-- (void)setup
+- (void)setupStage
 {
     
     //    [SPAudioEngine start];  // starts up the sound engine
+    startShipTypes = @[num(Cruiser), num(Cruiser), num(Destroyer), num(Destroyer), num(Destroyer), num(Torpedo), num(Torpedo), num(Miner), num(Miner), num(Radar)];
     
     
     _content = [[SPSprite alloc] init];
@@ -471,6 +551,31 @@
     
     [_gridContainer addEventListener:@selector(scrollGrid:) atObject:self forType:SP_EVENT_TYPE_TOUCH];
     
+    //  doneSetup button
+    SPTexture *checkmarkButtonTexture = [SPTexture textureWithContentsOfFile:@"green_checkmark.png"];
+    _doneSetupBtn = [[SPButton alloc] initWithUpState:checkmarkButtonTexture];
+    _doneSetupBtn.x = (Sparrow.stage.width - _doneSetupBtn.width) / 2.0f;
+    _doneSetupBtn.y = (_doneSetupBtn.height) * 2.0f;
+    [self addChild:_doneSetupBtn];
+    [_doneSetupBtn addEventListener:@selector(doneSetup) atObject:self forType:SP_EVENT_TYPE_TRIGGERED];
+    [_doneSetupBtn setVisible:NO];
+    
+    //  acceptReef button
+    _acceptReefBtn = [[SPButton alloc] initWithUpState:checkmarkButtonTexture];
+    _acceptReefBtn.x = _doneSetupBtn.x - 2 * _acceptReefBtn.width;
+    _acceptReefBtn.y = _doneSetupBtn.y;
+    [self addChild:_acceptReefBtn];
+    [_acceptReefBtn addEventListener:@selector(acceptReef) atObject:self forType:SP_EVENT_TYPE_TRIGGERED];
+    [_acceptReefBtn setVisible:NO];
+    
+    //  rejectReef button
+    SPTexture *rejectButtonTexture = [SPTexture textureWithContentsOfFile:@"red_cross.png"];
+    _rejectReefBtn = [[SPButton alloc] initWithUpState:rejectButtonTexture];
+    _rejectReefBtn.x = _doneSetupBtn.x + 2 * _acceptReefBtn.width;
+    _rejectReefBtn.y = _doneSetupBtn.y;
+    [self addChild:_rejectReefBtn];
+    [_rejectReefBtn addEventListener:@selector(rejectReef) atObject:self forType:SP_EVENT_TYPE_TRIGGERED];
+    [_rejectReefBtn setVisible:NO];
     
     // Turn notifier.
     _myTurnImage = [[SPImage alloc] initWithContentsOfFile:@"green_circle.png"];
@@ -508,9 +613,6 @@
         if (touchUp) {
             if (!isGrabbed && !isPinched) {
                 [self tapGrid:touchUp];
-                //                if (_shipCommandBar) {
-                //                    [_shipCommandBar deselect];
-                //                }
             }
             isGrabbed = NO;
             isPinched = NO;
@@ -525,16 +627,7 @@
         SPPoint *movement = [touch movementInSpace:_content.parent];
         
         _content.x += movement.x;
-        _content.y += movement.y;
-        
-        // Doesn't work, since pivot changes on drag....
-        //        newY = _content.y + movement.y;
-        //        int lb = Sparrow.stage.height - _tileCount * _tileSize - 162.0f;
-        //        NSLog(@"newY: %f", newY);
-        //        if (newY <= 62 && lb <= newY) {
-        //            _content.y = newY;
-        //        }
-        
+        _content.y += movement.y;        
     } else if (touches.count >= 2) {
         isPinched = YES;
         // two fingers touching -> rotate and scale
@@ -596,7 +689,7 @@
 - (void)doneSettingShips
 {
     NSLog(@"Here");
-    [self removeChild:_shipsTray];
+    [self removeChild:(SPDisplayObject *)_shipsTray];
     _shipsTray = nil;
     
     _shipCommandBar = [[ShipCommandBar alloc] init];

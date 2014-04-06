@@ -11,6 +11,7 @@
 @class Ship, Tile, Game;
 @interface ShipCommandBar : SPSprite
 
+@property (nonatomic, strong) Ship *ship;
 
 - (void)setSelected:(Ship *)ship;
 - (void)deselect;

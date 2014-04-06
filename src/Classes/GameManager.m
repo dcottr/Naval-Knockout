@@ -38,7 +38,6 @@
     NSLog(@"Entering game");
     if (_game) {
         [_game newGame];
-        //        [_game newState:_gameState.state];
     }
 }
 
@@ -47,9 +46,8 @@
 {
     [_gameState DataToState:match.matchData];
     NSLog(@"LayoutMatch: %@", _gameState.state);
-    //    [_gameState DataToState:match.matchData];
     if (_game) {
-        [_game newState:_gameState.state];
+        [_game receivedGame:_gameState.state];
     }
 }
 
@@ -58,7 +56,7 @@
     NSLog(@"Taking turn");
     [_gameState DataToState:match.matchData];
     if (_game) {
-        [_game newState:_gameState.state];
+        [_game receivedGame:_gameState.state];
     }
 }
 
@@ -66,7 +64,7 @@
 {
     [_gameState DataToState:match.matchData];
     if (_game) {
-        [_game newState:_gameState.state];
+        [_game receivedGame:_gameState.state];
     }
     NSString *myID = [GKLocalPlayer localPlayer].playerID;
     for (GKTurnBasedParticipant *participant in match.participants) {
@@ -91,9 +89,6 @@
 
 - (void)sendTurn
 {
-    if(!_game) {
-        NSLog(@"Game is not yet initialized");
-    }
     
     GKTurnBasedMatch *currentMatch = [[NKMatchHelper sharedInstance] currentMatch];
     
@@ -160,7 +155,6 @@
             }];
         }
     }
-    NSLog(@"Send Turn, %@, %@", data, nextParticipant);
 }
 
 - (void)presentVictory:(BOOL)victory
@@ -174,4 +168,5 @@
     [alert show];
 
 }
+
 @end
