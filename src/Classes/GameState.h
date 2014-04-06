@@ -15,6 +15,7 @@
 @property (nonatomic, strong) NSString *playerKey;
 
 @property (nonatomic, strong) NSMutableDictionary *state;
+
 -(NSData *) DataFromState:(NSDictionary *)gameState;
 -(NSMutableDictionary *) updateState:(NSDictionary *)board;
 -(NSMutableDictionary *) DataToState:(NSData *) data;

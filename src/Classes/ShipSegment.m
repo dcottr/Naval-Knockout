@@ -12,29 +12,80 @@
 
 @interface ShipSegment ()
 
-@property (nonatomic, strong) SPImage *overlayImage;
 @property (nonatomic, strong) SPQuad *selectableOverlay;
+
+@property (nonatomic, strong) SPImage *shipSegmentImage;
+
+@property (nonatomic, strong) SPSprite *healthOverlayContent;
+@property (nonatomic, strong) SPQuad *damagedOverlay;
+@property (nonatomic, strong) SPQuad *destroyedOverlay;
+@property (nonatomic, strong) SPQuad *collisionOverlay;
+
 
 @end
 
 @implementation ShipSegment
 
 static SPTexture *waterTexture = nil;
+static SPTexture *backShipTexture = nil;
+static SPTexture *middleShipTexture = nil;
+static SPTexture *frontShipTexture = nil;
 
-- (id)init
+
+
+- (id)initWithIndex:(ShipSegmentIndex)index
 {
     if (!waterTexture) {
         waterTexture = [SPTexture textureWithContentsOfFile:@"watertile.jpeg"];
     }
+    if (!backShipTexture) {
+        backShipTexture = [SPTexture textureWithContentsOfFile:@"shipBack.png"];
+    }
+    if (!middleShipTexture) {
+        middleShipTexture = [SPTexture textureWithContentsOfFile:@"shipMid.png"];
+    }
+    if (!frontShipTexture) {
+        frontShipTexture = [SPTexture textureWithContentsOfFile:@"shipFront.png"];
+    }
+
 
     self = [super init];
     if (self) {
-        _overlayImage = [[SPImage alloc] initWithTexture:waterTexture];
-        [self addChild:_overlayImage];
-        [_overlayImage setVisible:NO];
+        SPTexture *shipSegmentTexture;
+        if (index == ShipSegmentIndexBack) {
+            shipSegmentTexture = backShipTexture;
+        } else if (index == ShipSegmentIndexMid) {
+            shipSegmentTexture = middleShipTexture;
+        } else {
+            shipSegmentTexture = frontShipTexture;
+        }
+        
+        _healthOverlayContent = [[SPSprite alloc] init];
+        _healthOverlayContent.width = 32.0f;
+        _healthOverlayContent.height = 32.0f;
+        [self addChild:_healthOverlayContent];
+        
+        _damagedOverlay = [[SPQuad alloc] initWithWidth:32.0f height:32.0f color:0xffff00];
+        [_healthOverlayContent addChild:_damagedOverlay];
+        [_damagedOverlay setVisible:NO];
+        
+        _destroyedOverlay = [[SPQuad alloc] initWithWidth:32.0f height:32.0f color:0x000000];
+        [_healthOverlayContent addChild:_destroyedOverlay];
+        [_destroyedOverlay setVisible:NO];
+
+        _collisionOverlay = [[SPQuad alloc] initWithWidth:32.0f - 7.0f height:32.0f - 7.0f color:0xff0000];
+        [self addChild:_collisionOverlay];
+        [_collisionOverlay setVisible:NO];
+        
+        _shipSegmentImage = [[SPImage alloc] initWithTexture:shipSegmentTexture];
+        _shipSegmentImage.width = 32.0f;
+        _shipSegmentImage.height = 32.0f;
+        [self addChild:_shipSegmentImage];
 
         _selectableOverlay = [[SPQuad alloc] initWithWidth:self.width height:self.height color:0x00FF00];
         _selectableOverlay.alpha = 0.5f;
+        _selectableOverlay.width = 32.0f;
+        _shipSegmentImage.height = 32.0f;
         [self addChild:_selectableOverlay];
         [_selectableOverlay setVisible:NO];
         _health = 2;
@@ -44,33 +95,8 @@ static SPTexture *waterTexture = nil;
 
 - (void)setFogOfWar:(BOOL)foggy
 {
-    if (_ship) {
-        NSLog(@"Ship Direction: %ld", (long)_ship.dir);
-    }
-    
-    _overlayImage.pivotX = _overlayImage.width/2.0f;
-    _overlayImage.pivotY = _overlayImage.height/2.0f;
-    _overlayImage.x = _overlayImage.width/2.0f;
-    _overlayImage.y = _overlayImage.height/2.0f;
-    
-    switch (_ship.dir) {
-        case Up:
-            _overlayImage.rotation = 0;
-            break;
-        case Right:
-            _overlayImage.rotation = -M_PI/2.0;
-            break;
-        case Left:
-            _overlayImage.rotation = M_PI/2.0;
-            break;
-        case Down:
-            _overlayImage.rotation = M_PI;
-            break;
-        default:
-            break;
-    }
-    
-    [_overlayImage setVisible:!foggy];
+    [_shipSegmentImage setVisible:foggy];
+    [_healthOverlayContent setVisible:foggy];
 }
 
 - (void)setSelectable:(BOOL)selectable
@@ -83,25 +109,33 @@ static SPTexture *waterTexture = nil;
     if (_health == 2) {
         if (_ship.shipArmour == ArmourHeavy) {
             _health = 1;
-            [self updateTileDamage];
+            [self updateSegmentDamage];
             return;
         }
     }
-    
-    NSLog(@"Hit by cannon, new health: %d", _health);
     _health = 0;
-    [self updateTileDamage];
-    return;
+    [self updateSegmentDamage];
 }
 
-- (void)updateTileDamage
+- (void)hitByHeavyCannon
 {
+    _health = 0;
+    [self updateSegmentDamage];
+}
+
+- (void)displayCannonHit:(BOOL)display
+{
+    [_collisionOverlay setVisible:display];
+}
+
+- (void)updateSegmentDamage
+{
+    [_destroyedOverlay setVisible:NO];
+    [_damagedOverlay setVisible:NO];
     if(_health == 0) {
-        [_tile setDestroyed];
+        [_destroyedOverlay setVisible:YES];
     } else if (_health == 1) {
-        [_tile setDamaged];
-    } else {
-        [_tile setClear];
+        [_damagedOverlay setVisible:YES];
     }
 }
 

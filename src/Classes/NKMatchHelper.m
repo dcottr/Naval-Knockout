@@ -65,12 +65,10 @@ static NKMatchHelper *sharedHelper = nil;
         !_userAuthenticated) {
         NSLog(@"Authentication changed: player authenticated.");
         _userAuthenticated = TRUE;
-//        [self installTurnBasedEventHandler];
     } else if (![GKLocalPlayer localPlayer].isAuthenticated &&
                _userAuthenticated) {
         NSLog(@"Authentication changed: player not authenticated");
         _userAuthenticated = FALSE;
-//        [self uninstallTurnBasedEventHandler];
     }
     
 }
@@ -91,43 +89,7 @@ static NKMatchHelper *sharedHelper = nil;
             NSLog(@"Unable to Authenticate with Game Center: %@", [error localizedDescription]);
         }
     };
-    
-    
-    
-    
-//    GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
-//    
-//    localPlayer.authenticateHandler = ^(UIViewController *viewController, NSError *error){
-//        NSLog(@"Authenticated with error: %@", error);
-//        if (viewController != nil)
-//        {
-//            [_menuViewController presentViewController:viewController animated:YES completion:nil];
-//        }
-//        else if (localPlayer.isAuthenticated)
-//        {
-//#pragma mark("TODO: If no active game")
-////            [[NKMatchHelper sharedInstance] findMatchWithMinPlayers:2 maxPlayers:2 viewController:_menuViewController];
-//        }
-//        else
-//        {
-//            //[self disableGameCenter];
-//        }
-//    };
-    
 }
-
-//- (void)installTurnBasedEventHandler
-//{
-//    NSLog(@"Listening for playerEvents");
-//
-//    [[GKLocalPlayer localPlayer] registerListener:self];
-//    
-//}
-//
-//- (void)uninstallTurnBasedEventHandler
-//{
-//    [[GKLocalPlayer localPlayer] unregisterAllListeners];
-//}
 
 #pragma mark GKTurnBasedMatchmakerViewControllerDelegate
 
@@ -263,13 +225,14 @@ static NKMatchHelper *sharedHelper = nil;
 {
     // Need to upload with htis match object.
     NSLog(@"In receivedTurnEvent active: %hhd", didBecomeActive);
-    self.currentMatch = match;
+    if ([self.currentMatch.matchID isEqualToString:match.matchID]) {
+        self.currentMatch = match;
+        [_delegate takeTurn:match];
+    } else if (didBecomeActive) {
+        self.currentMatch = match;
+        [_delegate takeTurn:match];
+    }
     
-//    if (didBecomeActive) {
-//        self.currentMatch = match;
-//    }
-    
-    [_delegate takeTurn:match];
 }
 
 @end

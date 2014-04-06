@@ -50,13 +50,13 @@ static BOOL shipTypeMapsInitialized = NO;
 + (void)initShipTypeMaps
 {
     if (!shipTypeMapsInitialized) {
-	  shipLengthMap = @{num(Cruiser): num(5), num(Destroyer): num(4), num(Torpedo): num(3), num(Miner): num(2), num(Radar): num(3), num(Base_Type): num(10)};
-	  shipSpeedMap = @{num(Cruiser): num(10), num(Destroyer): num(8), num(Torpedo): num(9), num(Miner): num(6), num(Radar): num(3), num(Base_Type):num(0)};
-	  shipArmourMap = @{num(Cruiser): num(ArmourHeavy), num(Destroyer): num(ArmourNormal), num(Torpedo): num(ArmourNormal), num(Miner): num(ArmourHeavy), num(Radar): num(ArmourNormal), num(Base_Type):num(ArmourNormal)};
-	  shipWeaponsMap = @{num(Cruiser): @[num(WeaponHeavyCannon)], num(Destroyer): @[num(WeaponCannon), num(WeaponTorpedo)], num(Torpedo): @[num(WeaponCannon), num(WeaponTorpedo)], num(Miner): @[num(WeaponCannon), num(WeaponMine)], num(Radar): @[num(WeaponCannon)], num(Base_Type):@[]};
+        shipLengthMap = @{num(Cruiser): num(5), num(Destroyer): num(4), num(Torpedo): num(3), num(Miner): num(2), num(Radar): num(3), num(Base_Type): num(10)};
+        shipSpeedMap = @{num(Cruiser): num(10), num(Destroyer): num(8), num(Torpedo): num(9), num(Miner): num(6), num(Radar): num(3), num(Base_Type):num(0)};
+        shipArmourMap = @{num(Cruiser): num(ArmourHeavy), num(Destroyer): num(ArmourNormal), num(Torpedo): num(ArmourNormal), num(Miner): num(ArmourHeavy), num(Radar): num(ArmourNormal), num(Base_Type):num(ArmourNormal)};
+        shipWeaponsMap = @{num(Cruiser): @[num(WeaponHeavyCannon)], num(Destroyer): @[num(WeaponCannon), num(WeaponTorpedo)], num(Torpedo): @[num(WeaponCannon), num(WeaponTorpedo)], num(Miner): @[num(WeaponCannon), num(WeaponMine)], num(Radar): @[num(WeaponCannon)], num(Base_Type):@[]};
         shipTypeMapsInitialized = YES;
-	  shipRadarDimensions =@{num(Cruiser): @[num(3),num(10)], num(Destroyer):@[num(3),num(8)], num(Torpedo):@[num(3),num(6)], num(Miner):@[num(6),num(5)] , num(Radar):@[num(6),num(3)], num(Base_Type):@[num(12),num(3)]};
-	  shipCannonDimensions = @{num(Cruiser): @[num(11), num(15), num(5)], num(Destroyer):@[num(9),num(12),num(4)], num(Torpedo):@[num(5),num(5), num(0)], num(Miner):@[num(5),num(4),num(1)], num(Radar):@[num(3),num(5),num(1)], num(Base_Type):@[]};
+        shipRadarDimensions =@{num(Cruiser): @[num(3),num(10)], num(Destroyer):@[num(3),num(8)], num(Torpedo):@[num(3),num(6)], num(Miner):@[num(6),num(5)] , num(Radar):@[num(6),num(3)], num(Base_Type):@[num(12),num(3)]};
+        shipCannonDimensions = @{num(Cruiser): @[num(11), num(15), num(5)], num(Destroyer):@[num(9),num(12),num(4)], num(Torpedo):@[num(5),num(5), num(0)], num(Miner):@[num(5),num(4),num(1)], num(Radar):@[num(3),num(5),num(1)], num(Base_Type):@[]};
     }
 }
 
@@ -80,13 +80,26 @@ static BOOL shipTypeMapsInitialized = NO;
         
         _shipImage.width = 32;
         _shipImage.height = 32 * _shipLength;
+        self.width = 32;
+        self.height = 32 * _shipLength;
+        
         _dir = Up;
         [self addChild:_shipImage];
-        
+        _shipImage.alpha = 0.0f;
         
         NSMutableArray *shipSegments = [[NSMutableArray alloc] init];
         for (int i = 0; i < _shipLength; i++) {
-            ShipSegment *shipSegment = [[ShipSegment alloc] init];
+            
+            ShipSegmentIndex segIndex;
+            if (i == 0) {
+                segIndex = ShipSegmentIndexBack;
+            } else if (i == _shipLength - 1) {
+                segIndex = ShipSegmentIndexFront;
+            } else {
+                segIndex = ShipSegmentIndexMid;
+            }
+            
+            ShipSegment *shipSegment = [[ShipSegment alloc] initWithIndex:segIndex];
             [shipSegments addObject:shipSegment];
             shipSegment.width = 32;
             shipSegment.height = 32;
@@ -114,8 +127,6 @@ static BOOL shipTypeMapsInitialized = NO;
     self.pivotY = self.height / 2.0f;
     
 }
-
-
 
 - (void)dragFromTray:(SPTouchEvent *)event
 {
@@ -250,11 +261,6 @@ static BOOL shipTypeMapsInitialized = NO;
 
 - (void)updateTilesOccupied
 {
-    for (ShipSegment *segment in _shipSegments) {
-        // Clear damage
-        [segment.tile setClear];
-    }
-    
     for (NSArray *column in _gameContainer.tiles) {
         for (Tile *tile in column) {
             if (_dir == Up) {
@@ -300,10 +306,69 @@ static BOOL shipTypeMapsInitialized = NO;
     // TODO, delete health attribute in ship (put it in segments)
     
     for (ShipSegment *segment in _shipSegments) {
-        [segment updateTileDamage];
+        [segment updateSegmentDamage];
     }
     [self updateSpeed];
 }
+
+- (void)sinkShip
+{
+    _isSunk = YES;
+    for (NSArray *column in _gameContainer.tiles) {
+        for (Tile *tile in column) {
+            if (_dir == Up) {
+                if (tile.col == _baseColumn) {
+                    if (tile.row <= _baseRow && tile.row > _baseRow - _shipLength) {
+                        ShipSegment *segment = [_shipSegments objectAtIndex:( (_baseRow - tile.row))];
+                        segment.tile = tile;
+                        if (segment.tile.myShipSegment == segment) {
+                            tile.myShip = nil;
+                            tile.myShipSegment = nil;
+                        }
+                    }
+                }
+            } else if(_dir == Left) {
+                if (tile.row == _baseRow) {
+                    if (tile.col <= _baseColumn && tile.col > _baseColumn - _shipLength) {
+                        ShipSegment *segment = [_shipSegments objectAtIndex:((_baseColumn - tile.col))];
+                        segment.tile = tile;
+                        if (segment.tile.myShipSegment == segment) {
+                            tile.myShip = nil;
+                            tile.myShipSegment = nil;
+                        }
+                    }
+                }
+            } else if(_dir == Right) {
+                if (tile.row == _baseRow) {
+                    if (tile.col >= _baseColumn && tile.col < _baseColumn + _shipLength) {
+                        ShipSegment *segment = [_shipSegments objectAtIndex:(tile.col - _baseColumn)];
+                        segment.tile = tile;
+                        if (segment.tile.myShipSegment == segment) {
+                            tile.myShip = nil;
+                            tile.myShipSegment = nil;
+                        }
+                    }
+                }
+            } else if(_dir == Down) {
+                if (tile.col == _baseColumn) {
+                    if (tile.row >= _baseRow && tile.row < _baseRow + _shipLength) {
+                        ShipSegment *segment = [_shipSegments objectAtIndex:(tile.row - _baseRow)];
+                        segment.tile = tile;
+                        if (segment.tile.myShipSegment == segment) {
+                            tile.myShip = nil;
+                            tile.myShipSegment = nil;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    for (ShipSegment *segment in _shipSegments) {
+        NSLog(@"Sink segment");
+        [segment.tile setSunk];
+    }
+}
+
 
 - (void)updateSpeed
 {
@@ -403,7 +468,7 @@ static BOOL shipTypeMapsInitialized = NO;
     }
     
     if (touchUp && _gameContainer.myTurn) {
-//        NSLog(@"Selecting ship: %d", _shipType);
+        //        NSLog(@"Selecting ship: %d", _shipType);
         [_gameContainer.shipCommandBar setSelected:self];
     }
 }
@@ -686,40 +751,36 @@ static BOOL shipTypeMapsInitialized = NO;
     switch (_dir) {
         case Down:  // swap length + width
             for ( int i = _baseRow +1; i <= _baseRow +1 + length && i<_gameContainer.tileCount && i>=0; i++){
-                for ( int j = _baseColumn - semiwidth; j<= semiwidth + _baseColumn && j<_gameContainer.tileCount && j>=0; j++ ){
+                for (int j = MAX(0, _baseColumn - semiwidth); j<= semiwidth + _baseColumn && j<_gameContainer.tileCount && j>=0; j++ ){
                     Tile *t= [[_gameContainer.tiles objectAtIndex:j] objectAtIndex:i];
                     [t fogOfWar:YES];
-                    //		  t.visible =YES;
                 }
             }
             break;
             
         case Up: // swap l + w, face downward
-            for ( int i = _baseRow - 1; i >= _baseRow -1 - length && i<_gameContainer.tileCount && i>=0; i--){
-                for ( int j = _baseColumn - semiwidth; j<= semiwidth + _baseColumn && j<_gameContainer.tileCount && j>=0; j++ ){
+            for ( int i = MAX(_baseRow - 1, 0); i >= _baseRow -1 - length && i<_gameContainer.tileCount && i>=0; i--){
+                for ( int j = MAX(0, _baseColumn - semiwidth); j<= semiwidth + _baseColumn && j<_gameContainer.tileCount && j>=0; j++ ){
                     Tile *t= [[_gameContainer.tiles objectAtIndex:j] objectAtIndex:i];
                     [t fogOfWar:YES];
-                    //		  t.visible =YES;
                 }
             }
             break;
             
         case Left:
-            for ( int i = _baseColumn	-1; i >= _baseColumn -1 - length && i<_gameContainer.tileCount && i>=0; i--){
-                for ( int j = _baseRow - semiwidth; j<= semiwidth + _baseRow && j<_gameContainer.tileCount && j>=0; j++ ){
+            for ( int i = MAX(_baseColumn-1, 0); i >= _baseColumn -1 - length && i<_gameContainer.tileCount && i>=0; i--){
+                for ( int j = MAX(_baseRow - semiwidth, 0); j<= semiwidth + _baseRow && j<_gameContainer.tileCount && j>=0; j++ ){
                     Tile *t= [[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j];
                     [t fogOfWar:YES];
-                    //		  t.visible =YES;
                 }
             }
             break;
             
         default:  // object is facing right
-            for ( int i = _baseColumn	+1; i <= _baseColumn +1 + length && i<_gameContainer.tileCount && i>=0; i++){
-                for ( int j = _baseRow - semiwidth; j<= semiwidth + _baseRow && j<_gameContainer.tileCount && j>=0; j++ ){
+            for ( int i = _baseColumn + 1; i <= _baseColumn +1 + length && i<_gameContainer.tileCount && i>=0; i++){
+                for ( int j = MAX(_baseRow - semiwidth, 0); j<= semiwidth + _baseRow && j<_gameContainer.tileCount && j>=0; j++ ){
                     Tile *t= [[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j];
                     [t fogOfWar:YES];
-                    // t.visible =YES;
                 }
             }
             break;
@@ -739,16 +800,16 @@ static BOOL shipTypeMapsInitialized = NO;
     
     switch (_dir) {
         case Down:  // swap length + width
-            for ( int i = _baseRow -offset; i <= _baseRow -offset + length && i<_gameContainer.tileCount && i>=0; i++){
-                for ( int j = _baseColumn - semiwidth; j<= semiwidth + _baseColumn && j<_gameContainer.tileCount && j>=0; j++ ){
+            for ( int i = MAX(_baseRow-offset,0); i < _baseRow -offset + length && i<_gameContainer.tileCount && i>=0; i++){
+                for ( int j = MAX(_baseColumn - semiwidth, 0); j<= semiwidth + _baseColumn && j<_gameContainer.tileCount && j>=0; j++ ){
                     [validTiles addObject:[[_gameContainer.tiles objectAtIndex:j] objectAtIndex:i]];
                 }
             }
             break;
             
         case Up: // swap l + w, face downward
-            for ( int i = _baseRow +offset; i >= _baseRow +offset - length  && i<_gameContainer.tileCount && i>=0; i--){
-                for ( int j = _baseColumn - semiwidth; j<= semiwidth + _baseColumn && j<_gameContainer.tileCount && j>=0; j++ ){
+            for ( int i = _baseRow +offset; i > _baseRow +offset - length  && i<_gameContainer.tileCount && i>=0; i--){
+                for ( int j = MAX(_baseColumn - semiwidth, 0); j<= semiwidth + _baseColumn && j<_gameContainer.tileCount && j>=0; j++ ){
                     [validTiles addObject: [[_gameContainer.tiles objectAtIndex:j] objectAtIndex:i]];
                     
                 }
@@ -756,8 +817,8 @@ static BOOL shipTypeMapsInitialized = NO;
             break;
             
         case Left:
-            for ( int i = _baseColumn	+ offset; i >= _baseColumn +offset- length && i<_gameContainer.tileCount && i>=0; i--){
-                for ( int j = _baseRow - semiwidth; j<= semiwidth + _baseRow && j<_gameContainer.tileCount && j>=0; j++ ){
+            for ( int i = _baseColumn	+ offset; i > _baseColumn +offset- length && i<_gameContainer.tileCount && i>=0; i--){
+                for ( int j = MAX(_baseRow - semiwidth, 0); j<= semiwidth + _baseRow && j<_gameContainer.tileCount && j>=0; j++ ){
                     [validTiles addObject: [[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j]];
                     
                 }
@@ -765,8 +826,8 @@ static BOOL shipTypeMapsInitialized = NO;
             break;
             
         default:  // object is facing right
-            for ( int i = _baseColumn	-offset; i <= _baseColumn -offset+ length && i<_gameContainer.tileCount && i>=0; i++){
-                for ( int j = _baseRow - semiwidth; j<= semiwidth + _baseRow && j<_gameContainer.tileCount && j>=0; j++ ){
+            for ( int i = MAX(_baseColumn - offset, 0); i < _baseColumn -offset+ length && i<_gameContainer.tileCount && i>=0; i++){
+                for ( int j = MAX(_baseRow - semiwidth, 0); j<= semiwidth + _baseRow && j<_gameContainer.tileCount && j>=0; j++ ){
                     [validTiles addObject:[[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j]];
                 }
             }

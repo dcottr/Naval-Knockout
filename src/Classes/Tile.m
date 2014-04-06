@@ -21,7 +21,6 @@
 
 @property (nonatomic, strong) SPQuad *collisionOverlay;
 
-@property (nonatomic, strong) SPQuad *damagedOverlay;
 @property (nonatomic, strong) SPQuad *sunkOverlay;
 
 @property (nonatomic, assign) BOOL fogOfWarVisibility;
@@ -79,15 +78,7 @@ static NSDictionary *reefPositions = nil;
         _content.height = _game.tileSize;
         [self addChild:_content];
         [_content setVisible:_fogOfWarVisibility];
-        
-        _damagedOverlay = [[SPQuad alloc] initWithWidth:_game.tileSize height:_game.tileSize color:0xffff00];
-        [_content addChild:_damagedOverlay];
-        [_damagedOverlay setVisible:NO];
-        
-        _sunkOverlay = [[SPQuad alloc] initWithWidth:_game.tileSize height:_game.tileSize color:0x000000];
-        [_content addChild:_sunkOverlay];
-        [_sunkOverlay setVisible:NO];
-        
+                
         _collisionOverlay = [[SPQuad alloc] initWithWidth:_game.tileSize - 7.0f height:_game.tileSize - 7.0f color:0xff0000];
         [_content addChild:_collisionOverlay];
         [_collisionOverlay setVisible:YES];
@@ -96,14 +87,16 @@ static NSDictionary *reefPositions = nil;
         [self addChild:_selectableOverlay];
         _selectableOverlay.alpha = 0.5f;
         [_selectableOverlay setVisible:NO];
+        _sunk = NO;
     }
     return self;
 }
 - (void)cleanTile
 {
-    [self setClear];
     _myShipSegment = nil;
     _myShip = nil;
+    _sunk = NO;
+    _backgroundImage.alpha = 1.0f;
     [self displayCannonHit:NO];
     [self fogOfWar:NO];
 }
@@ -131,16 +124,27 @@ static NSDictionary *reefPositions = nil;
     if (display) {
         [self fogOfWar:YES];
     }
+    if (_myShipSegment) {
+        [_myShipSegment displayCannonHit:display];
+    }
 }
 
 - (void)performCannonAction
 {
     [_content setVisible:YES];
     if (_myShipSegment) {
-        NSLog(@"Hit at row: %d, col: %d with ship: %@", _row, _col, _myShip);
         [_myShipSegment hitByCannon];
     }
   [self notifyEvent];
+}
+
+- (void)performHeavyCannonAction
+{
+    [_content setVisible:YES];
+    if (_myShipSegment) {
+        [_myShipSegment hitByHeavyCannon];
+    }
+    [self notifyEvent];
 }
 
 - (void)notifyEvent
@@ -168,22 +172,20 @@ static NSDictionary *reefPositions = nil;
     }
 }
 
-- (void)setDamaged
+//- (void)setDamaged
+//{
+//    [_damagedOverlay setVisible:YES];
+//}
+//- (void)setDestroyed
+//{
+//    [_destroyedOverlay setVisible:YES];
+//}
+
+- (void)setSunk
 {
-    [_damagedOverlay setVisible:YES];
-}
-- (void)setDestroyed
-{
-    [_sunkOverlay setVisible:YES];
-}
-- (void)setClear
-{
-    if (_sunkOverlay) {
-        [_sunkOverlay setVisible:NO];
-    }
-    if (_damagedOverlay) {
-        [_damagedOverlay setVisible:NO];
-    }
+    NSLog(@"Set sunk!");
+    _backgroundImage.alpha = 0.5f;
+    _sunk = YES;
 }
 
 

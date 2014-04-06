@@ -18,6 +18,7 @@
 @property (nonatomic, assign) BOOL hasMine;
 @property (nonatomic, assign) BOOL selectable;
 @property (nonatomic, assign) BOOL reef;
+@property (nonatomic, assign) BOOL sunk;
 
 @property (nonatomic, strong) Ship *myShip; // Replace with myShipSegment
 @property (nonatomic, strong) ShipSegment *myShipSegment;
@@ -27,14 +28,12 @@
 
 - (void)performMineAction;
 - (void)performCannonAction;
+- (void)performHeavyCannonAction;
 - (void)displayCannonHit:(BOOL)display;
 - (void)initReef;
 - (void)notifyEvent;
 
-
-- (void)setDamaged;
-- (void)setDestroyed;
-- (void)setClear;
+- (void)setSunk;
 
 - (void)fogOfWar:(BOOL)visible;
 

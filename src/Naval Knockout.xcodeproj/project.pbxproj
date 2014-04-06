@@ -14,8 +14,11 @@
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
 		305008A818F0709C00E5935E /* Base.m in Sources */ = {isa = PBXBuildFile; fileRef = 305008A718F0709C00E5935E /* Base.m */; };
 		3056882818D128EF00285CD6 /* GameState.m in Sources */ = {isa = PBXBuildFile; fileRef = 3056882718D128EF00285CD6 /* GameState.m */; };
-		30C4967E18CD670300FCA0CC /* GameManagerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 30C4967D18CD670300FCA0CC /* GameManagerViewController.m */; };
+		30C4967E18CD670300FCA0CC /* GameManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 30C4967D18CD670300FCA0CC /* GameManager.m */; };
 		630F253D18D0CB83007301A4 /* Mine.m in Sources */ = {isa = PBXBuildFile; fileRef = 630F253C18D0CB83007301A4 /* Mine.m */; };
+		631A78C118F0D68D000A7C83 /* shipBack.png in Resources */ = {isa = PBXBuildFile; fileRef = 631A78BE18F0D68D000A7C83 /* shipBack.png */; };
+		631A78C218F0D68D000A7C83 /* shipFront.png in Resources */ = {isa = PBXBuildFile; fileRef = 631A78BF18F0D68D000A7C83 /* shipFront.png */; };
+		631A78C318F0D68D000A7C83 /* shipMid.png in Resources */ = {isa = PBXBuildFile; fileRef = 631A78C018F0D68D000A7C83 /* shipMid.png */; };
 		631C23ED18C50587009EA080 /* watertile.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 631C23EC18C50587009EA080 /* watertile.jpeg */; };
 		631C23F518C52640009EA080 /* ShipsTray.m in Sources */ = {isa = PBXBuildFile; fileRef = 631C23F418C52640009EA080 /* ShipsTray.m */; };
 		631C23F818C53E64009EA080 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 631C23F718C53E64009EA080 /* Images.xcassets */; };
@@ -41,7 +44,7 @@
 		63A3EEE618F05A230099F2BF /* green_circle.png in Resources */ = {isa = PBXBuildFile; fileRef = 63A3EEE418F05A230099F2BF /* green_circle.png */; };
 		63A3EEE718F05A230099F2BF /* red_circle.png in Resources */ = {isa = PBXBuildFile; fileRef = 63A3EEE518F05A230099F2BF /* red_circle.png */; };
 		63A3EEE918F05D1B0099F2BF /* grey_circle.png in Resources */ = {isa = PBXBuildFile; fileRef = 63A3EEE818F05D1B0099F2BF /* grey_circle.png */; };
-		63A3EEEB18F0606A0099F2BF /* green_button05.png in Resources */ = {isa = PBXBuildFile; fileRef = 63A3EEEA18F0606A0099F2BF /* green_button05.png */; };
+		63A3EEEB18F0606A0099F2BF /* green_button05@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 63A3EEEA18F0606A0099F2BF /* green_button05@2x.png */; };
 		63A3EEED18F061780099F2BF /* blue_panel.png in Resources */ = {isa = PBXBuildFile; fileRef = 63A3EEEC18F061780099F2BF /* blue_panel.png */; };
 		63AB936718C817B00055E77B /* Tile.m in Sources */ = {isa = PBXBuildFile; fileRef = 63AB936618C817B00055E77B /* Tile.m */; };
 		63BE1C4B18C2A0AF00D00F2D /* WaterTile1.png in Resources */ = {isa = PBXBuildFile; fileRef = 63BE1C4A18C2A0AF00D00F2D /* WaterTile1.png */; };
@@ -111,11 +114,14 @@
 		305008A718F0709C00E5935E /* Base.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Base.m; sourceTree = "<group>"; };
 		3056882618D128EF00285CD6 /* GameState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameState.h; sourceTree = "<group>"; };
 		3056882718D128EF00285CD6 /* GameState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameState.m; sourceTree = "<group>"; };
-		30C4967C18CD670300FCA0CC /* GameManagerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameManagerViewController.h; sourceTree = "<group>"; };
-		30C4967D18CD670300FCA0CC /* GameManagerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameManagerViewController.m; sourceTree = "<group>"; };
+		30C4967C18CD670300FCA0CC /* GameManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameManager.h; sourceTree = "<group>"; };
+		30C4967D18CD670300FCA0CC /* GameManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameManager.m; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* App-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "App-Prefix.pch"; sourceTree = "<group>"; };
 		630F253B18D0CB83007301A4 /* Mine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mine.h; sourceTree = "<group>"; };
 		630F253C18D0CB83007301A4 /* Mine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Mine.m; sourceTree = "<group>"; };
+		631A78BE18F0D68D000A7C83 /* shipBack.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = shipBack.png; sourceTree = "<group>"; };
+		631A78BF18F0D68D000A7C83 /* shipFront.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = shipFront.png; sourceTree = "<group>"; };
+		631A78C018F0D68D000A7C83 /* shipMid.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = shipMid.png; sourceTree = "<group>"; };
 		631C23EC18C50587009EA080 /* watertile.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = watertile.jpeg; sourceTree = "<group>"; };
 		631C23F318C52640009EA080 /* ShipsTray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShipsTray.h; sourceTree = "<group>"; };
 		631C23F418C52640009EA080 /* ShipsTray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShipsTray.m; sourceTree = "<group>"; };
@@ -147,7 +153,7 @@
 		63A3EEE418F05A230099F2BF /* green_circle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = green_circle.png; sourceTree = "<group>"; };
 		63A3EEE518F05A230099F2BF /* red_circle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = red_circle.png; sourceTree = "<group>"; };
 		63A3EEE818F05D1B0099F2BF /* grey_circle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = grey_circle.png; sourceTree = "<group>"; };
-		63A3EEEA18F0606A0099F2BF /* green_button05.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = green_button05.png; sourceTree = "<group>"; };
+		63A3EEEA18F0606A0099F2BF /* green_button05@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "green_button05@2x.png"; sourceTree = "<group>"; };
 		63A3EEEC18F061780099F2BF /* blue_panel.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = blue_panel.png; sourceTree = "<group>"; };
 		63AB936518C817AF0055E77B /* Tile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tile.h; sourceTree = "<group>"; };
 		63AB936618C817B00055E77B /* Tile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tile.m; sourceTree = "<group>"; };
@@ -283,8 +289,8 @@
 		30C4967F18CD670C00FCA0CC /* GameManager */ = {
 			isa = PBXGroup;
 			children = (
-				30C4967C18CD670300FCA0CC /* GameManagerViewController.h */,
-				30C4967D18CD670300FCA0CC /* GameManagerViewController.m */,
+				30C4967C18CD670300FCA0CC /* GameManager.h */,
+				30C4967D18CD670300FCA0CC /* GameManager.m */,
 				3056882618D128EF00285CD6 /* GameState.h */,
 				3056882718D128EF00285CD6 /* GameState.m */,
 			);
@@ -375,8 +381,11 @@
 		DE4F80DD14E1541400655D44 /* 1x */ = {
 			isa = PBXGroup;
 			children = (
+				631A78BE18F0D68D000A7C83 /* shipBack.png */,
+				631A78BF18F0D68D000A7C83 /* shipFront.png */,
+				631A78C018F0D68D000A7C83 /* shipMid.png */,
 				63A3EEEC18F061780099F2BF /* blue_panel.png */,
-				63A3EEEA18F0606A0099F2BF /* green_button05.png */,
+				63A3EEEA18F0606A0099F2BF /* green_button05@2x.png */,
 				63A3EEE418F05A230099F2BF /* green_circle.png */,
 				63A3EEE818F05D1B0099F2BF /* grey_circle.png */,
 				63A3EEE518F05A230099F2BF /* red_circle.png */,
@@ -507,13 +516,15 @@
 				DE4F80ED14E1541400655D44 /* atlas@2x.png in Resources */,
 				63A3EEE618F05A230099F2BF /* green_circle.png in Resources */,
 				638896D918C3E7760044693E /* waterBlock.png in Resources */,
-				63A3EEEB18F0606A0099F2BF /* green_button05.png in Resources */,
+				63A3EEEB18F0606A0099F2BF /* green_button05@2x.png in Resources */,
+				631A78C318F0D68D000A7C83 /* shipMid.png in Resources */,
 				631C23F818C53E64009EA080 /* Images.xcassets in Resources */,
 				DE4F80EE14E1541400655D44 /* atlas@2x.xml in Resources */,
 				6354EDFA18C6391300BC257E /* green_button06.png in Resources */,
 				638896D118C3E0C90044693E /* blue_button13.png in Resources */,
 				DE115961162320F100A25086 /* background.jpg in Resources */,
 				63615BD018CD5C37006ACB25 /* MenuViewController.xib in Resources */,
+				631A78C118F0D68D000A7C83 /* shipBack.png in Resources */,
 				638896D518C3E4D40044693E /* ship_small_body.png in Resources */,
 				638896DB18C3E7A30044693E /* darkSkyBlock.png in Resources */,
 				637FEB3F18D3024800265F74 /* visible.png in Resources */,
@@ -532,6 +543,7 @@
 				637FEB3D18D3023400265F74 /* reef.png in Resources */,
 				63A3EEE718F05A230099F2BF /* red_circle.png in Resources */,
 				DE0C7111162417B800357F6E /* Icon@2x~ipad.png in Resources */,
+				631A78C218F0D68D000A7C83 /* shipFront.png in Resources */,
 				638896D318C3E2DC0044693E /* Glossy05.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -549,7 +561,7 @@
 				1D3623260D0F684500981E51 /* AppDelegate.m in Sources */,
 				63615BCF18CD5C37006ACB25 /* MenuViewController.m in Sources */,
 				63371EA018C56E2C00AA3FAE /* ShipCommandBar.m in Sources */,
-				30C4967E18CD670300FCA0CC /* GameManagerViewController.m in Sources */,
+				30C4967E18CD670300FCA0CC /* GameManager.m in Sources */,
 				3056882818D128EF00285CD6 /* GameState.m in Sources */,
 				631C23F518C52640009EA080 /* ShipsTray.m in Sources */,
 				DE4A3DE510FFB2AF00FDA492 /* Game.m in Sources */,

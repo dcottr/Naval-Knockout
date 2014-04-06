@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "NKMatchHelper.h"
 
-@interface GameManagerViewController : NSObject <NKMatchHelperDelegate>
+@interface GameManager : NSObject <NKMatchHelperDelegate>
 
 
 - (void)sendTurn;

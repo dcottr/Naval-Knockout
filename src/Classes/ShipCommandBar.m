@@ -13,8 +13,8 @@
 
 enum {
     ActionMove,
-    ActionHeavyCanon,
-    ActionCanon,
+    ActionHeavyCannon,
+    ActionCannon,
     ActionTorpedo,
     ActionMine
 };
@@ -23,11 +23,15 @@ typedef NSInteger Action;
 
 @interface ShipCommandBar ()
 
+@property (nonatomic, strong) SPQuad *background;
 @property (nonatomic, strong) SPImage *commandBar;
+@property (nonatomic, strong) SPTextField *shipName;
 @property (nonatomic, strong) SPButton *lButton;
 @property (nonatomic, strong) SPButton *rButton;
 @property (nonatomic, strong) SPButton *dropMineButton;
 @property (nonatomic, strong) SPButton *cannonButton;
+@property (nonatomic, strong) SPButton *heavyCannonButton;
+@property (nonatomic, strong) SPButton *torpedo;
 
 
 @property (nonatomic, strong) Ship *ship;
@@ -43,17 +47,28 @@ typedef NSInteger Action;
 @implementation ShipCommandBar
 
 static SPTexture *commandBarTexture = nil;
+static SPTexture *buttonTexture = nil;
+static NSDictionary *shipNameMap = nil;
 
 - (id)initWithGame:(Game *)game
 {
+    if (!shipNameMap) {
+        shipNameMap = @{num(Cruiser): @"Cruiser", num(Destroyer): @"Destroyer", num(Torpedo): @"Torpedo Boat", num(Miner): @"Mine Layer", num(Radar): @"Radar Boat", num(Base_Type): @"Base"};
+    }
     if (!commandBarTexture)
         commandBarTexture = [SPTexture textureWithContentsOfFile:@"Glossy08.png"];
     if (!buttonTexture) {
-        buttonTexture = [SPTexture textureWithContentsOfFile:@"button2.png"];
+        buttonTexture = [SPTexture textureWithContentsOfFile:@"green_button05.png"];
     }
     self = [super init];
     if (self) {
         _game = game;
+        
+        _background = [[SPQuad alloc] initWithWidth:Sparrow.stage.width height:90.0f color:0x000000];
+        _background.y = 10.0f;
+        [self addChild:_background];
+        [_background setVisible:NO];
+
         _commandBar = [[SPImage alloc] initWithTexture:commandBarTexture];
         _commandBar.width = Sparrow.stage.width;
         _commandBar.height = 100.0f;
@@ -63,48 +78,63 @@ static SPTexture *commandBarTexture = nil;
         _lButton = [[SPButton alloc] initWithUpState:buttonTexture text:@"Left"];
         [_lButton addEventListener:@selector(turnLeft:) atObject:self forType:SP_EVENT_TYPE_TRIGGERED];
         _lButton.x = 30.0f;
-        _lButton.y = 5.0f;
+        _lButton.y = 20.0f;
         [self addChild:_lButton];
         [_lButton setVisible:NO];
         
         _rButton = [[SPButton alloc] initWithUpState:buttonTexture text:@"Right"];
         [_rButton addEventListener:@selector(turnRight:) atObject:self forType:SP_EVENT_TYPE_TRIGGERED];
         _rButton.x = 30.0f;
-        _rButton.y = 5.0f + _lButton.y + _lButton.height;
+        _rButton.y = 20.0f + _lButton.y + _lButton.height;
         [self addChild:_rButton];
         [_rButton setVisible:NO];
         
-        _dropMineButton = [[SPButton alloc] initWithUpState:buttonTexture text:@"Mine"];
-        [_dropMineButton addEventListener:@selector(dropMine:) atObject:self forType:SP_EVENT_TYPE_TRIGGERED];
-        _dropMineButton.x = 30.0f * 2 + _lButton.width;
-        _dropMineButton.y = 5.0f + _lButton.y;
-        [self addChild:_dropMineButton];
-        [_dropMineButton setVisible:NO];
-        
         _cannonButton = [[SPButton alloc] initWithUpState:buttonTexture text:@"Cannon"];
         [_cannonButton addEventListener:@selector(shootCannon:) atObject:self forType:SP_EVENT_TYPE_TRIGGERED];
-        _cannonButton.x = 30.0f * 2 + _lButton.width;
-        _cannonButton.y = 5.0f + _lButton.y + _lButton.height;
+        _cannonButton.x = _lButton.x * 2 + _lButton.width;
+        _cannonButton.y = _lButton.y;
         [self addChild:_cannonButton];
         [_cannonButton setVisible:NO];
+        
+        _heavyCannonButton = [[SPButton alloc] initWithUpState:buttonTexture text:@"Heavy Cannon"];
+        _heavyCannonButton.fontSize = 11;
+        [_heavyCannonButton addEventListener:@selector(shootHeavyCannon:) atObject:self forType:SP_EVENT_TYPE_TRIGGERED];
+        _heavyCannonButton.x = _cannonButton.x;
+        _heavyCannonButton.y = _cannonButton.y;
+        [self addChild:_heavyCannonButton];
+        [_heavyCannonButton setVisible:NO];
 
         
+        _dropMineButton = [[SPButton alloc] initWithUpState:buttonTexture text:@"Mine"];
+        [_dropMineButton addEventListener:@selector(dropMine:) atObject:self forType:SP_EVENT_TYPE_TRIGGERED];
+        _dropMineButton.x = _rButton.x * 2 + _lButton.width;
+        _dropMineButton.y = _rButton.y;
+        [self addChild:_dropMineButton];
+        [_dropMineButton setVisible:NO];
+
+        _shipName = [SPTextField textFieldWithWidth:100 height:20 text:@"Text"];
+        _shipName.x = Sparrow.stage.width - 100;
+        _shipName.y = 10;
+        _shipName.color = 0xd3d3d3;
+        [self addChild:_shipName];
+        [_shipName setVisible:NO];
     }
     return self;
 }
 
-static SPTexture *buttonTexture = nil;
 - (void)setSelected:(Ship *)ship
 {
     
     [self deselect];
     _ship = ship;
     [_commandBar setVisible:YES];
-    
+    [_background setVisible:YES];
     
     
     [_lButton setVisible:YES];
     [_rButton setVisible:YES];
+    _shipName.text = [shipNameMap objectForKey:num(ship.shipType)];
+    [_shipName setVisible:YES];
     // Set validTileSelections Likes
     _selectedAction = ActionMove;
     _validTileSelects = [ship validMoveTiles];
@@ -113,6 +143,9 @@ static SPTexture *buttonTexture = nil;
     }
     if ([_ship.shipWeapons indexOfObject:num(WeaponCannon)] != NSNotFound) {
         [_cannonButton setVisible:YES];
+    }
+    if ([_ship.shipWeapons indexOfObject:num(WeaponHeavyCannon)] != NSNotFound) {
+        [_heavyCannonButton setVisible:YES];
     }
     [self setSelectableTiles];
 }
@@ -123,10 +156,13 @@ static SPTexture *buttonTexture = nil;
     [self deselectTiles];
     _validTileSelects = nil;
     [_commandBar setVisible:NO];
+    [_background setVisible:NO];
     [_lButton setVisible:NO];
     [_rButton setVisible:NO];
+    [_shipName setVisible:NO];
     [_dropMineButton setVisible:NO];
     [_cannonButton setVisible:NO];
+    [_heavyCannonButton setVisible:NO];
     _ship = nil;
 }
 
@@ -190,7 +226,7 @@ static SPTexture *buttonTexture = nil;
 
 - (void)shootCannon:(SPEvent *)event
 {
-    if (_selectedAction == ActionCanon) {
+    if (_selectedAction == ActionCannon) {
         [self setSelected:_ship];
         return;
     }
@@ -199,8 +235,21 @@ static SPTexture *buttonTexture = nil;
     
     _validTileSelects = [_ship validShootCannonTiles];
     [self setSelectableTiles];
-    _selectedAction = ActionCanon;
+    _selectedAction = ActionCannon;
+}
 
+- (void)shootHeavyCannon:(SPEvent *)event
+{
+    if (_selectedAction == ActionCannon) {
+        [self setSelected:_ship];
+        return;
+    }
+    
+    [self deselectTiles];
+    
+    _validTileSelects = [_ship validShootCannonTiles];
+    [self setSelectableTiles];
+    _selectedAction = ActionHeavyCannon;
 }
 
 - (void)selectTile:(Tile *)tile
@@ -217,8 +266,10 @@ static SPTexture *buttonTexture = nil;
             [_ship performMoveActionTo:tile];
         } else if (_selectedAction == ActionMine) {
             [tile performMineAction];
-        } else if (_selectedAction == ActionCanon) {
+        } else if (_selectedAction == ActionCannon) {
             [tile performCannonAction];
+        } else if (_selectedAction == ActionHeavyCannon) {
+            [tile performHeavyCannonAction];
         }
         [self didPerformAction];
     }

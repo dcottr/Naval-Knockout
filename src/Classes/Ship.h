@@ -58,12 +58,14 @@ typedef NSInteger WeaponType;
 - (void)updateLocation;
 - (void)performMoveActionTo:(Tile *)tile;
 - (NSArray *)rotateTileList:(Direction) newdir;
+- (void)sinkShip;
 
 @property (nonatomic, assign) ShipType shipType;
 @property (nonatomic, assign) ArmourType shipArmour;
 @property (nonatomic, assign) Direction dir;
 @property (nonatomic, assign) int baseRow;
 @property (nonatomic, assign) int baseColumn;
+@property (nonatomic, assign) BOOL isSunk;
 @property (nonatomic, strong) NSArray *shipWeapons;
 
 @property (nonatomic, assign) BOOL isEnemyShip;
