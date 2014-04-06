@@ -6,9 +6,9 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIDevice.h>
 #import "GameState.h"
-@class ShipsTray, ShipCommandBar, GameManagerViewController, Tile;
+@class ShipsTray, ShipCommandBar, GameManager, Tile;
 
-@interface Game : SPSprite
+@interface Game : SPSprite <UIAlertViewDelegate>
 
 @property (nonatomic, strong) SPSprite *gridContainer;
 
@@ -27,7 +27,7 @@
 @property (nonatomic, assign) int tileCount;
 @property (nonatomic, strong) NSArray *tiles;
 
-@property (nonatomic, weak) GameManagerViewController *delegate;
+@property (nonatomic, weak) GameManager *delegate;
 
 @property (nonatomic, assign) BOOL myTurn;
 
@@ -35,12 +35,13 @@
 
 
 - (NSDictionary *)getDataDictWithMyID:(NSString *)myID opponentID:(NSString *)oppID;
-
+- (BOOL)checkVictoryWithMyID:(NSString *)myID;
 - (void)newState:(NSDictionary *)state;
 
 - (void)performedAction;
 - (void)notifyCannonCollision:(Tile *)tile;
 
 - (void)newGame;
+- (void)dismissMenu;
 
 @end

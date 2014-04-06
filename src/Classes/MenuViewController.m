@@ -8,7 +8,7 @@
 
 #import "MenuViewController.h"
 #import "NKMatchHelper.h"
-#import "GameManagerViewController.h"
+#import "GameManager.h"
 #import "Game.h"
 
 @interface MenuViewController ()
@@ -41,7 +41,7 @@
     [super viewDidAppear:animated];
     NKMatchHelper *helper = [NKMatchHelper sharedInstance];
     helper.menuViewController = self;
-    GameManagerViewController *gameManager = [[GameManagerViewController alloc] initWithGame:_game];
+    GameManager *gameManager = [[GameManager alloc] initWithGame:_game];
     helper.delegate = gameManager;
     _game.delegate = gameManager;
     [[NKMatchHelper sharedInstance] authenticateLocalPlayer];

@@ -9,7 +9,7 @@
 #import "ShipsTray.h"
 #import "ShipCommandBar.h"
 #import "Tile.h"
-#import "GameManagerViewController.h"
+#import "GameManager.h"
 #import "ShipSegment.h"
 #import "MenuViewController.h"
 
@@ -46,7 +46,6 @@
         _tileCount = 30;
         _myShips = [[NSMutableSet alloc] init];
         _enemyShips = [[NSMutableSet alloc] init];
-//        _myTurn = false;
         [self setup];
         [self presentMenu];
         
@@ -68,6 +67,17 @@
     
     [Sparrow.currentController addChildViewController:_matchMakerController];
     [Sparrow.currentController.view addSubview:_matchMakerController.view];
+}
+
+- (void)dismissMenu
+{
+    [_matchMakerController.view removeFromSuperview];
+    [_matchMakerController removeFromParentViewController];
+}
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    [self presentMenu];
 }
 
 - (void)newGame
@@ -149,10 +159,6 @@
             [newShip updateLocation];
         }
         
-        if(_shipCommandBar) {
-            [_shipCommandBar deselect];
-        }
-        
         // CheckButton stuff
         SPTexture *checkButtonTexture = [SPTexture textureWithContentsOfFile:@"green_checkmark.png"];
         _checkButton = _checkButton = [[SPButton alloc] initWithUpState:checkButtonTexture];
@@ -206,12 +212,13 @@
 
 - (void)clearMap
 {
+    [self dismissMenu];
     for (NSArray *column in _tiles) {
         for (Tile *tile in column) {
             [tile cleanTile];
         }
     }
-
+    
     for (Ship *ship in _myShips) {
         [ship removeFromParent];
     }
@@ -220,6 +227,10 @@
         [ship removeFromParent];
     }
     _enemyShips = nil;
+    
+    if(_shipCommandBar) {
+        [_shipCommandBar deselect];
+    }
     
 }
 
@@ -237,7 +248,9 @@
     }
     
     _myShips = [[NSMutableSet alloc] init];
+    BOOL isSunk;
     for (NSArray *shipAttrs in myShips) {
+        isSunk = YES;
         Ship *newShip = [[Ship alloc] initWithGame:self type:(ShipType)([(NSNumber *)[shipAttrs objectAtIndex:3] intValue])];
         newShip.baseRow = ([(NSNumber *)[shipAttrs objectAtIndex:0] intValue]);
         newShip.baseColumn = ([(NSNumber *)[shipAttrs objectAtIndex:1] intValue]);
@@ -247,18 +260,27 @@
         for (int i = 0; i < newShip.shipSegments.count; i++) {
             ShipSegment *segment = [newShip.shipSegments objectAtIndex:i];
             segment.health = ([(NSNumber *)[health objectAtIndex:i] intValue]);
+            if (segment.health > 0) {
+                isSunk = NO;
+            }
         }
         
         [_myShips addObject:newShip];
-        Tile *myTile = [[_tiles objectAtIndex:newShip.baseColumn] objectAtIndex:newShip.baseRow];
-        myTile.myShip = newShip;
-        
-        
-        [myTile fogOfWar:NO];
-        
-        [_gridContainer addChild:newShip];
-        [newShip positionedShip];
-        [newShip updateLocation];
+
+        if (isSunk) {
+            [newShip sinkShip];
+        } else {
+            [_myShips addObject:newShip];
+            [_gridContainer addChild:newShip];
+            [newShip positionedShip];
+            [newShip updateLocation];
+        }
+    }
+    
+    for (Ship *ship in _myShips) {
+        if (!ship.isSunk) {
+            [ship setSurroundingTilesVisible];
+        }
     }
 }
 
@@ -269,32 +291,44 @@
     }
     
     _enemyShips = [[NSMutableSet alloc] init];
+    BOOL isSunk;
     for (NSArray *shipAttrs in enemyShips) {
+        isSunk = YES;
         Ship *newShip = [[Ship alloc] initWithGame:self type:(ShipType)([(NSNumber *)[shipAttrs objectAtIndex:3] intValue])];
         newShip.baseRow = ([(NSNumber *)[shipAttrs objectAtIndex:0] intValue]);
         newShip.baseColumn = ([(NSNumber *)[shipAttrs objectAtIndex:1] intValue]);
         newShip.dir = ([(NSNumber *)[shipAttrs objectAtIndex:2] intValue]);
         NSArray *health = [shipAttrs objectAtIndex:4];
         if (health) {
-            NSLog(@"health: %@", health);
             for (int i = 0; i < newShip.shipSegments.count; i++) {
                 ShipSegment *segment = [newShip.shipSegments objectAtIndex:i];
                 segment.health = ([(NSNumber *)[health objectAtIndex:i] intValue]);
+                if (segment.health > 0) {
+                    isSunk = NO;
+                }
             }
         }
+        
         [_enemyShips addObject:newShip];
-        Tile *myTile = [[_tiles objectAtIndex:newShip.baseColumn] objectAtIndex:newShip.baseRow];
-        myTile.myShip = newShip;
-        [newShip updateTilesOccupied];
-        for (ShipSegment *segment in newShip.shipSegments) {
-            [segment.tile fogOfWar:NO];
+        
+        if (isSunk) {
+            [newShip sinkShip];
+        } else {
+            [_enemyShips addObject:newShip];
+            [newShip updateTilesOccupied];
+            
+            [_gridContainer addChild:newShip];
+            [newShip setIsEnemyShip:YES];
+            [newShip updateLocation];
         }
-        
-        
-        [_gridContainer addChild:newShip];
-        [newShip setIsEnemyShip:YES];
-        [newShip updateLocation];
-        
+    }
+    
+    for (Ship *ship in _enemyShips) {
+        if (!ship.isSunk) {
+            for (ShipSegment *segment in ship.shipSegments) {
+                [segment.tile fogOfWar:NO];
+            }
+        }
     }
 }
 
@@ -319,7 +353,7 @@
         for (ShipSegment *segment in ship.shipSegments) {
             [health addObject:num(segment.health)];
         }
-
+        
         NSArray *shipAttrs = [NSArray arrayWithObjects:num(ship.baseRow), num(ship.baseColumn), num(ship.dir), num(ship.shipType), [NSArray arrayWithArray:health], nil];
         [enemyShips addObject:shipAttrs];
     }
@@ -349,6 +383,23 @@
     //    }
     
     
+}
+
+- (BOOL)checkVictoryWithMyID:(NSString *)myID
+{
+    //  Game just started.
+    if (_enemyShips == nil || [_enemyShips count] == 0) {
+        return NO;
+    }
+    
+    for (Ship *ship in _enemyShips) {
+        for (ShipSegment *segment in ship.shipSegments) {
+            if (segment.health > 0) {
+                return NO;
+            }
+        }
+    }
+    return YES;
 }
 
 - (void)performedAction
@@ -529,7 +580,7 @@
             return;
         }
     }
-
+    
     
     if (_shipCommandBar && _myTurn) {
         [_shipCommandBar selectTile:tile];

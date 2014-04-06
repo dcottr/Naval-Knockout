@@ -8,17 +8,25 @@
 
 #import "SPSprite.h"
 
+enum {
+    ShipSegmentIndexBack,
+    ShipSegmentIndexMid,
+    ShipSegmentIndexFront
+};
+typedef NSInteger ShipSegmentIndex;
+
 @class Tile, Ship;
 @interface ShipSegment : SPSprite
 
 @property (nonatomic, weak) Tile *tile;
 @property (nonatomic, weak) Ship *ship;
 @property (nonatomic, assign) int health; // integer ==> destroyed = 0, damaged = 1, intact = 2.
-
-- (void)setFogOfWar:(BOOL)foggy;
 @property (nonatomic, assign) BOOL selectable;
 
+- (id)initWithIndex:(ShipSegmentIndex)index;
+- (void)setFogOfWar:(BOOL)foggy;
 - (void)hitByCannon;
-- (void)updateTileDamage;
-
+- (void)hitByHeavyCannon;
+- (void)updateSegmentDamage;
+- (void)displayCannonHit:(BOOL)display;
 @end
