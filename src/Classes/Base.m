@@ -32,7 +32,7 @@ static SPTexture * disabledBase = nil;
 
 static BOOL texturesInitialized = NO;
 
-static int NKBASESIZE = 10;
+
 static Base * myTail = nil;
 static Base * enemyTail = nil;
 
@@ -53,15 +53,18 @@ static Base * enemyTail = nil;
 -(id)initWithGame:(Game *)game type:(ShipType)type{
   if (!texturesInitialized){
 	healthyBase = [SPTexture textureWithContentsOfFile:@"base_healthy.png"];
-	damagedBase = [SPTexture textureWithContentsOfFile:@"base_weak.png"];
-	disabledBase = [SPTexture textureWithContentsOfFile:@"base_dead.png"];
+	//damagedBase = [SPTexture textureWithContentsOfFile:@"base_weak.png"];
+	//disabledBase = [SPTexture textureWithContentsOfFile:@"base_dead.png"];
   }
   if (!baseTexture){
 	baseTexture = healthyBase;
   }
-  self = [[Base alloc] initWithGame:game type:Base_Type];
-  self.shipImage = [[SPImage alloc] initWithTexture:baseTexture];
-  [self removeEventListenersAtObject:self forType:SP_EVENT_TYPE_TOUCH];
+  if (self = [super initWithGame:game type:Base_Type]){
+	self.shipImage = [[SPImage alloc] initWithTexture:baseTexture];
+	[self removeEventListenersAtObject:self forType:SP_EVENT_TYPE_TOUCH];
+	self.baseRow = 9;
+	self.dir = Up;
+  }
   return self;
 }
 
