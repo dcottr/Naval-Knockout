@@ -50,9 +50,9 @@ static BOOL shipTypeMapsInitialized = NO;
 + (void)initShipTypeMaps
 {
     if (!shipTypeMapsInitialized) {
-        shipLengthMap = @{num(Cruiser): num(5), num(Destroyer): num(4), num(Torpedo): num(3), num(Miner): num(2), num(Radar): num(3), num(Base_Type): num(10)};
-        shipSpeedMap = @{num(Cruiser): num(10), num(Destroyer): num(8), num(Torpedo): num(9), num(Miner): num(6), num(Radar): num(3), num(Base_Type):num(0)};
-        shipArmourMap = @{num(Cruiser): num(ArmourHeavy), num(Destroyer): num(ArmourNormal), num(Torpedo): num(ArmourNormal), num(Miner): num(ArmourHeavy), num(Radar): num(ArmourNormal), num(Base_Type):num(ArmourNormal)};
+        shipLengthMap = @{num(Cruiser): num(5), num(Destroyer): num(4), num(Torpedo): num(3), num(Miner): num(2), num(Radar): num(3), num(BaseType): num(10)};
+        shipSpeedMap = @{num(Cruiser): num(10), num(Destroyer): num(8), num(Torpedo): num(9), num(Miner): num(6), num(Radar): num(3), num(BaseType):num(0)};
+        shipArmourMap = @{num(Cruiser): num(ArmourHeavy), num(Destroyer): num(ArmourNormal), num(Torpedo): num(ArmourNormal), num(Miner): num(ArmourHeavy), num(Radar): num(ArmourNormal), num(BaseType):num(ArmourNormal)};
         shipWeaponsMap = @{num(Cruiser): @[num(WeaponHeavyCannon)], num(Destroyer): @[num(WeaponCannon), num(WeaponTorpedo)], num(Torpedo): @[num(WeaponCannon), num(WeaponTorpedo)], num(Miner): @[num(WeaponCannon), num(WeaponMine)], num(Radar): @[num(WeaponCannon)], num(Base_Type):@[]};
         shipTypeMapsInitialized = YES;
         shipRadarDimensions =@{num(Cruiser): @[num(3),num(10)], num(Destroyer):@[num(3),num(8)], num(Torpedo):@[num(3),num(6)], num(Miner):@[num(6),num(5)] , num(Radar):@[num(6),num(3)], num(Base_Type):@[num(12),num(3)]};

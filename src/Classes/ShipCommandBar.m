@@ -50,7 +50,7 @@ static NSDictionary *shipNameMap = nil;
 - (id)initWithGame:(Game *)game
 {
     if (!shipNameMap) {
-        shipNameMap = @{num(Cruiser): @"Cruiser", num(Destroyer): @"Destroyer", num(Torpedo): @"Torpedo Boat", num(Miner): @"Mine Layer", num(Radar): @"Radar Boat", num(Base_Type): @"Base"};
+        shipNameMap = @{num(Cruiser): @"Cruiser", num(Destroyer): @"Destroyer", num(Torpedo): @"Torpedo Boat", num(Miner): @"Mine Layer", num(Radar): @"Radar Boat", num(BaseType): @"Base"};
     }
     if (!commandBarTexture)
         commandBarTexture = [SPTexture textureWithContentsOfFile:@"Glossy08.png"];
