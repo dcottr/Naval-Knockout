@@ -59,7 +59,7 @@ static Base * enemyTail = nil;
   if (!baseTexture){
 	baseTexture = healthyBase;
   }
-  self = [[Base alloc] initWithGame:game type:Base_Type];
+  self = [[Base alloc] initWithGame:game type:BaseType];
   self.shipImage = [[SPImage alloc] initWithTexture:baseTexture];
   [self removeEventListenersAtObject:self forType:SP_EVENT_TYPE_TOUCH];
   return self;
