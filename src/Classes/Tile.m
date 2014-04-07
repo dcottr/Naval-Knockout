@@ -17,7 +17,7 @@
 @property (nonatomic, weak) Game * game;
 @property (nonatomic, strong) SPQuad *selectableOverlay;
 
-@property (nonatomic, strong) Mine *triggerMine;
+@property (nonatomic, weak) Mine *triggerMine;
 
 @property (nonatomic, strong) SPQuad *notifyOverlay;
 
@@ -213,6 +213,12 @@ static SPTexture *visTexture = nil;
 - (void)addMineTrigger:(Mine *)mine
 {
     _triggerMine = mine;
+}
+
+- (BOOL)collide:(Ship *)ship
+{
+    //
+    return NO;
 }
 
 @end

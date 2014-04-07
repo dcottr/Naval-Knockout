@@ -40,4 +40,6 @@
 
 - (void)addMineTrigger:(Mine *)mine;
 
+- (BOOL)collide:(Ship *)ship;
+
 @end

@@ -488,8 +488,6 @@ static NSArray *startShipTypes = nil;
     
     [result setObject:num(_currentStateType) forKey:@"stateType"];
     
-    return [NSDictionary dictionaryWithDictionary:result];
-    
     
     // Mine stuff
     NSMutableArray *mines = [[NSMutableArray alloc] init];
@@ -502,8 +500,8 @@ static NSArray *startShipTypes = nil;
         }
     }
     [result setObject:[NSArray arrayWithArray:mines] forKey:@"mines"];
-
     
+    return [NSDictionary dictionaryWithDictionary:result];
 }
 
 - (BOOL)checkVictoryWithMyID:(NSString *)myID
