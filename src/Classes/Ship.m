@@ -402,16 +402,16 @@ static BOOL shipTypeMapsInitialized = NO;
     if (_shipType == Torpedo || _shipType == Radar) {
         switch (tempdir) {
             case Up:
-                _baseColumn += 1;
-                _baseRow -= 1;
+                _baseColumn -= 1;
+                _baseRow += 1;
                 break;
             case Right:
                 _baseColumn -= 1;
                 _baseRow -= 1;
                 break;
             case Down:
-                _baseColumn -= 1;
-                _baseRow += 1;
+                _baseColumn += 1;
+                _baseRow -= 1;
                 break;
             case Left:
                 _baseColumn += 1;
