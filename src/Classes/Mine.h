@@ -12,5 +12,6 @@
 @interface Mine : SPSprite
 
 - (id)initWithTile:(Tile *)tile;
+@property (nonatomic, weak) Tile *tile;
 
 @end

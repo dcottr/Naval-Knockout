@@ -228,7 +228,7 @@ static NSArray *startShipTypes = nil;
     // Load enemy ships
     NSArray *enemyShips;
     for (NSString *enemyId in [state allKeys]) {
-        if (![enemyId isEqualToString:@"Mines"] && ![enemyId isEqualToString:@"notify"] && ![enemyId isEqualToString:myId] && ![enemyId isEqualToString:@"reef"] && ![enemyId isEqualToString:@"stateType"]) {
+        if (![enemyId isEqualToString:@"mines"] && ![enemyId isEqualToString:@"notify"] && ![enemyId isEqualToString:myId] && ![enemyId isEqualToString:@"reef"] && ![enemyId isEqualToString:@"stateType"]) {
             enemyShips = [state objectForKey:enemyId];
             break;
         }
@@ -248,6 +248,14 @@ static NSArray *startShipTypes = nil;
         NSInteger col = [[notify objectAtIndex:1] integerValue];
         Tile *tile = [[_tiles objectAtIndex:col] objectAtIndex:row];
         [tile displayCannonHit:YES];
+    }
+    
+    NSArray *mines = [state objectForKey:@"mines"];
+    for (NSArray *position in mines) {
+        NSInteger row = [[position objectAtIndex:0] integerValue];
+        NSInteger col = [[position objectAtIndex:1] integerValue];
+        Tile *tile = [[_tiles objectAtIndex:col] objectAtIndex:row];
+        [tile performMineAction];
     }
 }
 
@@ -484,16 +492,17 @@ static NSArray *startShipTypes = nil;
     
     
     // Mine stuff
-    //    NSMutableArray *mines = [[NSMutableArray alloc] init];
-    //    for (NSArray *column in _tiles) {
-    //        for (Tile *tile in column) {
-    //            if (tile.hasMine) {
-    //                NSArray *position = [NSArray arrayWithObjects:num(tile.row), num(tile.col), nil];
-    //                [mines addObject:position];
-    //            }
-    //        }
-    //    }
-    
+    NSMutableArray *mines = [[NSMutableArray alloc] init];
+    for (NSArray *column in _tiles) {
+        for (Tile *tile in column) {
+            if (tile.mine) {
+                NSArray *position = [NSArray arrayWithObjects:num(tile.row), num(tile.col), nil];
+                [mines addObject:position];
+            }
+        }
+    }
+    [result setObject:[NSArray arrayWithArray:mines] forKey:@"mines"];
+
     
 }
 

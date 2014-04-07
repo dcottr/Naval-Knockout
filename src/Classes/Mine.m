@@ -8,10 +8,10 @@
 
 #import "Mine.h"
 #import "Tile.h"
-
+#import "Game.h"
 @interface Mine ()
 
-@property (nonatomic, weak) Tile *tile;
+@property (nonatomic, strong) NSArray *triggerTiles;
 
 @end
 
@@ -29,11 +29,40 @@ static SPTexture *mineTexture = nil;
         SPImage *image = [[SPImage alloc] initWithTexture:mineTexture];
         image.width = 32.0f;
         image.width = 32.0f;
-//        image.width = _game.tileSize;
-//        image.height = _game.tileSize;
         [self addChild:image];
+        [self setup];
+//        [tile addMine:self];
     }
     return self;
+}
+
+- (void)setup
+{
+    int row = _tile.row;
+    int col = _tile.col;
+    Game *game = (Game *)Sparrow.root;
+    _tile = [game tileAtRow:row col:(col + 1)];
+    NSMutableArray *triggerTiles;
+    if (_tile) {
+        [triggerTiles addObject:_tile];
+        [_tile addMineTrigger:self];
+    }
+    _tile = [game tileAtRow:row col:(col - 1)];
+    if (_tile) {
+        [triggerTiles addObject:_tile];
+        [_tile addMineTrigger:self];
+    }
+    _tile = [game tileAtRow:(row + 1) col:col];
+    if (_tile) {
+        [triggerTiles addObject:_tile];
+        [_tile addMineTrigger:self];
+    }
+    _tile = [game tileAtRow:(row - 1) col:col];
+    if (_tile) {
+        [triggerTiles addObject:_tile];
+        [_tile addMineTrigger:self];
+    }
+    _triggerTiles = [NSArray arrayWithArray:triggerTiles];
 }
 
 
