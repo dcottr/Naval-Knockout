@@ -94,13 +94,26 @@ static NSArray *startShipTypes = nil;
 
 - (void)generateRandomReef
 {
-    for (int col = 10; col < 20; col++) {
+   /* for (int col = 10; col < 20; col++) {
         for (int row = 3; row < 27; row++) {
             if(arc4random_uniform(100) > 90) {
                 [[[_tiles objectAtIndex:col] objectAtIndex:row] setReef:YES];
             }
         }
     }
+	*/
+  int count = 0;
+  int x0 = 3;
+  int y0 = 10;
+  while (count < 25){
+	int x = arc4random_uniform(24);
+	int y = arc4random_uniform(10);
+	Tile *t = [self tileAtRow:(x0 + x) col:(y0 + y)];
+	if (! t.reef){
+	  [t setReef:YES];
+	  count ++;
+	}
+  }
 }
 
 - (Tile *)tileAtRow:(int)row col:(int)col
