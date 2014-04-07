@@ -935,7 +935,7 @@ static BOOL shipTypeMapsInitialized = NO;
 #pragma message("handle rotation failure outside of this method")
 		return nil;
 	  }
-	  if (_dir == Up)
+	  if (_dir == Left)
 	  {
 	  // send the reverse of what we just calculated so that we collide with closer tiles first
             return [[tiles reverseObjectEnumerator] allObjects];
@@ -960,7 +960,7 @@ static BOOL shipTypeMapsInitialized = NO;
 		}
 	  }
 	  
-        if (_dir == Right) // send the reverse of what we just calculated
+        if (_dir == Up) // send the reverse of what we just calculated
         {
             return [[tiles reverseObjectEnumerator] allObjects];
         }
@@ -986,7 +986,7 @@ static BOOL shipTypeMapsInitialized = NO;
 		return nil;
 	  }
 	  
-	  if (_dir == Down) // send the reverse of what we just calculated
+	  if (_dir == Right) // send the reverse of what we just calculated
         {
             return [[tiles reverseObjectEnumerator] allObjects];
         }
@@ -1011,7 +1011,7 @@ static BOOL shipTypeMapsInitialized = NO;
 	  else{
 		return nil;
 	  }
-	  if (_dir == Left) // send the reverse of what we just calculated
+	  if (_dir == Down) // send the reverse of what we just calculated
         {
             return [[tiles reverseObjectEnumerator] allObjects];
         }
