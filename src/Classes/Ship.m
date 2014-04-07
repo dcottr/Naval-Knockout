@@ -421,13 +421,14 @@ static BOOL shipTypeMapsInitialized = NO;
                 break;
         }
     }
-
+  if ( [self shouldTurn:tempdir]){
     self.rotation = temprotation;
     _dir = tempdir;
     [self updateLocation];
     if (!_isEnemyShip) {
         [self setSurroundingTilesVisible];
     }
+  }
 }
 
 - (void)turnLeft
@@ -909,7 +910,7 @@ static BOOL shipTypeMapsInitialized = NO;
     //	int length = [[shipLengthMap objectForKey:num(_shipType)] intValue];
 	// x coordinate of tile that isn't touched during rotation
     // Upper Left
-  if (_shipType != Radar || _shipType != Torpedo){
+  if (_shipType != Radar && _shipType != Torpedo){
 	if( (_dir == Left && newdir == Up) || (_dir == Up && newdir == Left) ){
 	  //  get entire rectangle and clear out
 	  int upperbound = _baseRow-_shipLength + 1;
@@ -1017,14 +1018,6 @@ static BOOL shipTypeMapsInitialized = NO;
 	//	rotating a torpedo boat or a radar
 	int centerRow;
 	int centerCol;
-	if (_dir == Up ) {
-	  centerRow = _baseRow + 1;
-	  centerCol = _baseColumn;
-	}
-	else if (_dir == Down){
-	  centerRow = _baseRow + _shipLength - 1;
-	  centerCol = _baseColumn;
-	}
 	
 	switch (_dir) {
 	  case Up:
@@ -1051,7 +1044,7 @@ static BOOL shipTypeMapsInitialized = NO;
 	  for (int i = centerRow + 1; i >= centerRow - 1  ; i--){
 		for( int j = centerCol -1; j<= centerCol +1; j ++ ){
 		  if ( ( i != centerRow - 1 && j != centerCol - 1 )
-			  ||  ( i != centerRow + 1 && j != centerCol + 1 ) ){
+			  &&  ( i != centerRow + 1 && j != centerCol + 1 ) ){
 			[tiles addObject:[_gameContainer tileAtRow:i col:j]];
 		  }
 		}
@@ -1062,7 +1055,7 @@ static BOOL shipTypeMapsInitialized = NO;
 	  for (int i = centerRow + 1; i >= centerRow - 1  ; i--){
 		for( int j = centerCol -1; j<= centerCol +1; j ++ ){
 		  if ( ( i != centerRow - 1 && j != centerCol + 1 )
-			  ||  ( i != centerRow + 1 && j != centerCol - 1 ) ){
+			  &&  ( i != centerRow + 1 && j != centerCol - 1 ) ){
 			[tiles addObject:[_gameContainer tileAtRow:i col:j]];
 		  }
 		}
@@ -1079,8 +1072,9 @@ static BOOL shipTypeMapsInitialized = NO;
   NSArray * tiles = [self rotateTileList:dir];
   if (tiles){
 	for (Tile * t in tiles){
-	  [t notifyEvent];
-	  // also check for ships
+	  if ([t collide:self]){
+		return NO;
+	  }
 	}
   }
   else{
