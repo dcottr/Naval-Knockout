@@ -118,6 +118,7 @@ static SPTexture *visTexture = nil;
 
 - (void)performMineAction
 {
+
     if (_mine) {
         [self removeMine];
         // Remove mine.
@@ -131,6 +132,7 @@ static SPTexture *visTexture = nil;
 {
     [self removeChild:_mine];
     _mine = nil;
+
 }
 
 - (void)displayCannonHit:(BOOL)display

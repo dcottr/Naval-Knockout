@@ -478,12 +478,15 @@ static BOOL shipTypeMapsInitialized = NO;
                 break;
         }
     }
+	
+  if ([self shouldTurn:tempdir]){
 	self.rotation = temprotation;
 	_dir = tempdir;
 	[self updateLocation];
 	if (!_isEnemyShip) {
         [self setSurroundingTilesVisible];
 	}
+  }
 }
 
 - (void)positionedShip
@@ -918,7 +921,7 @@ static BOOL shipTypeMapsInitialized = NO;
 			indent++;
 		  }
 		  for ( int j = _baseColumn; j >= leftbound + indent; j--){
-			[tiles addObject:[[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j]];
+			[tiles addObject:[_gameContainer tileAtRow:i col:j]];
 		  }
 		}
 	  }
@@ -946,7 +949,7 @@ static BOOL shipTypeMapsInitialized = NO;
 		  }
 		  for(int j = _baseColumn; j <= rightbound - indent; j++){
 			
-			[tiles addObject:[[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j]];
+			[tiles addObject:[_gameContainer tileAtRow:i col:j]];
 		  }
 		  
 		}
@@ -970,7 +973,7 @@ static BOOL shipTypeMapsInitialized = NO;
 			indent++;
 		  }
 		  for(int j = _baseColumn; j<=rightbound-indent; j ++ ){
-			[tiles addObject:[[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j]];
+			[tiles addObject:[_gameContainer tileAtRow:i col:j]];
 		  }
 		}
 	  }
@@ -987,16 +990,16 @@ static BOOL shipTypeMapsInitialized = NO;
     // Lower left
     
     if( (_dir == Down && newdir == Left) || (_dir == Left && newdir == Down) ){
-	  int lowerbound = _baseColumn + _shipLength - 1;
+	  int lowerbound = _baseRow + _shipLength - 1;
 	  int leftbound = _baseColumn - _shipLength + 1;
 	  int indent = 0;
 	  if ( lowerbound<= 30 && leftbound>=0){
 		for (int i = _baseRow; i<= lowerbound; i++){ // top to bottom
-		  if (i >= _baseRow + 1){
+		  if (i > _baseRow + 1){
 			indent++;
 		  }
 		  for(int j = _baseColumn; j>=leftbound+indent; j--){
-			[tiles addObject:[[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j]];
+			[tiles addObject:[_gameContainer tileAtRow:i col:j]];
 		  }
 		}
 	  }
@@ -1049,7 +1052,7 @@ static BOOL shipTypeMapsInitialized = NO;
 		for( int j = centerCol -1; j<= centerCol +1; j ++ ){
 		  if ( ( i != centerRow - 1 && j != centerCol - 1 )
 			  ||  ( i != centerRow + 1 && j != centerCol + 1 ) ){
-			[tiles addObject:[[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j]];
+			[tiles addObject:[_gameContainer tileAtRow:i col:j]];
 		  }
 		}
 	  }
@@ -1060,7 +1063,7 @@ static BOOL shipTypeMapsInitialized = NO;
 		for( int j = centerCol -1; j<= centerCol +1; j ++ ){
 		  if ( ( i != centerRow - 1 && j != centerCol + 1 )
 			  ||  ( i != centerRow + 1 && j != centerCol - 1 ) ){
-			[tiles addObject:[[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j]];
+			[tiles addObject:[_gameContainer tileAtRow:i col:j]];
 		  }
 		}
 	  }
@@ -1074,7 +1077,14 @@ static BOOL shipTypeMapsInitialized = NO;
 {
 
   NSArray * tiles = [self rotateTileList:dir];
-  for (Tile * t in tiles){
+  if (tiles){
+	for (Tile * t in tiles){
+	  [t notifyEvent];
+	  // also check for ships
+	}
+  }
+  else{
+	return NO;
   }
   return YES;
 }
