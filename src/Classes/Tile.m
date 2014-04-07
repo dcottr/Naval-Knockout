@@ -104,6 +104,7 @@ static SPTexture *visTexture = nil;
     _backgroundImage.alpha = 1.0f;
     [self displayCannonHit:NO];
     [self fogOfWar:NO];
+    [self setSonar:NO];
 }
 
 - (void)setSelectable:(BOOL)selectable
@@ -124,6 +125,7 @@ static SPTexture *visTexture = nil;
         // Remove mine.
     } else {
         _mine = [[Mine alloc] initWithTile:self];
+        _triggerMine = _mine;
         [self addChild:_mine];
     }
 }
@@ -207,6 +209,13 @@ static SPTexture *visTexture = nil;
     _fogOfWarVisibility = visible;
 }
 
+- (void)setSonar:(BOOL)visible
+{
+    if (_mine) {
+        [_mine setVisible:visible];
+    }
+}
+
 - (BOOL)isBase
 {
     return (_myShipSegment && !_myShipSegment.ship.isEnemyShip && _myShipSegment.ship.shipType == BaseType);
@@ -219,8 +228,29 @@ static SPTexture *visTexture = nil;
 
 - (BOOL)collide:(Ship *)ship
 {
-    //
+    
+    if (_triggerMine || _mine) {
+        if (ship.shipType == Miner) {
+            if (_mine) {
+                [self notifyEvent];
+                return YES;
+            }
+        } else {
+            [_triggerMine explode];
+            return YES;
+        }
+    }
+    if (_reef) {
+        [self notifyEvent];
+        return YES;
+    }
+    if (_myShipSegment) {
+        [self notifyEvent];
+        return YES;
+    }
+    
     return NO;
 }
+
 
 @end

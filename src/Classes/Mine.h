@@ -13,5 +13,6 @@
 
 - (id)initWithTile:(Tile *)tile;
 @property (nonatomic, weak) Tile *tile;
+- (void)explode;
 
 @end

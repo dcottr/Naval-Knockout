@@ -817,6 +817,7 @@ static BOOL shipTypeMapsInitialized = NO;
                 for (int j = _baseColumn - semiwidth; j<= semiwidth + _baseColumn; j++ ){
                     Tile *t = [_gameContainer tileAtRow:i col:j];
                     [t fogOfWar:YES];
+                    [t setSonar:(_shipType == Miner)];
                 }
             }
             break;
@@ -826,6 +827,7 @@ static BOOL shipTypeMapsInitialized = NO;
                 for ( int j = MAX(0, _baseColumn - semiwidth); j<= semiwidth + _baseColumn && j<_gameContainer.tileCount && j>=0; j++ ){
                     Tile *t= [[_gameContainer.tiles objectAtIndex:j] objectAtIndex:i];
                     [t fogOfWar:YES];
+                    [t setSonar:(_shipType == Miner)];
                 }
             }
             break;
@@ -835,6 +837,7 @@ static BOOL shipTypeMapsInitialized = NO;
                 for ( int j = MAX(_baseRow - semiwidth, 0); j<= semiwidth + _baseRow && j<_gameContainer.tileCount && j>=0; j++ ){
                     Tile *t= [[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j];
                     [t fogOfWar:YES];
+                    [t setSonar:(_shipType == Miner)];
                 }
             }
             break;
@@ -844,6 +847,7 @@ static BOOL shipTypeMapsInitialized = NO;
                 for ( int j = MAX(_baseRow - semiwidth, 0); j<= semiwidth + _baseRow && j<_gameContainer.tileCount && j>=0; j++ ){
                     Tile *t= [[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j];
                     [t fogOfWar:YES];
+                    [t setSonar:(_shipType == Miner)];
                 }
             }
             break;

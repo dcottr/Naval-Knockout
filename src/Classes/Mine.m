@@ -9,6 +9,7 @@
 #import "Mine.h"
 #import "Tile.h"
 #import "Game.h"
+#import "ShipSegment.h"
 @interface Mine ()
 
 @property (nonatomic, strong) NSArray *triggerTiles;
@@ -31,7 +32,6 @@ static SPTexture *mineTexture = nil;
         image.width = 32.0f;
         [self addChild:image];
         [self setup];
-//        [tile addMine:self];
     }
     return self;
 }
@@ -65,5 +65,16 @@ static SPTexture *mineTexture = nil;
     _triggerTiles = [NSArray arrayWithArray:triggerTiles];
 }
 
+- (void)explode
+{
+    for (Tile *tile in _triggerTiles) {
+        if (tile.myShipSegment) {
+            [tile.myShipSegment hitByMine];
+        }
+    }
+    
+    [_tile notifyEvent];
+    [_tile removeMine];
+}
 
 @end

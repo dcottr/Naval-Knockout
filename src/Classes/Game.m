@@ -217,8 +217,15 @@ static NSArray *startShipTypes = nil;
     // Remember, this can be called any time if it is not my turn, and only on play if it is my turn.
     NSLog(@"LoadingState: %@", state);
     NSString *myId = [GKLocalPlayer localPlayer].playerID;
-
-    // Old stuff
+    
+    NSArray *mines = [state objectForKey:@"mines"];
+    for (NSArray *position in mines) {
+        NSInteger row = [[position objectAtIndex:0] integerValue];
+        NSInteger col = [[position objectAtIndex:1] integerValue];
+        Tile *tile = [[_tiles objectAtIndex:col] objectAtIndex:row];
+        [tile performMineAction];
+        [tile setSonar:NO];
+    }
     
     if (_cannonCollisionTile) {
         [_cannonCollisionTile displayCannonHit:NO];
@@ -248,14 +255,6 @@ static NSArray *startShipTypes = nil;
         NSInteger col = [[notify objectAtIndex:1] integerValue];
         Tile *tile = [[_tiles objectAtIndex:col] objectAtIndex:row];
         [tile displayCannonHit:YES];
-    }
-    
-    NSArray *mines = [state objectForKey:@"mines"];
-    for (NSArray *position in mines) {
-        NSInteger row = [[position objectAtIndex:0] integerValue];
-        NSInteger col = [[position objectAtIndex:1] integerValue];
-        Tile *tile = [[_tiles objectAtIndex:col] objectAtIndex:row];
-        [tile performMineAction];
     }
 }
 
