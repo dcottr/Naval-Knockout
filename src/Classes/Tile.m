@@ -173,6 +173,9 @@ static SPTexture *visTexture = nil;
 - (void)fogOfWar:(BOOL)visible
 {
     if (_myShipSegment) {
+        if (_myShipSegment.ship.shipType == BaseType) {
+            visible = YES;
+        }
         [_myShipSegment setFogOfWar:visible];
     }
     [_content setVisible:visible];

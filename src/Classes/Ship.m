@@ -168,12 +168,6 @@ static BOOL shipTypeMapsInitialized = NO;
 	SPTouch *drag = [[event touchesWithTarget:self andPhase:SPTouchPhaseMoved] anyObject];
 	SPTouch *touchUp = [[event touchesWithTarget:self andPhase:SPTouchPhaseEnded] anyObject];
     
-    //        SPTouch *touch = touches[0];
-    //        SPPoint *movement = [touch movementInSpace:self.parent];
-    //
-    //        self.x += movement.x;
-    //        self.y += movement.y;
-    
     if (touch) {
         isGrabbed = YES;
     } else if (drag) {
@@ -851,39 +845,6 @@ static BOOL shipTypeMapsInitialized = NO;
             }
             break;
     }
-    
-	
-    /*  original code for destroyers
-     for (NSArray *column in _gameContainer.tiles) {
-     for (Tile *tile in column) {
-     if (_dir == Up ) {
-     if (tile.row >= _baseRow - 7 && tile.row <= _baseRow + 4) {
-     if (tile.col >= _baseColumn - 4 && tile.col <= _baseColumn + 4) {
-     [validTiles addObject:tile];
-     }
-     }
-     } else if (_dir == Down) {
-     if (tile.row >= _baseRow - 4 && tile.row <= _baseRow + 7) {
-     if (tile.col >= _baseColumn - 4 && tile.col <= _baseColumn + 4) {
-     [validTiles addObject:tile];
-     }
-     }
-     } else if (_dir == Left) {
-     if (tile.col >= _baseColumn - 7 && tile.col <= _baseColumn + 4) {
-     if (tile.row >= _baseRow - 4 && tile.row <= _baseRow + 4) {
-     [validTiles addObject:tile];
-     }
-     }
-     } else if (_dir == Right) {
-     if (tile.col >= _baseColumn - 4 && tile.col <= _baseColumn + 7) {
-     if (tile.row >= _baseRow - 4 && tile.row <= _baseRow + 4) {
-     [validTiles addObject:tile];
-     }
-     }
-     }
-     }
-     }
-     */
     return validTiles;
 }
 
