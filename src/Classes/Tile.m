@@ -191,4 +191,9 @@ static SPTexture *visTexture = nil;
     _fogOfWarVisibility = visible;
 }
 
+- (BOOL)isBase
+{
+    return (_myShipSegment && !_myShipSegment.ship.isEnemyShip && _myShipSegment.ship.shipType == BaseType);
+}
+
 @end

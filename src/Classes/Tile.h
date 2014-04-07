@@ -35,5 +35,6 @@
 - (void)setSunk;
 
 - (void)fogOfWar:(BOOL)visible;
+- (BOOL)isBase;
 
 @end

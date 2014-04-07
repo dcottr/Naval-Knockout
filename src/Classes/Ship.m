@@ -991,30 +991,21 @@ static BOOL shipTypeMapsInitialized = NO;
         neighbours = [[NSMutableArray alloc] init];
         row = segment.tile.row;
         col = segment.tile.col;
-        // Ugh, fix this later... too tired right now.
         tile = [_gameContainer tileAtRow:row col:(col + 1)];
         if (tile) {
-            if (tile.myShipSegment && tile.myShipSegment.ship.shipType == BaseType) {
-                return YES;
-            }
+            return [tile isBase];
         }
         tile = [_gameContainer tileAtRow:row col:(col - 1)];
         if (tile) {
-            if (tile.myShipSegment && tile.myShipSegment.ship.shipType == BaseType) {
-                return YES;
-            }
+            return [tile isBase];
         }
         tile = [_gameContainer tileAtRow:(row + 1) col:col];
         if (tile) {
-            if (tile.myShipSegment && tile.myShipSegment.ship.shipType == BaseType) {
-                return YES;
-            }
+            return [tile isBase];
         }
         tile = [_gameContainer tileAtRow:(row - 1) col:col];
         if (tile) {
-            if (tile.myShipSegment && tile.myShipSegment.ship.shipType == BaseType) {
-                return YES;
-            }
+            return [tile isBase];
         }
     }
     return NO;
