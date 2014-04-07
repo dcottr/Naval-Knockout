@@ -245,8 +245,10 @@ static SPTexture *visTexture = nil;
         return YES;
     }
     if (_myShipSegment) {
-        [self notifyEvent];
-        return YES;
+        if (![_myShipSegment.ship isEqual:ship]) {
+            [self notifyEvent];
+            return YES;
+        }
     }
     
     return NO;

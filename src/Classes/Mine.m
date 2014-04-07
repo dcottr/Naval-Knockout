@@ -22,14 +22,12 @@ static SPTexture *mineTexture = nil;
 - (id)initWithTile:(Tile *)tile
 {
     if (!mineTexture) {
-        mineTexture = [SPTexture textureWithContentsOfFile:@"ship_small_body.png"];
+        mineTexture = [SPTexture textureWithContentsOfFile:@"shipMid.png"];
     }
     self = [super init];
     if (self) {
         _tile = tile;
         SPImage *image = [[SPImage alloc] initWithTexture:mineTexture];
-        image.width = 32.0f;
-        image.width = 32.0f;
         [self addChild:image];
         [self setup];
     }
