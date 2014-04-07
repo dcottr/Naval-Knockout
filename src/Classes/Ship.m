@@ -860,6 +860,7 @@ static BOOL shipTypeMapsInitialized = NO;
     //	int length = [[shipLengthMap objectForKey:num(_shipType)] intValue];
 	// x coordinate of tile that isn't touched during rotation
     // Upper Left
+  if (_shipType != Radar || _shipType != Torpedo){
 	if( (_dir == Left && newdir == Up) || (_dir == Up && newdir == Left) ){
 	  //  get entire rectangle and clear out
 	  int upperbound = _baseRow-_shipLength + 1;
@@ -961,11 +962,77 @@ static BOOL shipTypeMapsInitialized = NO;
             return [[tiles reverseObjectEnumerator] allObjects];
         }
     }
-    
-    
+  }
+  else{
+	
+	//	rotating a torpedo boat or a radar
+	int centerRow;
+	int centerCol;
+	if (_dir == Up ) {
+	  centerRow = _baseRow + 1;
+	  centerCol = _baseColumn;
+	}
+	else if (_dir == Down){
+	  centerRow = _baseRow + _shipLength - 1;
+	  centerCol = _baseColumn;
+	}
+	
+	switch (_dir) {
+	  case Up:
+		centerRow = _baseRow - 1;
+		centerCol = _baseColumn;
+		break;
+	  case Down:
+		centerRow = _baseRow + 1;
+		centerCol = _baseColumn;
+		break;
+	  case Left:
+		centerRow = _baseRow;
+		centerCol = _baseColumn - 1;
+	  case Right:
+		centerRow = _baseRow;
+		centerCol = _baseColumn + 1;
+	  
+	  default:
+		break;
+	}
+	
+	if (( (_dir == Up && newdir == Right) || (_dir == Right && newdir == Up) || (_dir== Down && newdir == Left) || (_dir == Left && newdir == Down) )){
+	  // assuming boat is in position and baserow/basecol is at the very back
+	  for (int i = centerRow + 1; i >= centerRow - 1  ; i--){
+		for( int j = centerCol -1; j<= centerCol +1; j ++ ){
+		  if ( ( i != centerRow - 1 && j != centerCol - 1 )
+			  ||  ( i != centerRow + 1 && j != centerCol + 1 ) ){
+			[tiles addObject:[[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j]];
+		  }
+		}
+	  }
+	}
+	if (( (_dir == Up && newdir == Left) || (_dir == Left && newdir == Up) || (_dir== Down && newdir == Right) || (_dir == Right && newdir == Down) )){
+	  // assuming boat is in position and baserow/basecol is at the very back
+	  for (int i = centerRow + 1; i >= centerRow - 1  ; i--){
+		for( int j = centerCol -1; j<= centerCol +1; j ++ ){
+		  if ( ( i != centerRow - 1 && j != centerCol + 1 )
+			  ||  ( i != centerRow + 1 && j != centerCol - 1 ) ){
+			[tiles addObject:[[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j]];
+		  }
+		}
+	  }
+	}
+  }
     return tiles;
     
 }
+
+-(BOOL)shouldTurn:(Direction)dir
+{
+
+  NSArray * tiles = [self rotateTileList:dir];
+  for (Tile * t in tiles){
+  }
+  return YES;
+}
+
 
 -(Tile *)shouldMove:(NSArray *)tileList
 {
