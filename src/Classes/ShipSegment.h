@@ -19,11 +19,11 @@ typedef NSInteger ShipSegmentIndex;
 @interface ShipSegment : SPSprite
 
 @property (nonatomic, weak) Tile *tile;
-@property (nonatomic, weak) Ship *ship;
+@property (nonatomic, weak, readonly) Ship *ship;
 @property (nonatomic, assign) int health; // integer ==> destroyed = 0, damaged = 1, intact = 2.
 @property (nonatomic, assign) BOOL selectable;
 
-- (id)initWithIndex:(ShipSegmentIndex)index;
+- (id)initWithIndex:(ShipSegmentIndex)index ship:(Ship *)ship;
 - (void)setFogOfWar:(BOOL)foggy;
 - (void)hitByCannon;
 - (void)hitByHeavyCannon;

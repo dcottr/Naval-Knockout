@@ -19,7 +19,7 @@ enum {
 typedef NSInteger StateType;
 
 
-@class shipTray, ShipCommandBar, GameManager, Tile;
+@class ShipsTray, ShipCommandBar, GameManager, Tile;
 
 @interface Game : SPSprite <UIAlertViewDelegate>
 
@@ -27,7 +27,7 @@ typedef NSInteger StateType;
 
 @property (nonatomic, strong) SPJuggler *shipJuggler;
 
-@property (nonatomic, strong) shipTray *shipsTray;
+@property (nonatomic, strong) ShipsTray *shipsTray;
 @property (nonatomic, strong) ShipCommandBar *shipCommandBar;
 
 // All ships

@@ -238,20 +238,28 @@ static NSArray *startShipTypes = nil;
     }
 }
 
-#pragma message("TODO: set up bases here.")
 - (void)createShipsLeft:(BOOL)left
 {
     _myShips = [[NSMutableSet alloc] init];
     for (int i = 0; i < [startShipTypes count]; i++) {
         NSNumber *shipType = [startShipTypes objectAtIndex:i];
         Ship *newShip = [[Ship alloc] initWithGame:self type:[shipType intValue]];
-        newShip.baseRow = i + 10;
-        if (left) {
-            newShip.baseColumn = 1;
-            newShip.dir = Right;
+        if (newShip.shipType == BaseType) {
+            newShip.baseRow = 19;
+            if (left) {
+                newShip.baseColumn = 0;
+            } else {
+                newShip.baseColumn = 29;
+            }
         } else {
-            newShip.baseColumn = 28;
-            newShip.dir = Left;
+            newShip.baseRow = i + 10;
+            if (left) {
+                newShip.baseColumn = 1;
+                newShip.dir = Right;
+            } else {
+                newShip.baseColumn = 28;
+                newShip.dir = Left;
+            }
         }
         [_myShips addObject:newShip];
         
@@ -510,7 +518,7 @@ static NSArray *startShipTypes = nil;
 {
     
     //    [SPAudioEngine start];  // starts up the sound engine
-    startShipTypes = @[num(Cruiser), num(Cruiser), num(Destroyer), num(Destroyer), num(Destroyer), num(Torpedo), num(Torpedo), num(Miner), num(Miner), num(Radar)];
+    startShipTypes = @[num(Cruiser), num(Cruiser), num(Destroyer), num(Destroyer), num(Destroyer), num(Torpedo), num(Torpedo), num(Miner), num(Miner), num(Radar), num(BaseType)];
     
     
     _content = [[SPSprite alloc] init];
@@ -680,7 +688,6 @@ static NSArray *startShipTypes = nil;
     }
 }
 
-
 - (void)advanceJugglers:(SPEnterFrameEvent *)event
 {
     [_shipJuggler advanceTime:event.passedTime];
@@ -689,7 +696,7 @@ static NSArray *startShipTypes = nil;
 - (void)doneSettingShips
 {
     NSLog(@"Here");
-    [self removeChild:(SPDisplayObject *)_shipsTray];
+    [self removeChild:_shipsTray];
     _shipsTray = nil;
     
     _shipCommandBar = [[ShipCommandBar alloc] init];

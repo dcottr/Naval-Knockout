@@ -54,9 +54,11 @@ static BOOL shipTypeMapsInitialized = NO;
         shipSpeedMap = @{num(Cruiser): num(10), num(Destroyer): num(8), num(Torpedo): num(9), num(Miner): num(6), num(Radar): num(3), num(BaseType):num(0)};
         shipArmourMap = @{num(Cruiser): num(ArmourHeavy), num(Destroyer): num(ArmourNormal), num(Torpedo): num(ArmourNormal), num(Miner): num(ArmourHeavy), num(Radar): num(ArmourNormal), num(BaseType):num(ArmourNormal)};
         shipWeaponsMap = @{num(Cruiser): @[num(WeaponHeavyCannon)], num(Destroyer): @[num(WeaponCannon), num(WeaponTorpedo)], num(Torpedo): @[num(WeaponCannon), num(WeaponTorpedo)], num(Miner): @[num(WeaponCannon), num(WeaponMine)], num(Radar): @[num(WeaponCannon)], num(BaseType):@[]};
-        shipTypeMapsInitialized = YES;
-        shipRadarDimensions =@{num(Cruiser): @[num(3),num(10)], num(Destroyer):@[num(3),num(8)], num(Torpedo):@[num(3),num(6)], num(Miner):@[num(6),num(5)] , num(Radar):@[num(6),num(3)], num(BaseType):@[num(12),num(3)]};
+        
+        // width, length, back.
+        shipRadarDimensions =@{num(Cruiser): @[num(3),num(10), num(0)], num(Destroyer):@[num(3),num(8), num(0)], num(Torpedo):@[num(3),num(6), num(0)], num(Miner):@[num(5),num(3), num(3)] , num(Radar):@[num(3),num(6), num(0)], num(BaseType):@[num(3),num(10),num(2)]};
         shipCannonDimensions = @{num(Cruiser): @[num(11), num(15), num(5)], num(Destroyer):@[num(9),num(12),num(4)], num(Torpedo):@[num(5),num(5), num(0)], num(Miner):@[num(5),num(4),num(1)], num(Radar):@[num(3),num(5),num(1)], num(BaseType):@[]};
+        shipTypeMapsInitialized = YES;
     }
 }
 
@@ -99,11 +101,10 @@ static BOOL shipTypeMapsInitialized = NO;
                 segIndex = ShipSegmentIndexMid;
             }
             
-            ShipSegment *shipSegment = [[ShipSegment alloc] initWithIndex:segIndex];
+            ShipSegment *shipSegment = [[ShipSegment alloc] initWithIndex:segIndex ship:self];
             [shipSegments addObject:shipSegment];
             shipSegment.width = 32;
             shipSegment.height = 32;
-            shipSegment.ship = self;
             [self addChild:shipSegment];
             shipSegment.x = 0;
             shipSegment.y = (_shipLength - 1 - i) * 32;
@@ -476,6 +477,10 @@ static BOOL shipTypeMapsInitialized = NO;
     }
     
     if (touchUp && _gameContainer.myTurn) {
+        if (self.shipType == BaseType) {
+            return;
+        }
+        
         if (_gameContainer.currentStateType == StateTypePlay) {
             [_gameContainer.shipCommandBar setSelected:self];
         } else if ((_gameContainer.currentStateType == StateTypeShipSetupRight || _gameContainer.currentStateType == StateTypeShipSetupLeft)) {
@@ -760,11 +765,12 @@ static BOOL shipTypeMapsInitialized = NO;
     NSArray *radarSize = [shipRadarDimensions objectForKey:num(_shipType)];
     // do cases on directions to get tiles of radar range
     int semiwidth =  ([[radarSize objectAtIndex:0] intValue] - 1)/2; // half the width ; is odd so -1
-    int length  = [[radarSize objectAtIndex:1] intValue]; // length is long side
+    int length  = [[radarSize objectAtIndex:1] intValue] - 1; // length is long side
+    int offset = [[radarSize objectAtIndex:2] intValue];
     [[[_gameContainer.tiles objectAtIndex:_baseColumn] objectAtIndex:_baseRow] fogOfWar:YES];
     switch (_dir) {
         case Down:  // swap length + width
-            for ( int i = _baseRow +1; i <= _baseRow +1 + length && i<_gameContainer.tileCount && i>=0; i++){
+            for ( int i = MAX(_baseRow +1 -  offset, 0); i <= _baseRow +1 + length && i<_gameContainer.tileCount && i>=0; i++){
                 for (int j = MAX(0, _baseColumn - semiwidth); j<= semiwidth + _baseColumn && j<_gameContainer.tileCount && j>=0; j++ ){
                     Tile *t= [[_gameContainer.tiles objectAtIndex:j] objectAtIndex:i];
                     [t fogOfWar:YES];
@@ -773,7 +779,7 @@ static BOOL shipTypeMapsInitialized = NO;
             break;
             
         case Up: // swap l + w, face downward
-            for ( int i = MAX(_baseRow - 1, 0); i >= _baseRow -1 - length && i<_gameContainer.tileCount && i>=0; i--){
+            for ( int i = MAX(_baseRow - 1 + offset, 0); i >= _baseRow -1 - length && i<_gameContainer.tileCount && i>=0; i--){
                 for ( int j = MAX(0, _baseColumn - semiwidth); j<= semiwidth + _baseColumn && j<_gameContainer.tileCount && j>=0; j++ ){
                     Tile *t= [[_gameContainer.tiles objectAtIndex:j] objectAtIndex:i];
                     [t fogOfWar:YES];
@@ -782,7 +788,7 @@ static BOOL shipTypeMapsInitialized = NO;
             break;
             
         case Left:
-            for ( int i = MAX(_baseColumn-1, 0); i >= _baseColumn -1 - length && i<_gameContainer.tileCount && i>=0; i--){
+            for ( int i = MAX(_baseColumn-1+offset, 0); i >= _baseColumn -1 - length && i<_gameContainer.tileCount && i>=0; i--){
                 for ( int j = MAX(_baseRow - semiwidth, 0); j<= semiwidth + _baseRow && j<_gameContainer.tileCount && j>=0; j++ ){
                     Tile *t= [[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j];
                     [t fogOfWar:YES];
@@ -791,7 +797,7 @@ static BOOL shipTypeMapsInitialized = NO;
             break;
             
         default:  // object is facing right
-            for ( int i = _baseColumn + 1; i <= _baseColumn +1 + length && i<_gameContainer.tileCount && i>=0; i++){
+            for ( int i = MAX(_baseColumn + 1 - offset, 0); i <= _baseColumn +1 + length && i<_gameContainer.tileCount && i>=0; i++){
                 for ( int j = MAX(_baseRow - semiwidth, 0); j<= semiwidth + _baseRow && j<_gameContainer.tileCount && j>=0; j++ ){
                     Tile *t= [[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j];
                     [t fogOfWar:YES];
@@ -810,8 +816,6 @@ static BOOL shipTypeMapsInitialized = NO;
     int semiwidth =  ([[cannonSize objectAtIndex:0] intValue] - 1)/2; // half the width
     int length  = [[cannonSize objectAtIndex:1] intValue]; // length is long side
     int offset = [[cannonSize objectAtIndex:2] intValue];
-    // unfortunately obj-c doesn't do factory well so we repeat a lot of logic
-    
     switch (_dir) {
         case Down:  // swap length + width
             for ( int i = MAX(_baseRow-offset,0); i < _baseRow -offset + length && i<_gameContainer.tileCount && i>=0; i++){

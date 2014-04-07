@@ -52,7 +52,7 @@ static Base * enemyTail = nil;
 
 -(id)initWithGame:(Game *)game type:(ShipType)type{
   if (!texturesInitialized){
-//	healthyBase = [SPTexture textureWithContentsOfFile:@"base_healthy.png"];
+	healthyBase = [SPTexture textureWithContentsOfFile:@"base_healthy.png"];
 	//damagedBase = [SPTexture textureWithContentsOfFile:@"base_weak.png"];
 	//disabledBase = [SPTexture textureWithContentsOfFile:@"base_dead.png"];
   }

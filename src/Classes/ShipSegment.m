@@ -30,10 +30,10 @@ static SPTexture *waterTexture = nil;
 static SPTexture *backShipTexture = nil;
 static SPTexture *middleShipTexture = nil;
 static SPTexture *frontShipTexture = nil;
+static SPTexture *frontBaseShipTexture = nil;
 
 
-
-- (id)initWithIndex:(ShipSegmentIndex)index
+- (id)initWithIndex:(ShipSegmentIndex)index ship:(Ship *)ship
 {
     if (!waterTexture) {
         waterTexture = [SPTexture textureWithContentsOfFile:@"watertile.jpeg"];
@@ -47,17 +47,26 @@ static SPTexture *frontShipTexture = nil;
     if (!frontShipTexture) {
         frontShipTexture = [SPTexture textureWithContentsOfFile:@"shipFront.png"];
     }
+    if (!frontBaseShipTexture) {
+        frontBaseShipTexture = [SPTexture textureWithContentsOfFile:@"shipFrontBase.png"];
+    }
 
 
     self = [super init];
     if (self) {
+        _ship = ship;
+        
         SPTexture *shipSegmentTexture;
         if (index == ShipSegmentIndexBack) {
             shipSegmentTexture = backShipTexture;
         } else if (index == ShipSegmentIndexMid) {
             shipSegmentTexture = middleShipTexture;
         } else {
-            shipSegmentTexture = frontShipTexture;
+            if (ship.shipType == BaseType) {
+                shipSegmentTexture = frontBaseShipTexture;
+            } else {
+                shipSegmentTexture = frontShipTexture;
+            }
         }
         
         _healthOverlayContent = [[SPSprite alloc] init];
