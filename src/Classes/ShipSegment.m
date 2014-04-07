@@ -132,6 +132,12 @@ static SPTexture *frontBaseShipTexture = nil;
     [self updateSegmentDamage];
 }
 
+- (void)hitByMine
+{
+    _health = 0;
+    [self updateSegmentDamage];
+}
+
 - (void)displayNotify:(BOOL)display
 {
     [_collisionOverlay setVisible:display];

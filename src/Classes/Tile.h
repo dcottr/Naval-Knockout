@@ -36,10 +36,14 @@
 - (void)setSunk;
 
 - (void)fogOfWar:(BOOL)visible;
+
+- (void)setSonar:(BOOL)visible;
 - (BOOL)isBase;
 
 - (void)addMineTrigger:(Mine *)mine;
 
 - (BOOL)collide:(Ship *)ship;
+
+- (void)removeMine;
 
 @end

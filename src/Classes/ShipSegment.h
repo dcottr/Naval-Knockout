@@ -27,6 +27,7 @@ typedef NSInteger ShipSegmentIndex;
 - (void)setFogOfWar:(BOOL)foggy;
 - (void)hitByCannon;
 - (void)hitByHeavyCannon;
+- (void)hitByMine;
 - (void)updateSegmentDamage;
 - (void)displayNotify:(BOOL)display;
 @end
