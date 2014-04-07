@@ -298,7 +298,6 @@ static BOOL shipTypeMapsInitialized = NO;
         }
     }
     // TODO, delete health attribute in ship (put it in segments)
-    
     for (ShipSegment *segment in _shipSegments) {
         [segment updateSegmentDamage];
     }
@@ -764,9 +763,9 @@ static BOOL shipTypeMapsInitialized = NO;
     [[[_gameContainer.tiles objectAtIndex:_baseColumn] objectAtIndex:_baseRow] fogOfWar:YES];
     switch (_dir) {
         case Down:  // swap length + width
-            for ( int i = MAX(_baseRow +1 -  offset, 0); i <= _baseRow +1 + length && i<_gameContainer.tileCount && i>=0; i++){
-                for (int j = MAX(0, _baseColumn - semiwidth); j<= semiwidth + _baseColumn && j<_gameContainer.tileCount && j>=0; j++ ){
-                    Tile *t= [[_gameContainer.tiles objectAtIndex:j] objectAtIndex:i];
+            for ( int i = _baseRow +1 -  offset; i <= _baseRow +1 + length; i++){
+                for (int j = _baseColumn - semiwidth; j<= semiwidth + _baseColumn; j++ ){
+                    Tile *t = [_gameContainer tileAtRow:i col:j];
                     [t fogOfWar:YES];
                 }
             }
@@ -810,6 +809,7 @@ static BOOL shipTypeMapsInitialized = NO;
     int semiwidth =  ([[cannonSize objectAtIndex:0] intValue] - 1)/2; // half the width
     int length  = [[cannonSize objectAtIndex:1] intValue]; // length is long side
     int offset = [[cannonSize objectAtIndex:2] intValue];
+    NSLog(@"offset: %d, semiwidth: %d, length: %d", offset, semiwidth, length);
     switch (_dir) {
         case Down:  // swap length + width
             for ( int i = MAX(_baseRow-offset,0); i < _baseRow -offset + length && i<_gameContainer.tileCount && i>=0; i++){
@@ -820,7 +820,7 @@ static BOOL shipTypeMapsInitialized = NO;
             break;
             
         case Up: // swap l + w, face downward
-            for ( int i = _baseRow +offset; i > _baseRow +offset - length  && i<_gameContainer.tileCount && i>=0; i--){
+            for ( int i = MIN(_baseRow +offset, 29); i > MIN(_baseRow +offset - length, 29)  && i<_gameContainer.tileCount && i>=0; i--){
                 for ( int j = MAX(_baseColumn - semiwidth, 0); j<= semiwidth + _baseColumn && j<_gameContainer.tileCount && j>=0; j++ ){
                     [validTiles addObject: [[_gameContainer.tiles objectAtIndex:j] objectAtIndex:i]];
                     
@@ -829,8 +829,10 @@ static BOOL shipTypeMapsInitialized = NO;
             break;
             
         case Left:
-            for ( int i = _baseColumn	+ offset; i > _baseColumn +offset- length && i<_gameContainer.tileCount && i>=0; i--){
+            NSLog(@"Left");
+            for ( int i = MIN(_baseColumn	+ offset, 29); i > MIN(_baseColumn +offset- length, 29) && i<_gameContainer.tileCount && i>=0; i--){
                 for ( int j = MAX(_baseRow - semiwidth, 0); j<= semiwidth + _baseRow && j<_gameContainer.tileCount && j>=0; j++ ){
+                    NSLog(@"Getting tile: %d, %d", i, j);
                     [validTiles addObject: [[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j]];
                     
                 }
@@ -844,6 +846,10 @@ static BOOL shipTypeMapsInitialized = NO;
                 }
             }
             break;
+    }
+    NSLog(@"Valid tile selects: %@, dir: %d", validTiles,(int) _dir);
+    for (Tile *tile in validTiles) {
+        NSLog(@"Can hit tile: %d, %d", tile.col, tile.row);
     }
     return validTiles;
 }
@@ -975,6 +981,43 @@ static BOOL shipTypeMapsInitialized = NO;
     return nil;
 }
 
-
+- (BOOL)isTouchingBase
+{
+    NSMutableArray *neighbours;
+    int row;
+    int col;
+    Tile *tile;
+    for (ShipSegment *segment in _shipSegments) {
+        neighbours = [[NSMutableArray alloc] init];
+        row = segment.tile.row;
+        col = segment.tile.col;
+        // Ugh, fix this later... too tired right now.
+        tile = [_gameContainer tileAtRow:row col:(col + 1)];
+        if (tile) {
+            if (tile.myShipSegment && tile.myShipSegment.ship.shipType == BaseType) {
+                return YES;
+            }
+        }
+        tile = [_gameContainer tileAtRow:row col:(col - 1)];
+        if (tile) {
+            if (tile.myShipSegment && tile.myShipSegment.ship.shipType == BaseType) {
+                return YES;
+            }
+        }
+        tile = [_gameContainer tileAtRow:(row + 1) col:col];
+        if (tile) {
+            if (tile.myShipSegment && tile.myShipSegment.ship.shipType == BaseType) {
+                return YES;
+            }
+        }
+        tile = [_gameContainer tileAtRow:(row - 1) col:col];
+        if (tile) {
+            if (tile.myShipSegment && tile.myShipSegment.ship.shipType == BaseType) {
+                return YES;
+            }
+        }
+    }
+    return NO;
+}
 
 @end

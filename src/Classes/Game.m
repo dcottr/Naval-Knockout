@@ -103,6 +103,14 @@ static NSArray *startShipTypes = nil;
     }
 }
 
+- (Tile *)tileAtRow:(int)row col:(int)col
+{
+    if (row < 0 || row > 29 || col < 0 || col > 29) {
+        return nil;
+    }
+    return [[_tiles objectAtIndex:col] objectAtIndex:row];
+}
+
 - (void)acceptReef
 {
     [self performedAction];
@@ -411,12 +419,24 @@ static NSArray *startShipTypes = nil;
 {
     NSMutableArray *myShips = [[NSMutableArray alloc] init];
     for (Ship *ship in _myShips) {
+        
         NSMutableArray *health = [[NSMutableArray alloc] init];
-        for (ShipSegment *segment in ship.shipSegments) {
-            [health addObject:num(segment.health)];
+        BOOL shouldHeal = NO;
+        if (ship.shipType != BaseType && [ship isTouchingBase]) {
+            shouldHeal = YES;
+        }
+        for (ShipSegment *segment in [ship.shipSegments reverseObjectEnumerator])
+        {
+            int segmentHealth = segment.health;
+            if (shouldHeal && segmentHealth != 2) {
+                shouldHeal = NO;
+                segmentHealth = 2;
+                NSLog(@"Healing a ship segment");
+            }
+            [health addObject:num(segmentHealth)];
         }
         
-        NSArray *shipAttrs = [NSArray arrayWithObjects:num(ship.baseRow), num(ship.baseColumn), num(ship.dir), num(ship.shipType), [NSArray arrayWithArray:health], nil];
+        NSArray *shipAttrs = [NSArray arrayWithObjects:num(ship.baseRow), num(ship.baseColumn), num(ship.dir), num(ship.shipType), [[health reverseObjectEnumerator] allObjects], nil];
         [myShips addObject:shipAttrs];
     }
     

@@ -73,4 +73,6 @@ typedef NSInteger WeaponType;
 @property (nonatomic, strong) NSMutableArray *shipSegments;
 - (void)updateTilesOccupied;
 
+- (BOOL)isTouchingBase;
+
 @end

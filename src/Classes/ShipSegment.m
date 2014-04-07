@@ -132,7 +132,7 @@ static SPTexture *frontBaseShipTexture = nil;
     [self updateSegmentDamage];
 }
 
-- (void)displayCannonHit:(BOOL)display
+- (void)displayNotify:(BOOL)display
 {
     [_collisionOverlay setVisible:display];
 }
@@ -140,7 +140,7 @@ static SPTexture *frontBaseShipTexture = nil;
 - (void)setTile:(Tile *)tile
 {
     _tile = tile;
-    [self displayCannonHit:NO];
+    [self displayNotify:NO];
 }
 
 - (void)updateSegmentDamage

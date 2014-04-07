@@ -19,7 +19,7 @@
 
 @property (nonatomic, strong) Mine *mine;
 
-@property (nonatomic, strong) SPQuad *collisionOverlay;
+@property (nonatomic, strong) SPQuad *notifyOverlay;
 
 @property (nonatomic, strong) SPQuad *sunkOverlay;
 
@@ -79,9 +79,9 @@ static SPTexture *visTexture = nil;
         [self addChild:_content];
         [_content setVisible:_fogOfWarVisibility];
                 
-        _collisionOverlay = [[SPQuad alloc] initWithWidth:_game.tileSize - 7.0f height:_game.tileSize - 7.0f color:0xff0000];
-        [_content addChild:_collisionOverlay];
-        [_collisionOverlay setVisible:YES];
+        _notifyOverlay = [[SPQuad alloc] initWithWidth:_game.tileSize - 7.0f height:_game.tileSize - 7.0f color:0xff0000];
+        [_content addChild:_notifyOverlay];
+        [_notifyOverlay setVisible:YES];
         
         _selectableOverlay = [[SPQuad alloc] initWithWidth:_game.tileSize height:_game.tileSize color:0x00FF00];
         [self addChild:_selectableOverlay];
@@ -121,12 +121,12 @@ static SPTexture *visTexture = nil;
 
 - (void)displayCannonHit:(BOOL)display
 {
-    [_collisionOverlay setVisible:display];
+    [_notifyOverlay setVisible:display];
     if (display) {
         [self fogOfWar:YES];
     }
     if (_myShipSegment) {
-        [_myShipSegment displayCannonHit:display];
+        [_myShipSegment displayNotify:display];
     }
 }
 

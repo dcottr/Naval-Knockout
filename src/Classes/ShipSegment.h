@@ -28,5 +28,5 @@ typedef NSInteger ShipSegmentIndex;
 - (void)hitByCannon;
 - (void)hitByHeavyCannon;
 - (void)updateSegmentDamage;
-- (void)displayCannonHit:(BOOL)display;
+- (void)displayNotify:(BOOL)display;
 @end

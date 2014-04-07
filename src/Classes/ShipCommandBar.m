@@ -275,6 +275,7 @@ static NSDictionary *shipNameMap = nil;
     
     // Refreshes GUI after operation
     [self deselect];
+    NSLog(@"Deselected");
 }
 
 - (void)didPerformAction

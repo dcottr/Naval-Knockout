@@ -39,6 +39,7 @@ typedef NSInteger StateType;
 @property (nonatomic, assign) float tileSize;
 @property (nonatomic, assign) int tileCount;
 @property (nonatomic, strong) NSArray *tiles;
+- (Tile *)tileAtRow:(int)row col:(int)col;
 
 @property (nonatomic, weak) GameManager *delegate;
 
