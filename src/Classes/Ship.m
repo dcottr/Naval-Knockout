@@ -990,7 +990,7 @@ static BOOL shipTypeMapsInitialized = NO;
   // Upper right
   NSMutableArray *tiles =[[NSMutableArray alloc] init];
   for (int a = 0; a < _shipLength; a++){
-	[tiles insertObject:[[NSMutableArray alloc] init] atIndex:a];
+	[tiles addObject:[[NSMutableArray alloc] init]];
 
   }
   if (_shipType != Torpedo && _shipType !=  Radar){
@@ -1008,11 +1008,18 @@ static BOOL shipTypeMapsInitialized = NO;
 		  }
 		  for(int j = rightbound - indent; j >=  _baseColumn; j--){
 			s = MAX(s,l) ; // exceeded the previous point, move it
+			NSLog(@"i is %d , j %d ,  s  is %d", i, j ,s );
+			
+			
+			
+			
 			[[tiles objectAtIndex:s] addObject:[_gameContainer tileAtRow:i col:j]];
 			// [tiles addObject:[_gameContainer tileAtRow:i col:j]];
+			NSLog(@"i is %d , j %d ,  s  is %d", i, j ,s );
 			s--;
 		  }
 		  l++;
+		  
 		}
 	  }
 	  
@@ -1031,7 +1038,7 @@ static BOOL shipTypeMapsInitialized = NO;
 	}
 	// lower right
 	if( (_dir == Down	&& newdir == Right) || (_dir == Right && newdir == Down) ){
-	  int lowerbound = _baseRow + _shipLength + 1;
+	  int lowerbound = _baseRow + _shipLength - 1;
 	  int rightbound = _baseColumn + _shipLength - 1;
 	  int indent = 0;
 	  int l = 0;
