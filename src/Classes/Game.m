@@ -559,7 +559,7 @@ static NSArray *startShipTypes = nil;
 {
     
     //    [SPAudioEngine start];  // starts up the sound engine
-    startShipTypes = @[num(Cruiser), num(Cruiser), num(Destroyer), num(Destroyer), num(Destroyer), num(Torpedo), num(Torpedo), num(Miner), num(Miner), num(Radar), num(BaseType)];
+    startShipTypes = @[num(Cruiser), num(Cruiser), num(Destroyer), num(Destroyer), num(Destroyer), num(Torpedo), num(Torpedo), num(Miner), num(Miner), num(Radar), num(BaseType), num(Kamikaze)];
     
     
     _content = [[SPSprite alloc] init];
