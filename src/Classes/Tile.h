@@ -46,5 +46,6 @@
 - (BOOL)collide:(Ship *)ship shipSegment:(ShipSegment *)segment;
 
 - (void)removeMine;
+- (void)performKamikazeAction;
 
 @end

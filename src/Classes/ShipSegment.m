@@ -132,6 +132,13 @@ static SPTexture *frontBaseShipTexture = nil;
     [self updateSegmentDamage];
 }
 
+- (void)hitByKamikaze
+{
+    _health = 0;
+    [self updateSegmentDamage];
+}
+
+
 - (void)hitByMine
 {
     _health = 0;

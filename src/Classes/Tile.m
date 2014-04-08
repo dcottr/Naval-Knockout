@@ -219,7 +219,6 @@ static SPTexture *visTexture = nil;
             _backgroundImage.texture = waterTexture;
         }
     }
-    
     _fogOfWarVisibility = visible;
 }
 
@@ -269,5 +268,20 @@ static SPTexture *visTexture = nil;
     return NO;
 }
 
+- (void)performKamikazeAction
+{
+    Tile *tile;
+    for (int row = _row - 1; row < _row + 2; row++) {
+        for (int col = _col - 1; col < _col + 2; col++) {
+            tile = [_game tileAtRow:row col:col];
+            if (!(row == _row && col == _col) && tile && tile.myShipSegment) {
+                NSLog(@"Haha, boom: %d, %d", row, col);
+                [self setFogOfWarVisibility:YES];
+                [tile.myShipSegment hitByKamikaze];
+            }
+        }
+    }
+    [self notifyEvent];
+}
 
 @end

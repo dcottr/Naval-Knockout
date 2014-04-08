@@ -56,7 +56,7 @@ static BOOL shipTypeMapsInitialized = NO;
         shipWeaponsMap = @{num(Cruiser): @[num(WeaponHeavyCannon)], num(Destroyer): @[num(WeaponCannon), num(WeaponTorpedo)], num(Torpedo): @[num(WeaponCannon), num(WeaponTorpedo)], num(Miner): @[num(WeaponCannon), num(WeaponMine)], num(Radar): @[num(WeaponCannon)], num(BaseType):@[], num(Kamikaze):@[num(WeaponKamikaze)]};
         
         // width, length, back.
-        shipRadarDimensions =@{num(Cruiser): @[num(3),num(10), num(0)], num(Destroyer):@[num(3),num(8), num(0)], num(Torpedo):@[num(3),num(6), num(0)], num(Miner):@[num(5),num(3), num(3)] , num(Radar):@[num(3),num(6), num(0)], num(BaseType):@[num(3),num(10),num(2)], num(Kamikaze):@[num(5), num(3), num(2)]};
+        shipRadarDimensions =@{num(Cruiser): @[num(3),num(10), num(0)], num(Destroyer):@[num(3),num(8), num(0)], num(Torpedo):@[num(3),num(6), num(0)], num(Miner):@[num(5),num(3), num(3)] , num(Radar):@[num(3),num(6), num(0)], num(BaseType):@[num(3),num(10),num(2)], num(Kamikaze):@[num(5), num(2), num(3)]};
         shipCannonDimensions = @{num(Cruiser): @[num(11), num(15), num(5)], num(Destroyer):@[num(9),num(12),num(4)], num(Torpedo):@[num(5),num(5), num(0)], num(Miner):@[num(5),num(4),num(1)], num(Radar):@[num(3),num(5),num(1)], num(BaseType):@[], num(Kamikaze):@[num(5), num(5), num(2)]};
         shipTypeMapsInitialized = YES;
     }
@@ -308,6 +308,10 @@ static BOOL shipTypeMapsInitialized = NO;
 - (void)sinkShip
 {
     _isSunk = YES;
+    for (ShipSegment *segment in _shipSegments) {
+        segment.health = 0;
+    }
+    
     for (NSArray *column in _gameContainer.tiles) {
         for (Tile *tile in column) {
             if (_dir == Up) {
@@ -976,10 +980,6 @@ static BOOL shipTypeMapsInitialized = NO;
             }
             break;
     }
-    NSLog(@"Valid tile selects: %@, dir: %d", validTiles,(int) _dir);
-    for (Tile *tile in validTiles) {
-        NSLog(@"Can hit tile: %d, %d", tile.col, tile.row);
-    }
     return validTiles;
 }
 
@@ -1187,20 +1187,20 @@ static BOOL shipTypeMapsInitialized = NO;
         row = segment.tile.row;
         col = segment.tile.col;
         tile = [_gameContainer tileAtRow:row col:(col + 1)];
-        if (tile) {
-            return [tile isBase];
+        if (tile && [tile isBase]) {
+            return YES;
         }
         tile = [_gameContainer tileAtRow:row col:(col - 1)];
-        if (tile) {
-            return [tile isBase];
+        if (tile && [tile isBase]) {
+            return YES;
         }
         tile = [_gameContainer tileAtRow:(row + 1) col:col];
-        if (tile) {
-            return [tile isBase];
+        if (tile && [tile isBase]) {
+            return YES;
         }
         tile = [_gameContainer tileAtRow:(row - 1) col:col];
-        if (tile) {
-            return [tile isBase];
+        if (tile && [tile isBase]) {
+            return YES;
         }
     }
     return NO;

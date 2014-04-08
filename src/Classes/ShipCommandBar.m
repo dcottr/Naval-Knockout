@@ -16,7 +16,8 @@ enum {
     ActionHeavyCannon,
     ActionCannon,
     ActionTorpedo,
-    ActionMine
+    ActionMine,
+    ActionKamikaze
 };
 typedef NSInteger Action;
 
@@ -35,6 +36,8 @@ typedef NSInteger Action;
 @property (nonatomic, strong) SPButton *torpedoButton;
 @property (nonatomic, strong) SPButton *radarOnButton;
 @property (nonatomic, strong) SPButton *radarOffButton;
+@property (nonatomic, strong) SPButton *kamikazeButton;
+
 
 @property (nonatomic, strong) NSSet *validTileSelects;
 
@@ -53,7 +56,7 @@ static NSDictionary *shipNameMap = nil;
 - (id)initWithGame:(Game *)game
 {
     if (!shipNameMap) {
-        shipNameMap = @{num(Cruiser): @"Cruiser", num(Destroyer): @"Destroyer", num(Torpedo): @"Torpedo Boat", num(Miner): @"Mine Layer", num(Radar): @"Radar Boat", num(BaseType): @"Base"};
+        shipNameMap = @{num(Cruiser): @"Cruiser", num(Destroyer): @"Destroyer", num(Torpedo): @"Torpedo Boat", num(Miner): @"Mine Layer", num(Radar): @"Radar Boat", num(BaseType): @"Base", num(Kamikaze):@"Kamikaze!!"};
     }
     if (!commandBarTexture)
         commandBarTexture = [SPTexture textureWithContentsOfFile:@"Glossy08.png"];
@@ -81,6 +84,13 @@ static NSDictionary *shipNameMap = nil;
         _lButton.y = 20.0f;
         [self addChild:_lButton];
         [_lButton setVisible:NO];
+        
+        _kamikazeButton = [[SPButton alloc] initWithUpState:buttonTexture text:@"Kamikaze!!"];
+        [_kamikazeButton addEventListener:@selector(kamikaze:) atObject:self forType:SP_EVENT_TYPE_TRIGGERED];
+        _kamikazeButton.x = _lButton.x;
+        _kamikazeButton.y = _lButton.y;
+        [self addChild:_kamikazeButton];
+        [_kamikazeButton setVisible:NO];
         
         _rButton = [[SPButton alloc] initWithUpState:buttonTexture text:@"Right"];
         [_rButton addEventListener:@selector(turnRight:) atObject:self forType:SP_EVENT_TYPE_TRIGGERED];
@@ -159,9 +169,12 @@ static NSDictionary *shipNameMap = nil;
         _rButton.enabled = NO;
         _spinButton.enabled = NO;
     }
-    
-    [_lButton setVisible:YES];
-    [_rButton setVisible:YES];
+    if (ship.shipType != Kamikaze) {
+        [_lButton setVisible:YES];
+        [_rButton setVisible:YES];
+    } else {
+        [_kamikazeButton setVisible:YES];
+    }
     // Set validTileSelections Likes
     _selectedAction = ActionMove;
     _validTileSelects = [ship validMoveTiles];
@@ -206,6 +219,7 @@ static NSDictionary *shipNameMap = nil;
     _spinButton.enabled = YES;
     [_radarOnButton setVisible:NO];
     [_radarOffButton setVisible:NO];
+    [_kamikazeButton setVisible:NO];
     _ship = nil;
 }
 
@@ -318,12 +332,23 @@ static NSDictionary *shipNameMap = nil;
     [self didPerformAction];
 }
 
+- (void)kamikaze:(SPEvent *)event
+{
+    if (_selectedAction == ActionKamikaze) {
+        [self setSelected:_ship];
+        return;
+    }
+    
+    [self deselectTiles];
+    
+    _validTileSelects = [_ship validShootCannonTiles];
+    [self setSelectableTiles];
+    _selectedAction = ActionKamikaze;
+}
 
 - (void)selectTile:(Tile *)tile
 {
     if (!_validTileSelects) {
-        
-        
         [self deselect];
         return;
     }
@@ -337,6 +362,12 @@ static NSDictionary *shipNameMap = nil;
             [tile performCannonAction];
         } else if (_selectedAction == ActionHeavyCannon) {
             [tile performHeavyCannonAction];
+        } else if (_selectedAction == ActionKamikaze) {
+            [tile performKamikazeAction];
+            [self didPerformAction];
+            [self deselect];
+            [_ship sinkShip];
+            return;
         }
         [self didPerformAction];
     }
