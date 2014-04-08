@@ -873,7 +873,6 @@ static BOOL shipTypeMapsInitialized = NO;
 
 -(void)setSurroundingTilesVisible
 {
-    NSLog(@"Setting visible, ship length: %d", _shipLength);
     // get values for length + width of ship type
     NSArray *radarSize = [shipRadarDimensions objectForKey:num(_shipType)];
     // do cases on directions to get tiles of radar range
