@@ -1019,7 +1019,7 @@ static BOOL shipTypeMapsInitialized = NO;
 	  if (_dir == Up) // send the reverse of what we just calculated
 	  {
 		NSMutableArray *a = [[NSMutableArray alloc] init];
-		for (int i = 0; i< sizeof(tiles); i++){
+		for (int i = 0; i< tiles.count; i++){
 		  
 		  [a addObject:([[[tiles objectAtIndex:i] reverseObjectEnumerator] allObjects])];
 		  
@@ -1055,7 +1055,7 @@ static BOOL shipTypeMapsInitialized = NO;
 	  if (_dir == Down) // send the reverse of what we just calculated
 	  {
 		NSMutableArray *a = [[NSMutableArray alloc] init];
-		for (int i = 0; i< sizeof(tiles); i++){
+		for (int i = 0; i< tiles.count; i++){
 		  
 		  [a addObject:([[[tiles objectAtIndex:i] reverseObjectEnumerator] allObjects])];
 		  
@@ -1093,7 +1093,7 @@ static BOOL shipTypeMapsInitialized = NO;
 	  if (_dir == Down) // send the reverse of what we just calculated
 	  {
 		NSMutableArray *a = [[NSMutableArray alloc] init];
-		for (int i = 0; i< sizeof(tiles); i++){
+		for (int i = 0; i< tiles.count; i++){
 		  
 		  [a addObject:([[[tiles objectAtIndex:i] reverseObjectEnumerator] allObjects])];
 		  
@@ -1128,7 +1128,7 @@ static BOOL shipTypeMapsInitialized = NO;
 	  if (_dir == Up) // send the reverse of what we just calculated
 	  {
 		NSMutableArray *a = [[NSMutableArray alloc] init];
-		for (int i = 0; i< sizeof(tiles); i++){
+		for (int i = 0; i< tiles.count; i++){
 		  
 		  [a addObject:([[[tiles objectAtIndex:i] reverseObjectEnumerator] allObjects])];
 		  
@@ -1197,9 +1197,9 @@ static BOOL shipTypeMapsInitialized = NO;
 
   NSArray * tiles = [self rotateTileList:dir];
   if (tiles){
-	for (int i = 0; i < sizeof(tiles); i++){
+	for (int i = 0; i < tiles.count; i++){
 	  NSArray *a = [tiles objectAtIndex:i];
-	  for (int j =0; j< sizeof(a); j++){
+	  for (int j =0; j< a.count; j++){
 		Tile *t = [a objectAtIndex:j];
 		if ([t collide:self shipSegment:[_shipSegments objectAtIndex:i]] ) {
 		  return NO;
@@ -1209,7 +1209,7 @@ static BOOL shipTypeMapsInitialized = NO;
   }
   else{
 	for (NSArray * a in tiles){
-	  if (sizeof(a)<1){
+	  if (a.count<1){
 		return NO;
 	  }
 	}
