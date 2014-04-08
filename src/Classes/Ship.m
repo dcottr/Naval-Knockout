@@ -975,24 +975,64 @@ static BOOL shipTypeMapsInitialized = NO;
     return validTiles;
 }
 
+
+-(ShipSegment *)rotateDammit:(Direction) newdir{
+  // Upper right
+  if( (_dir == Up && newdir == Right) || (_dir == Right && newdir == Up) ){
+	int upperbound = _baseRow-_shipLength + 1;
+	int rightbound = _baseColumn + _shipLength - 1;
+	int indent = 0;
+	int c = 0;
+	int l = 0;
+	if (upperbound >= 0 && rightbound < 30){
+	  for (int i=_baseRow; i>= upperbound; i--){
+		if ( i < _baseRow -1){
+		  indent++;
+		}
+		for(int j = _baseColumn; j <= rightbound - indent; j++){
+		  c = (j <= (l + _baseColumn)) ?l:j;
+		  // [tiles addObject:[_gameContainer tileAtRow:i col:j]];
+		}
+		
+	  }
+	}
+	
+	if (_dir == Up) // send the reverse of what we just calculated
+	{
+	  // return [[tiles reverseObjectEnumerator] allObjects];
+	}
+  }
+  
+
+}
+
 -(NSArray *)rotateTileList:(Direction)newdir
 {
     NSMutableArray *tiles =[[NSMutableArray alloc] init];
     //	int length = [[shipLengthMap objectForKey:num(_shipType)] intValue];
 	// x coordinate of tile that isn't touched during rotation
     // Upper Left
+ /* for (int a = 0; a < _shipLength; a++){
+	NSMutableArray *segment = [[NSMutableArray alloc] init];
+	[tiles addObject:segment];
+  }
+ */
   if (_shipType != Radar && _shipType != Torpedo){
+	
 	if( (_dir == Left && newdir == Up) || (_dir == Up && newdir == Left) ){
 	  //  get entire rectangle and clear out
 	  int upperbound = _baseRow-_shipLength + 1;
 	  int leftbound  = _baseColumn - _shipLength +1;
 	  int indent = 0;
+	  int l = 0 ;
+	  int c = 0 ;
 	  if (upperbound >= 0 && leftbound >= 0){
 		for (int i=_baseRow; i>= upperbound; i--){
 		  if (i < _baseRow -1){
 			indent++;
 		  }
 		  for ( int j = _baseColumn; j >= leftbound + indent; j--){
+			c = (j <= (l + _baseColumn)) ?l:j;
 			[tiles addObject:[_gameContainer tileAtRow:i col:j]];
 		  }
 		}
