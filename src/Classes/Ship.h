@@ -23,7 +23,8 @@ enum {
     Torpedo,
     Miner,
     Radar,
-	BaseType
+	BaseType,
+    Kamikaze
 };
 typedef NSInteger ShipType;
 
@@ -37,7 +38,8 @@ enum {
     WeaponHeavyCannon,
     WeaponCannon,
     WeaponTorpedo,
-    WeaponMine
+    WeaponMine,
+    WeaponKamikaze
 };
 typedef NSInteger WeaponType;
 

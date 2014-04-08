@@ -157,6 +157,7 @@ static NSDictionary *shipNameMap = nil;
     if (ship.movementIsDisabled) {
         _lButton.enabled = NO;
         _rButton.enabled = NO;
+        _spinButton.enabled = NO;
     }
     
     [_lButton setVisible:YES];
@@ -202,6 +203,7 @@ static NSDictionary *shipNameMap = nil;
     [_cannonButton setVisible:NO];
     [_heavyCannonButton setVisible:NO];
     [_spinButton setVisible:NO];
+    _spinButton.enabled = YES;
     [_radarOnButton setVisible:NO];
     [_radarOffButton setVisible:NO];
     _ship = nil;
