@@ -429,6 +429,11 @@ static NSArray *startShipTypes = nil;
 
 - (NSDictionary *)getDataDictWithMyID:(NSString *)myID opponentID:(NSString *)oppID
 {
+    if (_cannonCollisionTile) {
+        [_cannonCollisionTile displayCannonHit:NO];
+        _cannonCollisionTile = nil;
+    }
+
     NSMutableArray *myShips = [[NSMutableArray alloc] init];
     for (Ship *ship in _myShips) {
         

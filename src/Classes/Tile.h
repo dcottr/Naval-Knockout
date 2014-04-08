@@ -30,6 +30,7 @@
 - (void)performMineAction;
 - (void)performCannonAction;
 - (void)performHeavyCannonAction;
+- (void)performTorpedoAction;
 - (void)displayCannonHit:(BOOL)display;
 - (void)notifyEvent;
 
@@ -42,7 +43,7 @@
 
 - (void)addMineTrigger:(Mine *)mine;
 
-- (BOOL)collide:(Ship *)ship;
+- (BOOL)collide:(Ship *)ship shipSegment:(ShipSegment *)segment;
 
 - (void)removeMine;
 

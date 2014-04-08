@@ -136,6 +136,13 @@ static SPTexture *frontBaseShipTexture = nil;
 {
     _health = 0;
     [self updateSegmentDamage];
+    for (ShipSegment *segment in _ship) {
+        if (segment.health > 0) {
+            segment.health = 0;
+            [segment updateSegmentDamage];
+            return;
+        }
+    }
 }
 
 - (void)displayNotify:(BOOL)display

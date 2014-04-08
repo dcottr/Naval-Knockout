@@ -8,11 +8,11 @@
 
 #import "SPSprite.h"
 
-@class Tile;
+@class Tile, ShipSegment;
 @interface Mine : SPSprite
 
 - (id)initWithTile:(Tile *)tile;
 @property (nonatomic, weak) Tile *tile;
-- (void)explode;
+- (void)explode:(ShipSegment *)segment;
 
 @end

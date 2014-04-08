@@ -78,7 +78,7 @@ static SPTexture *visTexture = nil;
         _content.height = _game.tileSize;
         [self addChild:_content];
         [_content setVisible:_fogOfWarVisibility];
-                
+        
         _notifyOverlay = [[SPQuad alloc] initWithWidth:_game.tileSize - 7.0f height:_game.tileSize - 7.0f color:0xff0000];
         [_content addChild:_notifyOverlay];
         [_notifyOverlay setVisible:YES];
@@ -119,7 +119,7 @@ static SPTexture *visTexture = nil;
 
 - (void)performMineAction
 {
-
+    
     if (_mine) {
         [self removeMine];
         // Remove mine.
@@ -132,9 +132,10 @@ static SPTexture *visTexture = nil;
 
 - (void)removeMine
 {
-    [self removeChild:_mine];
-    _mine = nil;
-
+    if (_mine) {
+        [self removeChild:_mine];
+        _mine = nil;
+    }
 }
 
 - (void)displayCannonHit:(BOOL)display
@@ -154,7 +155,8 @@ static SPTexture *visTexture = nil;
     if (_myShipSegment) {
         [_myShipSegment hitByCannon];
     }
-  [self notifyEvent];
+    [self removeMine];
+    [self notifyEvent];
 }
 
 - (void)performHeavyCannonAction
@@ -163,13 +165,25 @@ static SPTexture *visTexture = nil;
     if (_myShipSegment) {
         [_myShipSegment hitByHeavyCannon];
     }
+    [self removeMine];
+    [self notifyEvent];
+}
+
+- (void)performTorpedoAction
+{
+    [_content setVisible:YES];
+    if (_myShipSegment) {
+        //        [_myShipSegment hitByTorpedo];
+    }
+    [self removeMine];
     [self notifyEvent];
 }
 
 - (void)notifyEvent
 {
-  [self displayCannonHit:YES];
-  [_game notifyCannonCollision:self];
+    [self displayCannonHit:YES];
+    [self setSonar:YES];
+    [_game notifyCannonCollision:self];
 }
 
 - (void)setSunk
@@ -212,6 +226,7 @@ static SPTexture *visTexture = nil;
 - (void)setSonar:(BOOL)visible
 {
     if (_mine) {
+        NSLog(@"Setting visible: %d", visible);
         [_mine setVisible:visible];
     }
 }
@@ -226,7 +241,7 @@ static SPTexture *visTexture = nil;
     _triggerMine = mine;
 }
 
-- (BOOL)collide:(Ship *)ship
+- (BOOL)collide:(Ship *)ship shipSegment:(ShipSegment *)segment
 {
     
     if (_triggerMine || _mine) {
@@ -236,7 +251,7 @@ static SPTexture *visTexture = nil;
                 return YES;
             }
         } else {
-            [_triggerMine explode];
+            [_triggerMine explode:segment];
             return YES;
         }
     }

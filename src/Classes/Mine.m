@@ -28,6 +28,8 @@ static SPTexture *mineTexture = nil;
     if (self) {
         _tile = tile;
         SPImage *image = [[SPImage alloc] initWithTexture:mineTexture];
+        image.width = 32.0f;
+        image.height = 32.0f;
         [self addChild:image];
         [self setup];
     }
@@ -63,14 +65,9 @@ static SPTexture *mineTexture = nil;
     _triggerTiles = [NSArray arrayWithArray:triggerTiles];
 }
 
-- (void)explode
+- (void)explode:(ShipSegment *)segment
 {
-    for (Tile *tile in _triggerTiles) {
-        if (tile.myShipSegment) {
-            [tile.myShipSegment hitByMine];
-        }
-    }
-    
+    [segment hitByMine];
     [_tile notifyEvent];
     [_tile removeMine];
 }
