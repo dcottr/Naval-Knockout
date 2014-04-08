@@ -50,11 +50,13 @@ typedef NSInteger WeaponType;
 
 - (void)turnRight;
 - (void)turnLeft;
+- (void)spin;
 - (void)setSurroundingTilesVisible;
 
 - (NSSet *)validMoveTiles;
 - (NSSet *)validDropMineTiles;
 - (NSSet *)validShootCannonTiles;
+- (void)toggleSuperRadar:(BOOL)on;
 - (void)updateLocation;
 - (void)performMoveActionTo:(Tile *)tile;
 - (NSArray *)rotateTileList:(Direction) newdir;
@@ -66,6 +68,7 @@ typedef NSInteger WeaponType;
 @property (nonatomic, assign) int baseRow;
 @property (nonatomic, assign) int baseColumn;
 @property (nonatomic, assign) BOOL isSunk;
+@property (nonatomic, assign) BOOL movementIsDisabled;
 @property (nonatomic, strong) NSArray *shipWeapons;
 
 @property (nonatomic, assign) BOOL isEnemyShip;

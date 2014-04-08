@@ -115,6 +115,7 @@ static BOOL shipTypeMapsInitialized = NO;
         _gameContainer = game;
         _trayContainer = game.shipsTray;
         _gridContainer = game.content;
+        _movementIsDisabled = NO;
         [self setup];
     }
     return self;
@@ -490,6 +491,60 @@ static BOOL shipTypeMapsInitialized = NO;
   }
 }
 
+- (void)spin
+{
+    Direction tempdir  = _dir;
+    float temprotation;
+    switch (tempdir) {
+        case Up:
+            temprotation = M_PI;
+            tempdir= Down;
+            break;
+        case Right:
+            temprotation = 3.0f * M_PI/2;
+            tempdir= Left;
+            break;
+        case Down:
+            temprotation = 0.0f;
+            tempdir= Up;
+            break;
+        case Left:
+            temprotation = M_PI/2;
+            tempdir = Right;
+            break;
+        default:
+            break;
+    }
+    
+    if (_shipType == Torpedo || _shipType == Radar) {
+        switch (tempdir) {
+            case Up:
+                _baseRow += 2;
+                break;
+            case Right:
+                _baseColumn -= 2;
+                break;
+            case Down:
+                _baseRow -= 2;
+                break;
+            case Left:
+                _baseColumn += 2;
+                break;
+            default:
+                break;
+        }
+    }
+	
+    if ([self shouldTurn:tempdir]){
+        self.rotation = temprotation;
+        _dir = tempdir;
+        [self updateLocation];
+        if (!_isEnemyShip) {
+            [self setSurroundingTilesVisible];
+        }
+    }
+}
+
 - (void)positionedShip
 {
     [self removeEventListener:@selector(dragFromTray:) atObject:self forType:SP_EVENT_TYPE_TOUCH];
@@ -540,6 +595,10 @@ static BOOL shipTypeMapsInitialized = NO;
 - (NSSet *)validMoveTiles
 {
     NSMutableSet *validTiles = [[NSMutableSet alloc] init];
+    if (_movementIsDisabled) {
+        return validTiles;
+    }
+    
     if (_dir == Up) {
         for (NSArray *column in _gameContainer.tiles) {
             for (Tile *tile in column) {
@@ -1083,9 +1142,9 @@ static BOOL shipTypeMapsInitialized = NO;
   NSArray * tiles = [self rotateTileList:dir];
   if (tiles){
 	for (Tile * t in tiles){
-	  if ([t collide:self]){
-		return NO;
-	  }
+//	  if ([t collide:self]){
+//		return NO;
+//	  }
 	}
   }
   else{
@@ -1137,6 +1196,14 @@ static BOOL shipTypeMapsInitialized = NO;
         }
     }
     return NO;
+}
+
+- (void)toggleSuperRadar:(BOOL)on
+{
+    _movementIsDisabled = on;
+    if (on && !_isEnemyShip) {
+        [self setSurroundingTilesVisible];
+    }
 }
 
 @end

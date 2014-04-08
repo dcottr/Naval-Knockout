@@ -28,10 +28,13 @@ typedef NSInteger Action;
 @property (nonatomic, strong) SPTextField *shipName;
 @property (nonatomic, strong) SPButton *lButton;
 @property (nonatomic, strong) SPButton *rButton;
+@property (nonatomic, strong) SPButton *spinButton;
 @property (nonatomic, strong) SPButton *dropMineButton;
 @property (nonatomic, strong) SPButton *cannonButton;
 @property (nonatomic, strong) SPButton *heavyCannonButton;
-@property (nonatomic, strong) SPButton *torpedo;
+@property (nonatomic, strong) SPButton *torpedoButton;
+@property (nonatomic, strong) SPButton *radarOnButton;
+@property (nonatomic, strong) SPButton *radarOffButton;
 
 @property (nonatomic, strong) NSSet *validTileSelects;
 
@@ -101,13 +104,33 @@ static NSDictionary *shipNameMap = nil;
         [self addChild:_heavyCannonButton];
         [_heavyCannonButton setVisible:NO];
 
-        
         _dropMineButton = [[SPButton alloc] initWithUpState:buttonTexture text:@"Mine"];
         [_dropMineButton addEventListener:@selector(dropMine:) atObject:self forType:SP_EVENT_TYPE_TRIGGERED];
         _dropMineButton.x = _rButton.x * 2 + _lButton.width;
         _dropMineButton.y = _rButton.y;
         [self addChild:_dropMineButton];
         [_dropMineButton setVisible:NO];
+        
+        _radarOffButton = [[SPButton alloc] initWithUpState:buttonTexture text:@"Radar Off"];
+        [_radarOffButton addEventListener:@selector(toggleOffRadar:) atObject:self forType:SP_EVENT_TYPE_TRIGGERED];
+        _radarOffButton.x = _dropMineButton.x;
+        _radarOffButton.y = _dropMineButton.y;
+        [self addChild:_radarOffButton];
+        [_radarOffButton setVisible:NO];
+        
+        _radarOnButton = [[SPButton alloc] initWithUpState:buttonTexture text:@"Radar On"];
+        [_radarOnButton addEventListener:@selector(toggleOnRadar:) atObject:self forType:SP_EVENT_TYPE_TRIGGERED];
+        _radarOnButton.x = _radarOffButton.x;
+        _radarOnButton.y = _radarOffButton.y;
+        [self addChild:_radarOnButton];
+        [_radarOnButton setVisible:NO];
+        
+        _spinButton = [[SPButton alloc] initWithUpState:buttonTexture text:@"Spin"];
+        [_spinButton addEventListener:@selector(spin:) atObject:self forType:SP_EVENT_TYPE_TRIGGERED];
+        _spinButton.x = _rButton.x * 3 + _rButton.width + _cannonButton.width;
+        _spinButton.y = _lButton.y;
+        [self addChild:_spinButton];
+        [_spinButton setVisible:NO];
 
         _shipName = [SPTextField textFieldWithWidth:100 height:20 text:@"Text"];
         _shipName.x = Sparrow.stage.width - 100;
@@ -131,6 +154,10 @@ static NSDictionary *shipNameMap = nil;
     if (_game.currentStateType == StateTypeShipSetupLeft || _game.currentStateType == StateTypeShipSetupRight) {
         return;
     }
+    if (ship.movementIsDisabled) {
+        _lButton.enabled = NO;
+        _rButton.enabled = NO;
+    }
     
     [_lButton setVisible:YES];
     [_rButton setVisible:YES];
@@ -146,22 +173,37 @@ static NSDictionary *shipNameMap = nil;
     if ([_ship.shipWeapons indexOfObject:num(WeaponHeavyCannon)] != NSNotFound) {
         [_heavyCannonButton setVisible:YES];
     }
+    if (_ship.shipType == Radar || _ship.shipType == Torpedo) {
+        [_spinButton setVisible:YES];
+    }
+    if (ship.shipType == Radar) {
+        if (ship.movementIsDisabled) {
+            [_radarOffButton setVisible:YES];
+        } else {
+            [_radarOnButton setVisible:YES];
+        }
+    }
+    
     [self setSelectableTiles];
 }
 
 - (void)deselect
 {
-    
     [self deselectTiles];
     _validTileSelects = nil;
     [_commandBar setVisible:NO];
     [_background setVisible:NO];
     [_lButton setVisible:NO];
     [_rButton setVisible:NO];
+    _lButton.enabled = YES;
+    _rButton.enabled = YES;
     [_shipName setVisible:NO];
     [_dropMineButton setVisible:NO];
     [_cannonButton setVisible:NO];
     [_heavyCannonButton setVisible:NO];
+    [_spinButton setVisible:NO];
+    [_radarOnButton setVisible:NO];
+    [_radarOffButton setVisible:NO];
     _ship = nil;
 }
 
@@ -211,6 +253,17 @@ static NSDictionary *shipNameMap = nil;
     [self didPerformAction];
 }
 
+- (void)spin:(SPEvent *)event
+{
+    if (!_ship) {
+        [self deselect];
+        return;
+    }
+    
+    [_ship spin];
+    [self didPerformAction];
+}
+
 - (void)dropMine:(SPEvent *)event
 {
     if (_selectedAction == ActionMine) {
@@ -250,6 +303,19 @@ static NSDictionary *shipNameMap = nil;
     [self setSelectableTiles];
     _selectedAction = ActionHeavyCannon;
 }
+
+- (void)toggleOffRadar:(SPEvent *)event
+{
+    [_ship toggleSuperRadar:NO];
+    [self didPerformAction];
+}
+
+- (void)toggleOnRadar:(SPEvent *)event
+{
+    [_ship toggleSuperRadar:YES];
+    [self didPerformAction];
+}
+
 
 - (void)selectTile:(Tile *)tile
 {

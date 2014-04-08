@@ -344,6 +344,9 @@ static NSArray *startShipTypes = nil;
             }
         }
         
+        newShip.movementIsDisabled = ([(NSNumber *)[shipAttrs objectAtIndex:5] boolValue]);
+
+        
         [_myShips addObject:newShip];
         
         if (isSunk) {
@@ -387,6 +390,8 @@ static NSArray *startShipTypes = nil;
                 }
             }
         }
+        
+        newShip.movementIsDisabled = ([(NSNumber *)[shipAttrs objectAtIndex:5] boolValue]);
         
         [_enemyShips addObject:newShip];
         
@@ -453,7 +458,7 @@ static NSArray *startShipTypes = nil;
             [health addObject:num(segmentHealth)];
         }
         
-        NSArray *shipAttrs = [NSArray arrayWithObjects:num(ship.baseRow), num(ship.baseColumn), num(ship.dir), num(ship.shipType), [[health reverseObjectEnumerator] allObjects], nil];
+        NSArray *shipAttrs = [NSArray arrayWithObjects:num(ship.baseRow), num(ship.baseColumn), num(ship.dir), num(ship.shipType), [[health reverseObjectEnumerator] allObjects], [NSNumber numberWithBool:ship.movementIsDisabled], nil];
         [myShips addObject:shipAttrs];
     }
     
@@ -464,7 +469,7 @@ static NSArray *startShipTypes = nil;
             [health addObject:num(segment.health)];
         }
         
-        NSArray *shipAttrs = [NSArray arrayWithObjects:num(ship.baseRow), num(ship.baseColumn), num(ship.dir), num(ship.shipType), [NSArray arrayWithArray:health], nil];
+        NSArray *shipAttrs = [NSArray arrayWithObjects:num(ship.baseRow), num(ship.baseColumn), num(ship.dir), num(ship.shipType), [NSArray arrayWithArray:health], [NSNumber numberWithBool:ship.movementIsDisabled], nil];
         [enemyShips addObject:shipAttrs];
     }
     
