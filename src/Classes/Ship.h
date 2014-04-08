@@ -61,7 +61,7 @@ typedef NSInteger WeaponType;
 - (void)toggleSuperRadar:(BOOL)on;
 - (void)updateLocation;
 - (void)performMoveActionTo:(Tile *)tile;
-- (NSArray *)rotateTileList:(Direction) newdir;
+- (NSMutableArray *)rotateTileList:(Direction) newdir;
 - (void)sinkShip;
 
 @property (nonatomic, assign) ShipType shipType;
