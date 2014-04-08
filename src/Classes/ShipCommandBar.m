@@ -10,6 +10,7 @@
 #import "Ship.h"
 #import "Tile.h"
 #import "Game.h"
+#import "ShipSegment.h"
 
 enum {
     ActionMove,
@@ -114,12 +115,19 @@ static NSDictionary *shipNameMap = nil;
         [self addChild:_heavyCannonButton];
         [_heavyCannonButton setVisible:NO];
 
-        _dropMineButton = [[SPButton alloc] initWithUpState:buttonTexture text:@"Mine"];
+        _dropMineButton = [[SPButton alloc] initWithUpState:buttonTexture text:@"Mine: "];
         [_dropMineButton addEventListener:@selector(dropMine:) atObject:self forType:SP_EVENT_TYPE_TRIGGERED];
         _dropMineButton.x = _rButton.x * 2 + _lButton.width;
         _dropMineButton.y = _rButton.y;
         [self addChild:_dropMineButton];
         [_dropMineButton setVisible:NO];
+
+        _torpedoButton = [[SPButton alloc] initWithUpState:buttonTexture text:@"Torpedo"];
+        [_torpedoButton addEventListener:@selector(shootTorpedo:) atObject:self forType:SP_EVENT_TYPE_TRIGGERED];
+        _torpedoButton.x = _dropMineButton.x;
+        _torpedoButton.y = _dropMineButton.y;
+        [self addChild:_torpedoButton];
+        [_torpedoButton setVisible:NO];
         
         _radarOffButton = [[SPButton alloc] initWithUpState:buttonTexture text:@"Radar Off"];
         [_radarOffButton addEventListener:@selector(toggleOffRadar:) atObject:self forType:SP_EVENT_TYPE_TRIGGERED];
@@ -180,6 +188,7 @@ static NSDictionary *shipNameMap = nil;
     _validTileSelects = [ship validMoveTiles];
     if (_ship.shipType == Miner) {
         [_dropMineButton setVisible:YES];
+        _dropMineButton.text = [NSString stringWithFormat:@"Mines: %d", ship.mineCount];
     }
     if ([_ship.shipWeapons indexOfObject:num(WeaponCannon)] != NSNotFound) {
         [_cannonButton setVisible:YES];
@@ -286,6 +295,9 @@ static NSDictionary *shipNameMap = nil;
         [self setSelected:_ship];
         return;
     }
+    if (_ship.mineCount < 1) {
+        
+    }
     [self deselectTiles];
     _validTileSelects = [_ship validDropMineTiles];
     [self setSelectableTiles];
@@ -318,6 +330,12 @@ static NSDictionary *shipNameMap = nil;
     _validTileSelects = [_ship validShootCannonTiles];
     [self setSelectableTiles];
     _selectedAction = ActionHeavyCannon;
+}
+
+- (void)shootTorpedo:(SPEvent *)event
+{
+    [_ship shootTorpedo];
+    [self didPerformAction];
 }
 
 - (void)toggleOffRadar:(SPEvent *)event
@@ -357,17 +375,18 @@ static NSDictionary *shipNameMap = nil;
         if (_selectedAction == ActionMove) {
             [_ship performMoveActionTo:tile];
         } else if (_selectedAction == ActionMine) {
-            [tile performMineAction];
+            [tile performMineAction:_ship];
         } else if (_selectedAction == ActionCannon) {
             [tile performCannonAction];
         } else if (_selectedAction == ActionHeavyCannon) {
             [tile performHeavyCannonAction];
         } else if (_selectedAction == ActionKamikaze) {
             [tile performKamikazeAction];
-            [self didPerformAction];
-            [_ship sinkShip];
-            [self deselect];
-            return;
+            if (_ship) {
+                for (ShipSegment *segment in _ship.shipSegments) {
+                    [segment hitByKamikaze];
+                }
+            }
         }
         [self didPerformAction];
     }

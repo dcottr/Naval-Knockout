@@ -31,6 +31,7 @@ static SPTexture *backShipTexture = nil;
 static SPTexture *middleShipTexture = nil;
 static SPTexture *frontShipTexture = nil;
 static SPTexture *frontBaseShipTexture = nil;
+static SPTexture *kamikazeShipTexture = nil;
 
 
 - (id)initWithIndex:(ShipSegmentIndex)index ship:(Ship *)ship
@@ -50,6 +51,9 @@ static SPTexture *frontBaseShipTexture = nil;
     if (!frontBaseShipTexture) {
         frontBaseShipTexture = [SPTexture textureWithContentsOfFile:@"shipFrontBase.png"];
     }
+    if (!kamikazeShipTexture) {
+        kamikazeShipTexture = [SPTexture textureWithContentsOfFile:@"kamikazeShip.png"];
+    }
 
 
     self = [super init];
@@ -57,7 +61,9 @@ static SPTexture *frontBaseShipTexture = nil;
         _ship = ship;
         
         SPTexture *shipSegmentTexture;
-        if (index == ShipSegmentIndexBack) {
+        if (ship.shipType == Kamikaze) {
+            shipSegmentTexture = kamikazeShipTexture;
+        } else if (index == ShipSegmentIndexBack) {
             shipSegmentTexture = backShipTexture;
         } else if (index == ShipSegmentIndexMid) {
             shipSegmentTexture = middleShipTexture;
@@ -167,12 +173,71 @@ static SPTexture *frontBaseShipTexture = nil;
 {
     [_destroyedOverlay setVisible:NO];
     [_damagedOverlay setVisible:NO];
+    [_selectableOverlay setVisible:NO];
     if(_health == 0) {
         [_destroyedOverlay setVisible:YES];
     } else if (_health == 1) {
         [_damagedOverlay setVisible:YES];
     }
+    BOOL shouldSinkShip = YES;
+    for (ShipSegment *segment in _ship.shipSegments) {
+        if (segment.health > 0) {
+            shouldSinkShip = NO;
+            break;
+        }
+    }
+    if (shouldSinkShip) {
+        [_ship sinkShip];
+        for (ShipSegment *segment in _ship.shipSegments) {
+            [segment setVisible:NO];
+        }
+    }
 }
 
+- (void)hitByTorpedo:(NSInteger)dir
+{
+    [self hitByCannon];
+    
+    ShipSegment *neighbourSegmentToHit = nil;
+    if (dir == Up || dir == Down) {
+        if (_ship.dir == Left || _ship.dir == Right) {
+            neighbourSegmentToHit = [self getHealthiestNeighbourSegment];
+        }
+    } else {
+        if (_ship.dir == Up || _ship.dir == Down) {
+            neighbourSegmentToHit = [self getHealthiestNeighbourSegment];
+        }
+    }
+    if (neighbourSegmentToHit) {
+        [neighbourSegmentToHit hitByCannon];
+    }
+
+}
+
+- (ShipSegment *)getHealthiestNeighbourSegment
+{
+    int myIndex = [_ship.shipSegments indexOfObject:self];
+    ShipSegment *above;
+    ShipSegment *below;
+    if (myIndex < _ship.shipSegments.count - 1) {
+        above = [_ship.shipSegments objectAtIndex:myIndex+1];
+    }
+    if (myIndex > 0) {
+        below = [_ship.shipSegments objectAtIndex:myIndex-1];
+    }
+    if (above && above.health == 2) {
+        return above;
+    }
+    if (below && below.health == 2) {
+        return below;
+    }
+    if (above && above.health == 1) {
+        return above;
+    }
+    if (below && below.health == 1) {
+        return below;
+    }
+    return nil;
+}
 
 @end

@@ -26,11 +26,10 @@
 
 - (void)cleanTile;
 
-
-- (void)performMineAction;
+- (void)hardSetMine;
+- (void)performMineAction:(Ship *)ship;
 - (void)performCannonAction;
 - (void)performHeavyCannonAction;
-- (void)performTorpedoAction;
 - (void)displayCannonHit:(BOOL)display;
 - (void)notifyEvent;
 
@@ -47,5 +46,6 @@
 
 - (void)removeMine;
 - (void)performKamikazeAction;
+- (BOOL)performTorpedoAction:(NSInteger)dir;
 
 @end

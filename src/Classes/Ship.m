@@ -308,9 +308,10 @@ static BOOL shipTypeMapsInitialized = NO;
 - (void)sinkShip
 {
     _isSunk = YES;
-    for (ShipSegment *segment in _shipSegments) {
-        segment.health = 0;
-    }
+//    for (ShipSegment *segment in _shipSegments) {
+//        segment.health = 0;
+//        [segment updateSegmentDamage];
+//    }
     
     for (NSArray *column in _gameContainer.tiles) {
         for (Tile *tile in column) {
@@ -872,6 +873,7 @@ static BOOL shipTypeMapsInitialized = NO;
 
 -(void)setSurroundingTilesVisible
 {
+    NSLog(@"Setting visible, ship length: %d", _shipLength);
     // get values for length + width of ship type
     NSArray *radarSize = [shipRadarDimensions objectForKey:num(_shipType)];
     // do cases on directions to get tiles of radar range
@@ -896,9 +898,9 @@ static BOOL shipTypeMapsInitialized = NO;
             break;
             
         case Up: // swap l + w, face downward
-            for ( int i = MAX(_baseRow - 1 + offset, 0); i >= _baseRow -1 - length && i<_gameContainer.tileCount && i>=0; i--){
-                for ( int j = MAX(0, _baseColumn - semiwidth); j<= semiwidth + _baseColumn && j<_gameContainer.tileCount && j>=0; j++ ){
-                    Tile *t= [[_gameContainer.tiles objectAtIndex:j] objectAtIndex:i];
+            for ( int i = _baseRow - 1 + offset; i >= _baseRow -1 - length; i--){
+                for ( int j = _baseColumn - semiwidth; j<= semiwidth + _baseColumn; j++ ){
+                    Tile *t = [_gameContainer tileAtRow:i col:j];
                     [t fogOfWar:YES];
                     if (_shipType == Miner) {
                         [t setSonar:YES];
@@ -908,9 +910,9 @@ static BOOL shipTypeMapsInitialized = NO;
             break;
             
         case Left:
-            for ( int i = MAX(_baseColumn-1+offset, 0); i >= _baseColumn -1 - length && i<_gameContainer.tileCount && i>=0; i--){
-                for ( int j = MAX(_baseRow - semiwidth, 0); j<= semiwidth + _baseRow && j<_gameContainer.tileCount && j>=0; j++ ){
-                    Tile *t= [[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j];
+            for ( int i = _baseColumn-1+offset; i >= _baseColumn -1 - length; i--){
+                for ( int j = _baseRow - semiwidth; j<= semiwidth + _baseRow; j++ ){
+                    Tile *t = [_gameContainer tileAtRow:j col:i];
                     [t fogOfWar:YES];
                     if (_shipType == Miner) {
                         [t setSonar:YES];
@@ -920,9 +922,9 @@ static BOOL shipTypeMapsInitialized = NO;
             break;
             
         default:  // object is facing right
-            for ( int i = MAX(_baseColumn + 1 - offset, 0); i <= _baseColumn +1 + length && i<_gameContainer.tileCount && i>=0; i++){
-                for ( int j = MAX(_baseRow - semiwidth, 0); j<= semiwidth + _baseRow && j<_gameContainer.tileCount && j>=0; j++ ){
-                    Tile *t= [[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j];
+            for ( int i = _baseColumn + 1 - offset; i <= _baseColumn +1 + length; i++){
+                for ( int j = _baseRow - semiwidth; j<= semiwidth + _baseRow; j++ ){
+                    Tile *t = [_gameContainer tileAtRow:j col:i];
                     [t fogOfWar:YES];
                     if (_shipType == Miner) {
                         [t setSonar:YES];
@@ -1251,6 +1253,16 @@ static BOOL shipTypeMapsInitialized = NO;
     _movementIsDisabled = on;
     if (on && !_isEnemyShip) {
         [self setSurroundingTilesVisible];
+    }
+}
+
+- (void)shootTorpedo
+{
+    NSArray *collisionTiles; // POPULATE THIIIIIIS with tiles the torpedo would hit, 10 squares
+    for (Tile *tile in collisionTiles) {
+        if ([tile performTorpedoAction:_dir]) {
+            return;
+        }
     }
 }
 

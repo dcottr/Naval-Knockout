@@ -22,7 +22,7 @@ static SPTexture *mineTexture = nil;
 - (id)initWithTile:(Tile *)tile
 {
     if (!mineTexture) {
-        mineTexture = [SPTexture textureWithContentsOfFile:@"shipMid.png"];
+        mineTexture = [SPTexture textureWithContentsOfFile:@"mine.png"];
     }
     self = [super init];
     if (self) {
