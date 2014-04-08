@@ -117,17 +117,28 @@ static SPTexture *visTexture = nil;
     }
 }
 
-- (void)performMineAction
+- (void)performMineAction:(Ship *)ship
 {
-    
     if (_mine) {
         [self removeMine];
+        ship.mineCount++;
         // Remove mine.
     } else {
-        _mine = [[Mine alloc] initWithTile:self];
-        _triggerMine = _mine;
-        [self addChild:_mine];
+        if (ship.mineCount < 1) {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"You've used all your mines" message:@"Try picking mines up!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [alert show];
+        } else {
+            ship.mineCount--;
+            [self hardSetMine];
+        }
     }
+}
+
+- (void)hardSetMine
+{
+    _mine = [[Mine alloc] initWithTile:self];
+    _triggerMine = _mine;
+    [self addChild:_mine];
 }
 
 - (void)removeMine
@@ -169,14 +180,18 @@ static SPTexture *visTexture = nil;
     [self notifyEvent];
 }
 
-- (void)performTorpedoAction
+- (BOOL)performTorpedoAction:(Direction)dir
 {
+    if (!(_reef || _mine || _myShipSegment)) {
+        return NO;
+    }
     [_content setVisible:YES];
     if (_myShipSegment) {
-        //        [_myShipSegment hitByTorpedo];
+        [_myShipSegment hitByTorpedo:dir];
     }
     [self removeMine];
     [self notifyEvent];
+    return YES;
 }
 
 - (void)notifyEvent

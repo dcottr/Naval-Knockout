@@ -31,4 +31,5 @@ typedef NSInteger ShipSegmentIndex;
 - (void)hitByMine;
 - (void)updateSegmentDamage;
 - (void)displayNotify:(BOOL)display;
+- (void)hitByTorpedo:(NSInteger)dir;
 @end

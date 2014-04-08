@@ -63,10 +63,12 @@ typedef NSInteger WeaponType;
 - (void)performMoveActionTo:(Tile *)tile;
 - (NSMutableArray *)rotateTileList:(Direction) newdir;
 - (void)sinkShip;
+- (void)shootTorpedo;
 
 @property (nonatomic, assign) ShipType shipType;
 @property (nonatomic, assign) ArmourType shipArmour;
 @property (nonatomic, assign) Direction dir;
+@property (nonatomic, assign) int mineCount;
 @property (nonatomic, assign) int baseRow;
 @property (nonatomic, assign) int baseColumn;
 @property (nonatomic, assign) BOOL isSunk;

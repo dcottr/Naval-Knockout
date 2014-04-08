@@ -223,7 +223,7 @@ static NSArray *startShipTypes = nil;
         NSInteger row = [[position objectAtIndex:0] integerValue];
         NSInteger col = [[position objectAtIndex:1] integerValue];
         Tile *tile = [[_tiles objectAtIndex:col] objectAtIndex:row];
-        [tile performMineAction];
+        [tile hardSetMine];
         [tile setSonar:NO];
     }
     
@@ -251,9 +251,9 @@ static NSArray *startShipTypes = nil;
     // Collision notify tile
     NSArray *notify = [state objectForKey:@"notify"];
     if (notify && [notify count] > 1) {
-        NSInteger row = [[notify objectAtIndex:0] integerValue];
-        NSInteger col = [[notify objectAtIndex:1] integerValue];
-        Tile *tile = [[_tiles objectAtIndex:col] objectAtIndex:row];
+        int row = [[notify objectAtIndex:0] intValue];
+        int col = [[notify objectAtIndex:1] intValue];
+        Tile *tile = [self tileAtRow:row col:col];
         [tile displayCannonHit:YES];
     }
 }
@@ -274,12 +274,25 @@ static NSArray *startShipTypes = nil;
         } else {
             newShip.baseRow = i + 10;
             if (left) {
-                newShip.baseColumn = 1;
+                if (newShip.shipType == Kamikaze) {
+                    newShip.baseColumn = 0;
+                } else {
+                    newShip.baseColumn = 1;
+                }
                 newShip.dir = Right;
             } else {
-                newShip.baseColumn = 28;
+                if (newShip.shipType == Kamikaze) {
+                    newShip.baseColumn = 29;
+                } else {
+                    newShip.baseColumn = 28;
+                }
                 newShip.dir = Left;
             }
+        }
+        if (newShip.shipType == Miner) {
+            newShip.mineCount = 5;
+        } else {
+            newShip.mineCount = 0;
         }
         [_myShips addObject:newShip];
         
@@ -345,7 +358,7 @@ static NSArray *startShipTypes = nil;
         }
         
         newShip.movementIsDisabled = ([(NSNumber *)[shipAttrs objectAtIndex:5] boolValue]);
-
+        newShip.mineCount = ([(NSNumber *)[shipAttrs objectAtIndex:6] intValue]);
         
         [_myShips addObject:newShip];
         
@@ -392,7 +405,8 @@ static NSArray *startShipTypes = nil;
         }
         
         newShip.movementIsDisabled = ([(NSNumber *)[shipAttrs objectAtIndex:5] boolValue]);
-        
+        newShip.mineCount = ([(NSNumber *)[shipAttrs objectAtIndex:6] intValue]);
+
         [_enemyShips addObject:newShip];
         
         if (isSunk) {
@@ -439,7 +453,7 @@ static NSArray *startShipTypes = nil;
         
         NSMutableArray *health = [[NSMutableArray alloc] init];
         BOOL shouldHeal = NO;
-        if (ship.shipType != BaseType && [ship isTouchingBase]) {
+        if (ship.shipType != BaseType && !ship.isSunk && [ship isTouchingBase]) {
             shouldHeal = YES;
         }
         for (ShipSegment *segment in [ship.shipSegments reverseObjectEnumerator])
@@ -453,7 +467,7 @@ static NSArray *startShipTypes = nil;
             [health addObject:num(segmentHealth)];
         }
         
-        NSArray *shipAttrs = [NSArray arrayWithObjects:num(ship.baseRow), num(ship.baseColumn), num(ship.dir), num(ship.shipType), [[health reverseObjectEnumerator] allObjects], [NSNumber numberWithBool:ship.movementIsDisabled], nil];
+        NSArray *shipAttrs = [NSArray arrayWithObjects:num(ship.baseRow), num(ship.baseColumn), num(ship.dir), num(ship.shipType), [[health reverseObjectEnumerator] allObjects], [NSNumber numberWithBool:ship.movementIsDisabled], num(ship.mineCount), nil];
         [myShips addObject:shipAttrs];
     }
     
@@ -464,7 +478,7 @@ static NSArray *startShipTypes = nil;
             [health addObject:num(segment.health)];
         }
         
-        NSArray *shipAttrs = [NSArray arrayWithObjects:num(ship.baseRow), num(ship.baseColumn), num(ship.dir), num(ship.shipType), [NSArray arrayWithArray:health], [NSNumber numberWithBool:ship.movementIsDisabled], nil];
+        NSArray *shipAttrs = [NSArray arrayWithObjects:num(ship.baseRow), num(ship.baseColumn), num(ship.dir), num(ship.shipType), [NSArray arrayWithArray:health], [NSNumber numberWithBool:ship.movementIsDisabled], num(ship.mineCount), nil];
         [enemyShips addObject:shipAttrs];
     }
     
@@ -533,6 +547,7 @@ static NSArray *startShipTypes = nil;
 - (void)performedAction
 {
     self.myTurn = NO;
+    [_shipCommandBar deselect];
     [_delegate sendTurn];
 }
 
@@ -559,7 +574,7 @@ static NSArray *startShipTypes = nil;
 {
     
     //    [SPAudioEngine start];  // starts up the sound engine
-    startShipTypes = @[num(Cruiser), num(Cruiser), num(Destroyer), num(Destroyer), num(Destroyer), num(Torpedo), num(Torpedo), num(Miner), num(Miner), num(Radar), num(BaseType), num(Kamikaze)];
+    startShipTypes = @[num(Cruiser), num(Cruiser), num(Destroyer), num(Destroyer), num(Destroyer), num(Torpedo), num(Torpedo), num(Miner), num(Miner), num(Radar), num(Kamikaze), num(BaseType)];
     
     
     _content = [[SPSprite alloc] init];
