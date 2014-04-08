@@ -270,6 +270,7 @@ static SPTexture *visTexture = nil;
 
 - (void)performKamikazeAction
 {
+    [_content setVisible:YES];
     Tile *tile;
     for (int row = _row - 1; row < _row + 2; row++) {
         for (int col = _col - 1; col < _col + 2; col++) {
@@ -281,6 +282,7 @@ static SPTexture *visTexture = nil;
             }
         }
     }
+    [_content setVisible:YES];
     [self notifyEvent];
 }
 

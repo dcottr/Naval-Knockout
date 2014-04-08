@@ -365,8 +365,8 @@ static NSDictionary *shipNameMap = nil;
         } else if (_selectedAction == ActionKamikaze) {
             [tile performKamikazeAction];
             [self didPerformAction];
-            [self deselect];
             [_ship sinkShip];
+            [self deselect];
             return;
         }
         [self didPerformAction];
