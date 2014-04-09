@@ -1578,30 +1578,42 @@ static BOOL shipTypeMapsInitialized = NO;
 
 - (void)shootTorpedo
 {
-    NSMutableArray *collisionTiles; // POPULATE THIIIIIIS with tiles the torpedo would hit, 10 squares
-	
+    NSMutableArray *collisionTiles = [[NSMutableArray alloc] init]; // POPULATE THIIIIIIS with tiles the torpedo would hit, 10 squares
+	Tile *tile;
   if (_dir == Down){
 	int head = _baseRow + _shipLength;
-	for ( int i =  head; i <= MIN(head + 10, 30); i ++  ){
-	  [collisionTiles addObject:[_gameContainer tileAtRow:i col:_baseColumn]];
+	for ( int i =  head; i <= MIN(head + 9, 30); i ++  ){
+        tile = [_gameContainer tileAtRow:i col:_baseColumn];
+        if (tile) {
+            [collisionTiles addObject:tile];
+        }
 	}
   }
   if (_dir == Up){
 	int head = _baseRow - _shipLength;
-	for ( int i =  head; i <= MAX(head - 10, 0); i --  ){
-	  [collisionTiles addObject:[_gameContainer tileAtRow:i col:_baseColumn]];
+	for ( int i =  head; i >= MAX(head - 9, 0); i --  ){
+        tile = [_gameContainer tileAtRow:i col:_baseColumn];
+        if (tile) {
+            [collisionTiles addObject:tile];
+        }
 	}
   }
   if (_dir == Left){
 	int head = _baseColumn - _shipLength;
-	for ( int i =  head; i >= MAX(head - 10, 0); i --  ){
-	  [collisionTiles addObject:[_gameContainer tileAtRow:_baseRow	col:i]];
+	for ( int i =  head; i >= MAX(head - 9, 0); i --  ){
+        tile = [_gameContainer tileAtRow:_baseRow col:i];
+        if (tile) {
+            [collisionTiles addObject:tile];
+        }
 	}
   }
   if (_dir == Right){
 	int head = _baseColumn + _shipLength;
-	for ( int i =  head; i <= MIN(head + 10, 30); i ++  ){
-	  [collisionTiles addObject:[_gameContainer tileAtRow:_baseRow	col:i]];
+	for ( int i =  head; i <= MIN(head + 9, 30); i ++  ){
+        tile = [_gameContainer tileAtRow:_baseRow col:i];
+        if (tile) {
+            [collisionTiles addObject:tile];
+        }
 	}
   }
   
