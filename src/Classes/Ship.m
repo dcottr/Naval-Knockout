@@ -805,222 +805,218 @@ static BOOL shipTypeMapsInitialized = NO;
 #pragma mark("TODO: Check for collision")
 - (void)performMoveActionTo:(Tile *)tile
 {
-
-  Tile * t = [self checkMove:tile];
-  if (_shipType == Kamikaze){
-	[self move:tile];
-  }
-  else if (t){
-	[self move:t];
-  }
-  else {
-	NSLog(@"move to tile (%d, %d ) was blocked", tile.row, tile.col);
-  }
-  
+    
+    Tile * t = [self checkMove:tile];
+    if (_shipType == Kamikaze){
+        [self move:tile];
+    }
+    else if (t){
+        [self move:t];
+    }
+    else {
+        NSLog(@"move to tile (%d, %d ) was blocked", tile.row, tile.col);
+    }
+    
 }
 
 -(Tile *)checkMove: (Tile *)tile{
-  // return nil if move failed, or the tile furthest tile that ship reached.
-  // collisions happen here, animated movement outside.
-  
-  Tile * next = nil;
-  Tile * current  = nil;
-  
-  // positions of shipsegment to collide
-  if ( _baseRow < tile.row ){ //  tile is below ship
-	// movement is below the ship
-	if ( _dir == Up){ // backpedal one up
-	  next =[_gameContainer tileAtRow:(_baseRow + 1)col: _baseColumn];
-	  current = [next collide:self shipSegment:([_shipSegments objectAtIndex:0])] ? nil: next;
-	}
-	if (_dir == Down){ // straight line down
-	  int head = _baseRow + _shipLength; // row position for head
-	  if (_baseColumn  == tile.col){
-		for (int i = 0 ; i <= tile.row - head; i++ ){
-		  next = [_gameContainer tileAtRow:(head + i) col: _baseColumn];
-		  NSLog(@"checking tile at %d, %d", next.row, next.col);
-		  if ([next collide:self shipSegment:[_shipSegments objectAtIndex:(_shipLength -1)]]){
-			break;
-		  }
-		  current =  next;
-		}
-	  }
-	  else if (_baseColumn < tile.col ){ // strafe right
-		current = tile;
-		for (int i = 0; i < _shipLength; i ++){
-		  if ( [[_gameContainer tileAtRow:(_baseRow - i) col:(_baseColumn + 1)] collide:self
-																			shipSegment:[_shipSegments objectAtIndex:i]]){
-			return nil; // collision
-		  }
-		}
-	  }
-	  else{	// strafe left
-		current = tile;
-		for (int i = 0; i < _shipLength; i ++){
-		  if ( [[_gameContainer tileAtRow:(_baseRow - i) col:(_baseColumn - 1)] collide:self
-																			shipSegment:[_shipSegments objectAtIndex:i]]){
-			return nil; // collision
-		  }
-		}
-	  }
-	}
-	if (_dir == Left){ // shift down
-	  current = tile;
-	  for (int i = 0; i < _shipLength; i ++){
-		if ( [[_gameContainer tileAtRow:(_baseRow + 1) col:(_baseColumn - i)] collide:self
-																		  shipSegment:[_shipSegments objectAtIndex:i]]){
-		  return nil; // collision happened, so don't shift ship
-		}
-	  }
-	  
-	}
-	else{ // shift down , alternate loop
-	  current = tile;
-	  for (int i = 0; i < _shipLength; i ++){
-		if ( [[_gameContainer tileAtRow:(_baseRow + 1) col:(_baseColumn + i)] collide:self
-																		  shipSegment:[_shipSegments objectAtIndex:i]]){
-		  return nil; // collision happened, so don't shift ship
-		}
-	  }
-	}
-	
-  }
-  else if (_baseRow > tile.row){ // tile is above ship
-	
-	if ( _dir == Up ){
-	  if (_baseColumn == tile.col){
-		//	straight line up
-		int head = _baseRow - _shipLength; // row position for head
-		for (int i = 0 ; i <= head - tile.row; i++ ){
-		  next = [_gameContainer tileAtRow:(head - i) col: _baseColumn];
-		  if ([next collide:self shipSegment:([_shipSegments objectAtIndex:(_shipLength -1)])]){
-			break;
-		  }
-		  current =  next;
-		}
-	  }
-	  else if (_baseColumn < tile.col ){ // strafe right
-		current = tile;
-		for (int i = 0; i < _shipLength; i ++){
-		  if ( [[_gameContainer tileAtRow:(_baseRow - i) col:(_baseColumn + 1)] collide:self
-																			shipSegment:[_shipSegments objectAtIndex:i]]){
-			return nil; // collision
-		  }
-		}
-	  }
-	  else{	// strafe left
-		current = tile;
-		for (int i = 0; i < _shipLength; i ++){
-		  if ( [[_gameContainer tileAtRow:(_baseRow - i) col:(_baseColumn - 1)] collide:self
-																			shipSegment:[_shipSegments objectAtIndex:i]]){
-			return nil; // collision
-		  }
-		}
-	  }
-	}
-	if( _dir == Down){ // backpedal
-	  next =[_gameContainer tileAtRow:(_baseRow - 1)col: _baseColumn];
-	  current = [next collide:self shipSegment:([_shipSegments objectAtIndex:0])] ? nil: next;
-	  
-	}
-	if (_dir == Left){ // shift up
-	  current = tile;
-	  for (int i = 0; i < _shipLength; i ++){
-		if ( [[_gameContainer tileAtRow:(_baseRow - 1) col:(_baseColumn - i)] collide:self
-																		  shipSegment:[_shipSegments objectAtIndex:i]]){
-		  return nil; // collision happened, so don't shift ship
-		}
-	  }
-	}
-	if (_dir == Right){
-	  current = tile;
-	  for (int i = 0; i < _shipLength; i ++){
-		if ( [[_gameContainer tileAtRow:(_baseRow - 1) col:(_baseColumn + i)] collide:self
-																		  shipSegment:[_shipSegments objectAtIndex:i]]){
-		  return nil; // collision happened, so don't shift ship
-		}
-	  }
-	}
-  }
-  else {
-	// movement is parallel to ship
-	// to the right
-	if ( _baseColumn < tile.col){
-	  if ( _dir == Up){ // shift right 
-		current = tile;
-		for (int i = 0; i < _shipLength; i ++){
-		  if ( [[_gameContainer tileAtRow:(_baseRow - i) col:(_baseColumn + 1)] collide:self
-																			shipSegment:[_shipSegments objectAtIndex:i]]){
-			return nil; // collision
-		  }
-		}
-	  }
-	  if( _dir == Down){
-		current = tile;
-		for (int i = 0; i < _shipLength; i ++){
-		  if ( [[_gameContainer tileAtRow:(_baseRow + i) col:(_baseColumn + 1)] collide:self
-																			shipSegment:[_shipSegments objectAtIndex:i]]){
-			return nil;
-		  }
-		}
-	  }
-	  if (_dir == Left){  //  backpedal 1 to the right
-		next =[_gameContainer tileAtRow:_baseRow col: (_baseColumn + 1)];
-		current = [next collide:self shipSegment:([_shipSegments objectAtIndex:0])] ? nil: next;
-		
-
-	  }
-	  if (_dir == Right){ //  move full right
-		int head = _baseColumn + _shipLength; // col position for head
-		for (int i = 0 ; i <= tile.col - head ; i++ ){
-		  next = [_gameContainer tileAtRow:_baseRow col: (head + i)];
-		  if ([next collide:self shipSegment:([_shipSegments objectAtIndex:(_shipLength -1)])]){
-			break;
-		  }
-		  current =  next;
-		}
-
-	  }
-	}
-	else {
-	// movement is left of ship
-	  if ( _dir == Up){ // shift right or left
-		current = tile;
-		for (int i = 0; i < _shipLength; i ++){
-		  if ( [[_gameContainer tileAtRow:(_baseRow - i) col:(_baseColumn - 1)] collide:self
-																			shipSegment:[_shipSegments objectAtIndex:i]]){
-			return nil; // collision
-		  }
-		}
-	  }
-	  if( _dir == Down){
-		current = tile;
-		for (int i = 0; i < _shipLength; i++){
-		  if ( [[_gameContainer tileAtRow:(_baseRow + i) col:(_baseColumn - 1)] collide:self
-																			shipSegment:[_shipSegments objectAtIndex:i]]){
-			return nil;
-		  }
-		}
-	  }
-	  if (_dir == Left){ // move full left
-		int head = _baseColumn - _shipLength; // col position for head
-		for (int i = 0 ; i <=  head - tile.col; i++ ){
-		  next = [_gameContainer tileAtRow:_baseRow col: (head - i)];
-		  if ([next collide:self shipSegment:([_shipSegments objectAtIndex:(_shipLength -1)])]){
-			break;
-		  }
-		  current =  next;
-		}
-
-	  }
-	  if (_dir == Right){ // backpedal to the left
-		next =[_gameContainer tileAtRow:_baseRow col: (_baseColumn - 1)];
-		current = [next collide:self shipSegment:([_shipSegments objectAtIndex:0])] ? nil: next;
-		
-	  }
-	}
-  }
-  return current;
+    // return nil if move failed, or the tile furthest tile that ship reached.
+    // collisions happen here, animated movement outside.
+    
+    Tile * next = nil;
+    Tile * current  = nil;
+    
+    // positions of shipsegment to collide
+    if ( _baseRow < tile.row ){ //  tile is below ship
+        // movement is below the ship
+        if ( _dir == Up){ // backpedal one up
+            next =[_gameContainer tileAtRow:(_baseRow + 1) col:_baseColumn];
+            if ([next collide:self shipSegment:[_shipSegments objectAtIndex:0]]) {
+                return nil;
+            } else {
+                current = next;
+            }
+        } else if (_dir == Down){ // straight line down
+            int head = _baseRow + _shipLength; // row position for head
+            if (_baseColumn  == tile.col){
+                for (int i = 0 ; i <= tile.row - head; i++ ){
+                    next = [_gameContainer tileAtRow:(head + i) col: _baseColumn];
+                    if ([next collide:self shipSegment:[_shipSegments objectAtIndex:(_shipLength -1)]]){
+                        break;
+                    }
+                    current =  next;
+                }
+            } else if (_baseColumn < tile.col ){ // strafe right
+                current = tile;
+                for (int i = 0; i < _shipLength; i ++){
+                    if ( [[_gameContainer tileAtRow:(_baseRow + i) col:(_baseColumn + 1)] collide:self
+                                                                                      shipSegment:[_shipSegments objectAtIndex:i]]){
+                        return nil; // collision
+                    }
+                }
+            } else{	// strafe left
+                current = tile;
+                for (int i = 0; i < _shipLength; i ++){
+                    if ( [[_gameContainer tileAtRow:(_baseRow + i) col:(_baseColumn - 1)] collide:self
+                                                                                      shipSegment:[_shipSegments objectAtIndex:i]]){
+                        return nil; // collision
+                    }
+                }
+            }
+        } else if (_dir == Left){ // shift down
+            current = tile;
+            for (int i = 0; i < _shipLength; i ++){
+                if ( [[_gameContainer tileAtRow:(_baseRow + 1) col:(_baseColumn - i)] collide:self
+                                                                                  shipSegment:[_shipSegments objectAtIndex:i]]){
+                    return nil; // collision happened, so don't shift ship
+                }
+            }
+            
+        } else { // shift down , alternate loop
+            current = tile;
+            for (int i = 0; i < _shipLength; i ++){
+                if ( [[_gameContainer tileAtRow:(_baseRow + 1) col:(_baseColumn + i)] collide:self
+                                                                                  shipSegment:[_shipSegments objectAtIndex:i]]){
+                    return nil; // collision happened, so don't shift ship
+                }
+            }
+        }
+        
+    } else if (_baseRow > tile.row){ // tile is above ship
+        
+        if ( _dir == Up ){
+            if (_baseColumn == tile.col){
+                //	straight line up
+                int head = _baseRow - _shipLength; // row position for head
+                for (int i = 0 ; i <= head - tile.row; i++ ){
+                    next = [_gameContainer tileAtRow:(head - i) col: _baseColumn];
+                    if ([next collide:self shipSegment:([_shipSegments objectAtIndex:(_shipLength -1)])]){
+                        break;
+                    }
+                    current =  next;
+                }
+            }
+            else if (_baseColumn < tile.col ){ // strafe right
+                current = tile;
+                for (int i = 0; i < _shipLength; i ++){
+                    if ( [[_gameContainer tileAtRow:(_baseRow - i) col:(_baseColumn + 1)] collide:self
+                                                                                      shipSegment:[_shipSegments objectAtIndex:i]]){
+                        return nil; // collision
+                    }
+                }
+            }
+            else{	// strafe left
+                current = tile;
+                for (int i = 0; i < _shipLength; i ++){
+                    if ( [[_gameContainer tileAtRow:(_baseRow - i) col:(_baseColumn - 1)] collide:self
+                                                                                      shipSegment:[_shipSegments objectAtIndex:i]]){
+                        return nil; // collision
+                    }
+                }
+            }
+        }
+        if( _dir == Down){ // backpedal
+            next =[_gameContainer tileAtRow:(_baseRow - 1)col: _baseColumn];
+            current = [next collide:self shipSegment:([_shipSegments objectAtIndex:0])] ? nil: next;
+            
+        }
+        if (_dir == Left){ // shift up
+            current = tile;
+            for (int i = 0; i < _shipLength; i ++){
+                if ( [[_gameContainer tileAtRow:(_baseRow - 1) col:(_baseColumn - i)] collide:self
+                                                                                  shipSegment:[_shipSegments objectAtIndex:i]]){
+                    return nil; // collision happened, so don't shift ship
+                }
+            }
+        }
+        if (_dir == Right){
+            current = tile;
+            for (int i = 0; i < _shipLength; i ++){
+                if ( [[_gameContainer tileAtRow:(_baseRow - 1) col:(_baseColumn + i)] collide:self
+                                                                                  shipSegment:[_shipSegments objectAtIndex:i]]){
+                    return nil; // collision happened, so don't shift ship
+                }
+            }
+        }
+    } else {
+        // movement is parallel to ship
+        // to the right
+        if ( _baseColumn < tile.col){
+            if ( _dir == Up){ // shift right
+                current = tile;
+                for (int i = 0; i < _shipLength; i ++){
+                    if ( [[_gameContainer tileAtRow:(_baseRow - i) col:(_baseColumn + 1)] collide:self
+                                                                                      shipSegment:[_shipSegments objectAtIndex:i]]){
+                        return nil; // collision
+                    }
+                }
+            }
+            if( _dir == Down){
+                current = tile;
+                for (int i = 0; i < _shipLength; i ++){
+                    if ( [[_gameContainer tileAtRow:(_baseRow + i) col:(_baseColumn + 1)] collide:self
+                                                                                      shipSegment:[_shipSegments objectAtIndex:i]]){
+                        return nil;
+                    }
+                }
+            }
+            if (_dir == Left){  //  backpedal 1 to the right
+                next =[_gameContainer tileAtRow:_baseRow col: (_baseColumn + 1)];
+                current = [next collide:self shipSegment:([_shipSegments objectAtIndex:0])] ? nil: next;
+                
+                
+            }
+            if (_dir == Right){ //  move full right
+                int head = _baseColumn + _shipLength; // col position for head
+                for (int i = 0 ; i <= tile.col - head ; i++ ){
+                    next = [_gameContainer tileAtRow:_baseRow col: (head + i)];
+                    if ([next collide:self shipSegment:([_shipSegments objectAtIndex:(_shipLength -1)])]){
+                        break;
+                    }
+                    current =  next;
+                }
+                
+            }
+        }
+        else {
+            // movement is left of ship
+            if ( _dir == Up){ // shift right or left
+                current = tile;
+                for (int i = 0; i < _shipLength; i ++){
+                    if ( [[_gameContainer tileAtRow:(_baseRow - i) col:(_baseColumn - 1)] collide:self
+                                                                                      shipSegment:[_shipSegments objectAtIndex:i]]){
+                        return nil; // collision
+                    }
+                }
+            }
+            if( _dir == Down){
+                current = tile;
+                for (int i = 0; i < _shipLength; i++){
+                    if ( [[_gameContainer tileAtRow:(_baseRow + i) col:(_baseColumn - 1)] collide:self
+                                                                                      shipSegment:[_shipSegments objectAtIndex:i]]){
+                        return nil;
+                    }
+                }
+            }
+            if (_dir == Left){ // move full left
+                int head = _baseColumn - _shipLength; // col position for head
+                for (int i = 0 ; i <=  head - tile.col; i++ ){
+                    next = [_gameContainer tileAtRow:_baseRow col: (head - i)];
+                    if ([next collide:self shipSegment:([_shipSegments objectAtIndex:(_shipLength -1)])]){
+                        break;
+                    }
+                    current =  next;
+                }
+                
+            }
+            if (_dir == Right){ // backpedal to the left
+                next =[_gameContainer tileAtRow:_baseRow col: (_baseColumn - 1)];
+                current = [next collide:self shipSegment:([_shipSegments objectAtIndex:0])] ? nil: next;
+                
+            }
+        }
+    }
+    return current;
 }
 
 
@@ -1155,7 +1151,7 @@ static BOOL shipTypeMapsInitialized = NO;
 {
     Tile *tile = [_gameContainer tileAtRow:_baseRow col:_baseColumn];
     tile.dfsFlag = YES;
-     return [NSSet setWithArray:[self squareDFS:tile upperBound:_baseColumn - 3 leftBound:_baseRow - 3]];
+    return [NSSet setWithArray:[self squareDFS:tile upperBound:_baseColumn - 3 leftBound:_baseRow - 3]];
 }
 
 - (NSArray *)squareDFS:(Tile *)tile upperBound:(int)u leftBound:(int)l
@@ -1581,47 +1577,47 @@ static BOOL shipTypeMapsInitialized = NO;
 {
     NSMutableArray *collisionTiles = [[NSMutableArray alloc] init]; // POPULATE THIIIIIIS with tiles the torpedo would hit, 10 squares
 	Tile *tile;
-  if (_dir == Down){
-	int head = _baseRow + _shipLength;
-	for ( int i =  head; i <= MIN(head + 9, 30); i ++  ){
-        tile = [_gameContainer tileAtRow:i col:_baseColumn];
-        if (tile) {
-            [collisionTiles addObject:tile];
+    if (_dir == Down){
+        int head = _baseRow + _shipLength;
+        for ( int i =  head; i <= MIN(head + 9, 30); i ++  ){
+            tile = [_gameContainer tileAtRow:i col:_baseColumn];
+            if (tile) {
+                [collisionTiles addObject:tile];
+            }
         }
-	}
-  }
-  if (_dir == Up){
-	int head = _baseRow - _shipLength;
-	for ( int i =  head; i >= MAX(head - 9, 0); i --  ){
-        tile = [_gameContainer tileAtRow:i col:_baseColumn];
-        if (tile) {
-            [collisionTiles addObject:tile];
+    }
+    if (_dir == Up){
+        int head = _baseRow - _shipLength;
+        for ( int i =  head; i >= MAX(head - 9, 0); i --  ){
+            tile = [_gameContainer tileAtRow:i col:_baseColumn];
+            if (tile) {
+                [collisionTiles addObject:tile];
+            }
         }
-	}
-  }
-  if (_dir == Left){
-	int head = _baseColumn - _shipLength;
-	for ( int i =  head; i >= MAX(head - 9, 0); i --  ){
-        tile = [_gameContainer tileAtRow:_baseRow col:i];
-        if (tile) {
-            [collisionTiles addObject:tile];
+    }
+    if (_dir == Left){
+        int head = _baseColumn - _shipLength;
+        for ( int i =  head; i >= MAX(head - 9, 0); i --  ){
+            tile = [_gameContainer tileAtRow:_baseRow col:i];
+            if (tile) {
+                [collisionTiles addObject:tile];
+            }
         }
-	}
-  }
-  if (_dir == Right){
-	int head = _baseColumn + _shipLength;
-	for ( int i =  head; i <= MIN(head + 9, 30); i ++  ){
-        tile = [_gameContainer tileAtRow:_baseRow col:i];
-        if (tile) {
-            [collisionTiles addObject:tile];
+    }
+    if (_dir == Right){
+        int head = _baseColumn + _shipLength;
+        for ( int i =  head; i <= MIN(head + 9, 30); i ++  ){
+            tile = [_gameContainer tileAtRow:_baseRow col:i];
+            if (tile) {
+                [collisionTiles addObject:tile];
+            }
         }
-	}
-  }
-  
-  
+    }
+    
+    
     for (Tile *tile in collisionTiles) {
         if ([tile performTorpedoAction:_dir]) {
-		  NSLog(@" torpedo hit tile %d, %d", tile.row, tile.col);
+            NSLog(@" torpedo hit tile %d, %d", tile.row, tile.col);
             return;
         }
     }
