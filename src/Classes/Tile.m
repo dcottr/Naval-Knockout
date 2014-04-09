@@ -260,15 +260,13 @@ static SPTexture *visTexture = nil;
 
 - (BOOL)collide:(Ship *)ship shipSegment:(ShipSegment *)segment
 {
-    
-    if (_triggerMine || _mine) {
+    // Forget about triggerMine
+    if (_mine) {
         if (ship.shipType == Miner) {
-            if (_mine) {
-                [self notifyEvent];
-                return YES;
-            }
+            [self notifyEvent];
+            return YES;
         } else {
-            [_triggerMine explode:segment];
+            [_mine explode:segment];
             return YES;
         }
     }
