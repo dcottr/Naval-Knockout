@@ -308,10 +308,10 @@ static BOOL shipTypeMapsInitialized = NO;
 - (void)sinkShip
 {
     _isSunk = YES;
-//    for (ShipSegment *segment in _shipSegments) {
-//        segment.health = 0;
-//        [segment updateSegmentDamage];
-//    }
+    //    for (ShipSegment *segment in _shipSegments) {
+    //        segment.health = 0;
+    //        [segment updateSegmentDamage];
+    //    }
     
     for (NSArray *column in _gameContainer.tiles) {
         for (Tile *tile in column) {
@@ -405,36 +405,36 @@ static BOOL shipTypeMapsInitialized = NO;
         default:
             break;
     }
-    if (_shipType == Torpedo || _shipType == Radar) {
-        switch (tempdir) {
-            case Up:
-                _baseColumn -= 1;
-                _baseRow += 1;
-                break;
-            case Right:
-                _baseColumn -= 1;
-                _baseRow -= 1;
-                break;
-            case Down:
-                _baseColumn += 1;
-                _baseRow -= 1;
-                break;
-            case Left:
-                _baseColumn += 1;
-                _baseRow += 1;
-                break;
-            default:
-                break;
+    if ( [self shouldTurn:tempdir]){
+        if (_shipType == Torpedo || _shipType == Radar) {
+            switch (tempdir) {
+                case Up:
+                    _baseColumn -= 1;
+                    _baseRow += 1;
+                    break;
+                case Right:
+                    _baseColumn -= 1;
+                    _baseRow -= 1;
+                    break;
+                case Down:
+                    _baseColumn += 1;
+                    _baseRow -= 1;
+                    break;
+                case Left:
+                    _baseColumn += 1;
+                    _baseRow += 1;
+                    break;
+                default:
+                    break;
+            }
+        }
+        self.rotation = temprotation;
+        _dir = tempdir;
+        [self updateLocation];
+        if (!_isEnemyShip) {
+            [self setSurroundingTilesVisible];
         }
     }
-  if ( [self shouldTurn:tempdir]){
-    self.rotation = temprotation;
-    _dir = tempdir;
-    [self updateLocation];
-    if (!_isEnemyShip) {
-        [self setSurroundingTilesVisible];
-    }
-  }
 }
 
 - (void)turnLeft
@@ -462,38 +462,38 @@ static BOOL shipTypeMapsInitialized = NO;
         default:
             break;
     }
-    
-    if (_shipType == Torpedo || _shipType == Radar) {
-        switch (tempdir) {
-            case Up:
-                _baseColumn += 1;
-                _baseRow += 1;
-                break;
-            case Right:
-                _baseColumn -= 1;
-                _baseRow += 1;
-                break;
-            case Down:
-                _baseColumn -= 1;
-                _baseRow -= 1;
-                break;
-            case Left:
-                _baseColumn += 1;
-                _baseRow -= 1;
-                break;
-            default:
-                break;
+    if ([self shouldTurn:tempdir]){
+        
+        if (_shipType == Torpedo || _shipType == Radar) {
+            switch (tempdir) {
+                case Up:
+                    _baseColumn += 1;
+                    _baseRow += 1;
+                    break;
+                case Right:
+                    _baseColumn -= 1;
+                    _baseRow += 1;
+                    break;
+                case Down:
+                    _baseColumn -= 1;
+                    _baseRow -= 1;
+                    break;
+                case Left:
+                    _baseColumn += 1;
+                    _baseRow -= 1;
+                    break;
+                default:
+                    break;
+            }
+        }
+        
+        self.rotation = temprotation;
+        _dir = tempdir;
+        [self updateLocation];
+        if (!_isEnemyShip) {
+            [self setSurroundingTilesVisible];
         }
     }
-	
-  if ([self shouldTurn:tempdir]){
-	self.rotation = temprotation;
-	_dir = tempdir;
-	[self updateLocation];
-	if (!_isEnemyShip) {
-        [self setSurroundingTilesVisible];
-	}
-  }
 }
 
 - (void)spin
@@ -520,27 +520,27 @@ static BOOL shipTypeMapsInitialized = NO;
         default:
             break;
     }
-    
-    if (_shipType == Torpedo || _shipType == Radar) {
-        switch (tempdir) {
-            case Up:
-                _baseRow += 2;
-                break;
-            case Right:
-                _baseColumn -= 2;
-                break;
-            case Down:
-                _baseRow -= 2;
-                break;
-            case Left:
-                _baseColumn += 2;
-                break;
-            default:
-                break;
+    if ([self shouldTurn:tempdir]) {
+        
+        if (_shipType == Torpedo || _shipType == Radar) {
+            switch (tempdir) {
+                case Up:
+                    _baseRow += 2;
+                    break;
+                case Right:
+                    _baseColumn -= 2;
+                    break;
+                case Down:
+                    _baseRow -= 2;
+                    break;
+                case Left:
+                    _baseColumn += 2;
+                    break;
+                default:
+                    break;
+            }
         }
-    }
-	
-    if ([self shouldTurn:tempdir]){
+        
         self.rotation = temprotation;
         _dir = tempdir;
         [self updateLocation];
@@ -583,7 +583,6 @@ static BOOL shipTypeMapsInitialized = NO;
         if (self.shipType == BaseType) {
             return;
         }
-        
         if (_gameContainer.currentStateType == StateTypePlay) {
             [_gameContainer.shipCommandBar setSelected:self];
         } else if ((_gameContainer.currentStateType == StateTypeShipSetupRight || _gameContainer.currentStateType == StateTypeShipSetupLeft)) {
@@ -606,7 +605,7 @@ static BOOL shipTypeMapsInitialized = NO;
     }
     
     if (_shipType == Kamikaze) {
-        return [self validShootCannonTiles];
+        return [self validKamikazeHitTiles];
     }
     
     if (_dir == Up) {
@@ -934,6 +933,66 @@ static BOOL shipTypeMapsInitialized = NO;
     }
 }
 
+- (NSSet *)validKamikazeHitTiles
+{
+    NSMutableSet *validTiles = [[NSMutableSet alloc] init];
+    
+    NSArray *cannonSize = [shipCannonDimensions objectForKey:num(_shipType)];
+    int semiwidth =  ([[cannonSize objectAtIndex:0] intValue] - 1)/2; // half the width
+    int length  = [[cannonSize objectAtIndex:1] intValue]; // length is long side
+    int offset = [[cannonSize objectAtIndex:2] intValue];
+    NSLog(@"offset: %d, semiwidth: %d, length: %d", offset, semiwidth, length);
+    Tile *tile;
+    switch (_dir) {
+        case Down:  // swap length + width
+            for ( int i = MAX(_baseRow-offset,0); i < _baseRow -offset + length && i<_gameContainer.tileCount && i>=0; i++){
+                for ( int j = MAX(_baseColumn - semiwidth, 0); j<= semiwidth + _baseColumn && j<_gameContainer.tileCount && j>=0; j++ ){
+                    tile = [[_gameContainer.tiles objectAtIndex:j] objectAtIndex:i];
+                    if (!tile.reef && !tile.myShipSegment) {
+                        [validTiles addObject:tile];
+                    }
+                }
+            }
+            break;
+            
+        case Up: // swap l + w, face downward
+            for ( int i = MIN(_baseRow +offset, 29); i > MIN(_baseRow +offset - length, 29)  && i<_gameContainer.tileCount && i>=0; i--){
+                for ( int j = MAX(_baseColumn - semiwidth, 0); j<= semiwidth + _baseColumn && j<_gameContainer.tileCount && j>=0; j++ ){
+                    tile = [[_gameContainer.tiles objectAtIndex:j] objectAtIndex:i];
+                    if (!tile.reef && !tile.myShipSegment) {
+                        [validTiles addObject:tile];
+                    }
+                    
+                }
+            }
+            break;
+            
+        case Left:
+            NSLog(@"Left");
+            for ( int i = MIN(_baseColumn	+ offset, 29); i > MIN(_baseColumn +offset- length, 29) && i<_gameContainer.tileCount && i>=0; i--){
+                for ( int j = MAX(_baseRow - semiwidth, 0); j<= semiwidth + _baseRow && j<_gameContainer.tileCount && j>=0; j++ ){
+                    tile = [[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j];
+                    if (!tile.reef && !tile.myShipSegment) {
+                        [validTiles addObject:tile];
+                    }
+                }
+            }
+            break;
+            
+        default:  // object is facing right
+            for ( int i = MAX(_baseColumn - offset, 0); i < _baseColumn -offset+ length && i<_gameContainer.tileCount && i>=0; i++){
+                for ( int j = MAX(_baseRow - semiwidth, 0); j<= semiwidth + _baseRow && j<_gameContainer.tileCount && j>=0; j++ ){
+                    tile = [[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j];
+                    if (!tile.reef && !tile.myShipSegment) {
+                        [validTiles addObject:tile];
+                    }
+                }
+            }
+            break;
+    }
+    return validTiles;
+}
+
 
 - (NSSet *)validShootCannonTiles
 {
@@ -986,266 +1045,275 @@ static BOOL shipTypeMapsInitialized = NO;
 
 
 -(NSMutableArray *)rotateTileList:(Direction) newdir{
-  // Upper right
-  NSMutableArray *tiles =[[NSMutableArray alloc] init];
-  for (int a = 0; a < _shipLength; a++){
-	[tiles addObject:[[NSMutableArray alloc] init]];
-
-  }
-  if (_shipType != Torpedo && _shipType !=  Radar){
-	if( (_dir == Up && newdir == Right) || (_dir == Right && newdir == Up) ){
-	  int upperbound = _baseRow-_shipLength + 1;
-	  int rightbound = _baseColumn + _shipLength - 1;
-	  int indent = 0;
-	  int l = 0;
-	   // segment tilelist that we're adding to
-	  if (upperbound >= 0 && rightbound < 30){
-		int s = _shipLength -1;
-		for (int i=_baseRow; i>= upperbound; i--){
-		  if ( i < _baseRow -1){
-			indent++;
-		  }
-		  for(int j = rightbound - indent; j >=  _baseColumn; j--){
-			s = MAX(s,l) ; // exceeded the previous point, move it
-			NSLog(@"i is %d , j %d ,  s  is %d", i, j ,s );
-			
-			
-			
-			
-			[[tiles objectAtIndex:s] addObject:[_gameContainer tileAtRow:i col:j]];
-			// [tiles addObject:[_gameContainer tileAtRow:i col:j]];
-			NSLog(@"i is %d , j %d ,  s  is %d", i, j ,s );
-			s--;
-		  }
-		  l++;
-		  
-		}
-	  }
-	  else{
-		return nil;
-	  }
-	  if (_dir == Up) // send the reverse of what we just calculated
-	  {
-		NSMutableArray *a = [[NSMutableArray alloc] init];
-		for (int i = 0; i< tiles.count; i++){
-		  
-		  [a addObject:([[[tiles objectAtIndex:i] reverseObjectEnumerator] allObjects])];
-		  
-		  
-		}
-		tiles = a;
-		// return [[tiles reverseObjectEnumerator] allObjects];
-	  }
+    // Upper right
+    NSMutableArray *tiles =[[NSMutableArray alloc] init];
+    for (int a = 0; a < _shipLength; a++){
+        [tiles addObject:[[NSMutableArray alloc] init]];
+        
+    }
+    if (_shipType != Torpedo && _shipType != Radar){
+        if( (_dir == Up && newdir == Right) || (_dir == Right && newdir == Up) ) {
+            int upperbound = _baseRow-_shipLength + 1;
+            int rightbound = _baseColumn + _shipLength - 1;
+            int indent = 0;
+            int l = 0;
+            // segment tilelist that we're adding to
+            if (upperbound >= 0 && rightbound < 30){
+                int s = _shipLength -1;
+                for (int i=_baseRow; i>= upperbound; i--){
+                    if ( i < _baseRow -1){
+                        indent++;
+                    }
+                    for(int j = rightbound - indent; j >=  _baseColumn; j--){
+                        s = MAX(s,l) ; // exceeded the previous point, move it
+                        [[tiles objectAtIndex:s] addObject:[_gameContainer tileAtRow:i col:j]];
+                        // [tiles addObject:[_gameContainer tileAtRow:i col:j]];
+                        s--;
+                    }
+                    l++;
+                    
+                }
+            } else {
+                return nil;
+            }
+            if (_dir == Up) // send the reverse of what we just calculated
+            {
+                NSMutableArray *a = [[NSMutableArray alloc] init];
+                for (int i = 0; i< tiles.count; i++){
+                    
+                    [a addObject:([[[tiles objectAtIndex:i] reverseObjectEnumerator] allObjects])];
+                    
+                    
+                }
+                tiles = a;
+                // return [[tiles reverseObjectEnumerator] allObjects];
+            }
+        }
+        // lower right
+        if( (_dir == Down	&& newdir == Right) || (_dir == Right && newdir == Down) ){
+            int lowerbound = _baseRow + _shipLength - 1;
+            int rightbound = _baseColumn + _shipLength - 1;
+            int indent = 0;
+            int l = 0;
+            // segment tilelist that we're adding to
+            if (lowerbound < 30 && rightbound < 30){
+                int s = _shipLength - 1;	//	 index of shipsegment that's colliding with tile
+                for (int i=_baseRow; i<= lowerbound; i++){
+                    if ( i > _baseRow + 1){
+                        indent++;
+                    }
+                    for(int j = rightbound - indent; j >=  _baseColumn; j--){
+                        s = MAX(s,l) ; // exceeded the previous point, move it
+                        [[tiles objectAtIndex:s] addObject:[_gameContainer tileAtRow:i col:j]];
+                        // [tiles addObject:[_gameContainer tileAtRow:i col:j]];
+                        s--;
+                    }
+                    l++;
+                }
+            }
+            else{
+                return nil;
+            }
+            if (_dir == Down) // send the reverse of what we just calculated
+            {
+                NSMutableArray *a = [[NSMutableArray alloc] init];
+                for (int i = 0; i< tiles.count; i++){
+                    
+                    [a addObject:([[[tiles objectAtIndex:i] reverseObjectEnumerator] allObjects])];
+                    
+                    
+                }
+                tiles =  a;
+                // return [[tiles reverseObjectEnumerator] allObjects];
+            }
+        }
+        
+        // lower left
+        
+        if( (_dir == Down	&& newdir == Left) || (_dir == Left && newdir == Down) ){
+            int lowerbound = _baseRow + _shipLength - 1;
+            int leftbound = _baseColumn - _shipLength + 1;
+            int indent = 0;
+            int l = 0;
+            // segment tilelist that we're adding to
+            if (lowerbound <= 30 && leftbound >= 0){
+                int s = _shipLength - 1;	//	 index of shipsegment that's colliding with tile
+                for (int i=_baseRow; i<= lowerbound; i++){
+                    if ( i > _baseRow + 1){
+                        indent++;
+                    }
+                    for(int j = leftbound + indent; j <=  _baseColumn; j++){
+                        s = MAX(s,l) ; // exceeded the previous point, move it
+                        [[tiles objectAtIndex:s] addObject:[_gameContainer tileAtRow:i col:j]];
+                        // [tiles addObject:[_gameContainer tileAtRow:i col:j]];
+                        s--;
+                    }
+                    l++;
+                }
+            }
+            else{
+                return nil;
+            }
+            if (_dir == Down) // send the reverse of what we just calculated
+            {
+                NSMutableArray *a = [[NSMutableArray alloc] init];
+                for (int i = 0; i< tiles.count; i++){
+                    
+                    [a addObject:([[[tiles objectAtIndex:i] reverseObjectEnumerator] allObjects])];
+                    
+                    
+                }
+                tiles = a;
+                // return [[tiles reverseObjectEnumerator] allObjects];
+            }
+        }
+        if( (_dir == Up	&& newdir == Left) || (_dir == Left && newdir == Up) ) {
+            int upperbound = _baseRow - _shipLength + 1;
+            int leftbound = _baseColumn - _shipLength + 1;
+            int indent = 0;
+            int l = 0;
+            // segment tilelist that we're adding to
+            if (upperbound >= 0 && leftbound >= 0) {
+                int s = _shipLength - 1;	//	 index of shipsegment that's colliding with tile
+                for (int i = _baseRow; i >= upperbound; i--){
+                    if ( i < _baseRow - 1){
+                        indent++;
+                    }
+                    for(int j = leftbound + indent; j <=  _baseColumn; j++){
+                        s = MAX(s,l) ; // exceeded the previous point, move it
+                        [[tiles objectAtIndex:s] addObject:[_gameContainer tileAtRow:i col:j]];
+                        // [tiles addObject:[_gameContainer tileAtRow:i col:j]];
+                        s--;
+                    }
+                    l++;
+                }
+            }
+            else{
+                return nil;
+            }
+            
+            if (_dir == Up) // send the reverse of what we just calculated
+            {
+                NSMutableArray *a = [[NSMutableArray alloc] init];
+                for (int i = 0; i< tiles.count; i++){
+                    
+                    [a addObject:([[[tiles objectAtIndex:i] reverseObjectEnumerator] allObjects])];
+                    
+                    
+                }
+                tiles = a;
+                // return [[tiles reverseObjectEnumerator] allObjects];
+            }
+        }
+    } else {
+        int centerRow = 0;
+        int centerCol = 0;
+        
+        switch (_dir) {
+            case Up:
+                centerRow = _baseRow - 1;
+                centerCol = _baseColumn;
+                break;
+            case Down:
+                centerRow = _baseRow + 1;
+                centerCol = _baseColumn;
+                break;
+            case Left:
+                centerRow = _baseRow;
+                centerCol = _baseColumn - 1;
+                break;
+            case Right:
+                centerRow = _baseRow;
+                centerCol = _baseColumn + 1;
+                break;
+            default:
+                break;
+        }
+        NSLog(@"base column: %d", _baseColumn);
+        NSLog(@"centerRow: %d, centerCol: %d", centerRow, centerCol);
+        if ( (_dir == Up && newdir == Right) || (_dir == Right && newdir == Up) || (_dir == Down && newdir == Left) || (_dir == Left && newdir == Down)){
+            // assuming boat is in position and baserow/basecol is at the very back
+            int tip = 2;
+            int bottom = 0;
+            for (int i = centerRow + 1; i >= centerRow - 1  ; i--){
+                for( int j = centerCol -1; j<= centerCol +1; j ++ ){
+                    NSLog(@"Checking tile: %d, %d", i, j);
+                    if ( !(i == centerRow - 1 && j == centerCol - 1) && !(i == centerRow + 1 && j == centerCol + 1)){
+                        NSLog(@"Hitting tile: %d, %d", i, j);
+                        if (i < _baseRow){
+                            NSMutableArray *tileList = [tiles objectAtIndex:tip];
+                            [tileList addObject:[_gameContainer tileAtRow:i col:j]];
+                        }
+                        else {
+                            NSMutableArray *tileList = [tiles objectAtIndex:bottom];
+                            [tileList addObject:[_gameContainer tileAtRow:i col:j]];
+                        }
+                    }
+                }
+            }
+        } else if (( (_dir == Up && newdir == Left) || (_dir == Left && newdir == Up) || (_dir == Down && newdir == Right) || (_dir == Right && newdir == Down) )){
+            // assuming boat is in position and baserow/basecol is at the very back
+            int tip = 0;
+            int bottom = 2;
+            for (int i = centerRow + 1; i >= centerRow - 1  ; i--){
+                for( int j = centerCol -1; j<= centerCol +1; j ++ ){
+                    NSLog(@"Checking tile: %d, %d", i, j);
+                    if ( !( i == centerRow + 1 && j == centerCol - 1 ) &&  !( i == centerRow - 1 && j == centerCol + 1 ) ){
+                        NSLog(@"Hitting tile: %d, %d", i, j);
+                        if (i < _baseRow){
+                            NSMutableArray *tileList = [tiles objectAtIndex:tip];
+                            [tileList addObject:[_gameContainer tileAtRow:i col:j]];
+                        } else {
+                            NSMutableArray *tileList = [tiles objectAtIndex:bottom];
+                            [tileList addObject:[_gameContainer tileAtRow:i col:j]];
+                        }
+                        
+                    }
+                }
+            }
+        } else if (( (_dir == Up && newdir == Down) || (_dir == Left && newdir == Right) || (_dir == Down && newdir == Up) || (_dir == Right && newdir == Left) )){
+            // TODO, handle full rotation.
+            int tip = 0;
+            int bottom = 2;
+            for (int i = centerRow + 1; i >= centerRow - 1  ; i--){
+                for( int j = centerCol -1; j<= centerCol +1; j ++ ){
+                    NSLog(@"Checking tile: %d, %d", i, j);
+                    if (i < _baseRow){
+                        NSMutableArray *tileList = [tiles objectAtIndex:tip];
+                        [tileList addObject:[_gameContainer tileAtRow:i col:j]];
+                    } else {
+                        NSMutableArray *tileList = [tiles objectAtIndex:bottom];
+                        [tileList addObject:[_gameContainer tileAtRow:i col:j]];
+                    }
+                    
+                }
+            }
+        }
 	}
-	// lower right
-	if( (_dir == Down	&& newdir == Right) || (_dir == Right && newdir == Down) ){
-	  int lowerbound = _baseRow + _shipLength - 1;
-	  int rightbound = _baseColumn + _shipLength - 1;
-	  int indent = 0;
-	  int l = 0;
-	   // segment tilelist that we're adding to
-	  if (lowerbound < 30 && rightbound < 30){
-		int s = _shipLength - 1;	//	 index of shipsegment that's colliding with tile
-		for (int i=_baseRow; i<= lowerbound; i++){
-		  if ( i > _baseRow + 1){
-			indent++;
-		  }
-		  for(int j = rightbound - indent; j >=  _baseColumn; j--){
-			s = MAX(s,l) ; // exceeded the previous point, move it
-			[[tiles objectAtIndex:s] addObject:[_gameContainer tileAtRow:i col:j]];
-			// [tiles addObject:[_gameContainer tileAtRow:i col:j]];
-			s--;
-		  }
-		  l++;
-		}
-	  }
-	  else{
-		return nil;
-	  }
-	  if (_dir == Down) // send the reverse of what we just calculated
-	  {
-		NSMutableArray *a = [[NSMutableArray alloc] init];
-		for (int i = 0; i< tiles.count; i++){
-		  
-		  [a addObject:([[[tiles objectAtIndex:i] reverseObjectEnumerator] allObjects])];
-		  
-		  
-		}
-		tiles =  a;
-		// return [[tiles reverseObjectEnumerator] allObjects];
-	  }
-	}
-	
-	// lower left
-	
-	if( (_dir == Down	&& newdir == Left) || (_dir == Left && newdir == Down) ){
-	  int lowerbound = _baseRow + _shipLength - 1;
-	  int leftbound = _baseColumn - _shipLength + 1;
-	  int indent = 0;
-	  int l = 0;
-	  // segment tilelist that we're adding to
-	  if (lowerbound <= 30 && leftbound >= 0){
-		int s = _shipLength - 1;	//	 index of shipsegment that's colliding with tile
-		for (int i=_baseRow; i<= lowerbound; i++){
-		  if ( i > _baseRow + 1){
-			indent++;
-		  }
-		  for(int j = leftbound + indent; j <=  _baseColumn; j++){
-			s = MAX(s,l) ; // exceeded the previous point, move it
-			[[tiles objectAtIndex:s] addObject:[_gameContainer tileAtRow:i col:j]];
-			// [tiles addObject:[_gameContainer tileAtRow:i col:j]];
-			s--;
-		  }
-		  l++;
-		}
-	  }
-	  else{
-		return nil;
-	  }
-	  if (_dir == Down) // send the reverse of what we just calculated
-	  {
-		NSMutableArray *a = [[NSMutableArray alloc] init];
-		for (int i = 0; i< tiles.count; i++){
-		  
-		  [a addObject:([[[tiles objectAtIndex:i] reverseObjectEnumerator] allObjects])];
-		  
-		  
-		}
-		tiles = a;
-		// return [[tiles reverseObjectEnumerator] allObjects];
-	  }
-	}
-	if( (_dir == Up	&& newdir == Left) || (_dir == Left && newdir == Up) ){
-	  int upperbound = _baseRow - _shipLength + 1;
-	  int leftbound = _baseColumn - _shipLength + 1;
-	  int indent = 0;
-	  int l = 0;
-	  // segment tilelist that we're adding to
-	  if (upperbound >= 0 && leftbound >= 0){
-		int s = _shipLength - 1;	//	 index of shipsegment that's colliding with tile
-		for (int i = _baseRow; i >= upperbound; i--){
-		  if ( i < _baseRow - 1){
-			indent++;
-		  }
-		  for(int j = leftbound + indent; j <=  _baseColumn; j++){
-			s = MAX(s,l) ; // exceeded the previous point, move it
-			[[tiles objectAtIndex:s] addObject:[_gameContainer tileAtRow:i col:j]];
-			// [tiles addObject:[_gameContainer tileAtRow:i col:j]];
-			s--;
-		  }
-		  l++;
-		}
-	  }
-	  else{
-		return nil;
-	  }
-	  
-	  if (_dir == Up) // send the reverse of what we just calculated
-	  {
-		NSMutableArray *a = [[NSMutableArray alloc] init];
-		for (int i = 0; i< tiles.count; i++){
-		  
-		  [a addObject:([[[tiles objectAtIndex:i] reverseObjectEnumerator] allObjects])];
-		  
-		  
-		}
-		tiles = a;
-		// return [[tiles reverseObjectEnumerator] allObjects];
-	  }
-	}
-  }
-  else{
-	  int centerRow;
-	  int centerCol;
-	  
-	  switch (_dir) {
-		case Up:
-		  centerRow = _baseRow - 1;
-		  centerCol = _baseColumn;
-		  break;
-		case Down:
-		  centerRow = _baseRow + 1;
-		  centerCol = _baseColumn;
-		  break;
-		case Left:
-		  centerRow = _baseRow;
-		  centerCol = _baseColumn - 1;
-		case Right:
-		  centerRow = _baseRow;
-		  centerCol = _baseColumn + 1;
-		  
-		default:
-		  break;
-	  }
-	  
-	
-	  if (( (_dir == Up && newdir == Right) || (_dir == Right && newdir == Up)
-		   )){
-		// assuming boat is in position and baserow/basecol is at the very back
-		int tip = 2;
-		int bottom = 0;
-		for (int i = centerRow + 1; i >= centerRow - 1  ; i--){
-		  for( int j = centerCol -1; j<= centerCol +1; j ++ ){
-			if ( ( i != centerRow - 1 && j != centerCol - 1 )
-				&&  ( i != centerRow + 1 && j != centerCol + 1 ) ){
-			  if (i < _baseRow){
-				[tiles insertObject:[_gameContainer tileAtRow:i col:j] atIndex:tip];
-			  }
-			  else {
-				[tiles insertObject:[_gameContainer tileAtRow:i col:j] atIndex:bottom];
-			  }
-			}
-		  }
-		}
-	  }
-	  if (( (_dir == Up && newdir == Left) || (_dir == Left && newdir == Up) || (_dir== Down && newdir == Right) || (_dir == Right && newdir == Down) )){
-		// assuming boat is in position and baserow/basecol is at the very back
-		int tip = 0;
-		int bottom = 2;
-		for (int i = centerRow + 1; i >= centerRow - 1  ; i--){
-		  for( int j = centerCol -1; j<= centerCol +1; j ++ ){
-			if ( ( i != centerRow - 1 && j != centerCol + 1 )
-				&&  ( i != centerRow + 1 && j != centerCol - 1 ) ){
-			  if (i < _baseRow){
-				[tiles insertObject:[_gameContainer tileAtRow:i col:j] atIndex:tip];
-			  }
-			  else {
-				[tiles insertObject:[_gameContainer tileAtRow:i col:j] atIndex:bottom];
-			  }
-
-			}
-		  }
-		}
-	  }
-	}
-  return tiles;
+    
+    return tiles;
 }
 
 
 
 -(BOOL)shouldTurn:(Direction)dir
 {
-
-  NSArray * tiles = [self rotateTileList:dir];
-  if (tiles){
-	for (int i = 0; i < tiles.count; i++){
-	  NSArray *a = [tiles objectAtIndex:i];
-	  for (int j =0; j< a.count; j++){
-		Tile *t = [a objectAtIndex:j];
-		if ([t collide:self shipSegment:[_shipSegments objectAtIndex:i]] ) {
-		  return NO;
-		}
-	  }
-	}
-  }
-  else{
-	for (NSArray * a in tiles){
-	  if (a.count<1){
-		return NO;
-	  }
-	}
-  }
-  return YES;
+    
+    NSArray * tiles = [self rotateTileList:dir];
+    if (tiles){
+        for (int i = 0; i < tiles.count; i++){
+            NSArray *a = [tiles objectAtIndex:i];
+            for (int j =0; j< a.count; j++){
+                Tile *t = [a objectAtIndex:j];
+                if ([t collide:self shipSegment:[_shipSegments objectAtIndex:i]] ) {
+                    return NO;
+                }
+            }
+        }
+    } else{
+        return NO;
+    }
+    return YES;
 }
 
 

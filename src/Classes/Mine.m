@@ -41,26 +41,26 @@ static SPTexture *mineTexture = nil;
     int row = _tile.row;
     int col = _tile.col;
     Game *game = (Game *)Sparrow.root;
-    _tile = [game tileAtRow:row col:(col + 1)];
+    Tile *tile = [game tileAtRow:row col:(col + 1)];
     NSMutableArray *triggerTiles;
-    if (_tile) {
-        [triggerTiles addObject:_tile];
-        [_tile addMineTrigger:self];
+    if (tile) {
+        [triggerTiles addObject:tile];
+        [tile addMineTrigger:self];
     }
-    _tile = [game tileAtRow:row col:(col - 1)];
-    if (_tile) {
-        [triggerTiles addObject:_tile];
-        [_tile addMineTrigger:self];
+    tile = [game tileAtRow:row col:(col - 1)];
+    if (tile) {
+        [triggerTiles addObject:tile];
+        [tile addMineTrigger:self];
     }
-    _tile = [game tileAtRow:(row + 1) col:col];
-    if (_tile) {
-        [triggerTiles addObject:_tile];
-        [_tile addMineTrigger:self];
+    tile = [game tileAtRow:(row + 1) col:col];
+    if (tile) {
+        [triggerTiles addObject:tile];
+        [tile addMineTrigger:self];
     }
-    _tile = [game tileAtRow:(row - 1) col:col];
-    if (_tile) {
-        [triggerTiles addObject:_tile];
-        [_tile addMineTrigger:self];
+    tile = [game tileAtRow:(row - 1) col:col];
+    if (tile) {
+        [triggerTiles addObject:tile];
+        [tile addMineTrigger:self];
     }
     _triggerTiles = [NSArray arrayWithArray:triggerTiles];
 }

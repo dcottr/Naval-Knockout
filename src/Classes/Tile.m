@@ -146,6 +146,7 @@ static SPTexture *visTexture = nil;
     if (_mine) {
         [self removeChild:_mine];
         _mine = nil;
+        NSLog(@"Deleted Mine");
     }
 }
 
@@ -240,7 +241,6 @@ static SPTexture *visTexture = nil;
 - (void)setSonar:(BOOL)visible
 {
     if (_mine) {
-        NSLog(@"Setting visible: %d", visible);
         [_mine setVisible:visible];
     }
 }

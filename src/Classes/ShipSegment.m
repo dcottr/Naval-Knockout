@@ -149,7 +149,7 @@ static SPTexture *kamikazeShipTexture = nil;
 {
     _health = 0;
     [self updateSegmentDamage];
-    for (ShipSegment *segment in _ship) {
+    for (ShipSegment *segment in _ship.shipSegments) {
         if (segment.health > 0) {
             segment.health = 0;
             [segment updateSegmentDamage];
