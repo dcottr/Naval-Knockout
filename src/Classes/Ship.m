@@ -821,7 +821,7 @@ static BOOL shipTypeMapsInitialized = NO;
 	}
 	if (_dir == Down){ // straight line down
 	  int head = _baseRow + _shipLength; // row position for head
-	  for (int i = 0 ; i < tile.row - _baseRow; i++ ){
+	  for (int i = 0 ; i <= tile.row - head; i++ ){
 		next = [_gameContainer tileAtRow:(head + i) col: _baseColumn];
 		if ([next collide:self shipSegment:([_shipSegments objectAtIndex:(_shipLength -1)])]){
 		  break;
@@ -854,7 +854,7 @@ static BOOL shipTypeMapsInitialized = NO;
 	
 	if ( _dir == Up){	//	straight line up
 	  int head = _baseRow - _shipLength; // row position for head
-	  for (int i = 0 ; i < _baseRow - tile.row; i++ ){
+	  for (int i = 0 ; i <= head - tile.row; i++ ){
 		next = [_gameContainer tileAtRow:(head - i) col: _baseColumn];
 		if ([next collide:self shipSegment:([_shipSegments objectAtIndex:(_shipLength -1)])]){
 		  break;
@@ -916,7 +916,7 @@ static BOOL shipTypeMapsInitialized = NO;
 	  }
 	  if (_dir == Right){ //  move full right
 		int head = _baseColumn + _shipLength; // col position for head
-		for (int i = 0 ; i < _baseColumn - tile.col; i++ ){
+		for (int i = 0 ; i <= tile.col - head ; i++ ){
 		  next = [_gameContainer tileAtRow:_baseRow col: (head + i)];
 		  if ([next collide:self shipSegment:([_shipSegments objectAtIndex:(_shipLength -1)])]){
 			break;
@@ -948,7 +948,7 @@ static BOOL shipTypeMapsInitialized = NO;
 	  }
 	  if (_dir == Left){ // move full left
 		int head = _baseColumn - _shipLength; // col position for head
-		for (int i = 0 ; i <  tile.col - _baseColumn; i++ ){
+		for (int i = 0 ; i <=  head - tile.col; i++ ){
 		  next = [_gameContainer tileAtRow:_baseRow col: (head - i)];
 		  if ([next collide:self shipSegment:([_shipSegments objectAtIndex:(_shipLength -1)])]){
 			break;
