@@ -31,9 +31,41 @@ static SPTexture *mineTexture = nil;
         image.width = 32.0f;
         image.height = 32.0f;
         [self addChild:image];
+        [self setup];
     }
     return self;
 }
+
+- (void)setup
+{
+    int row = _tile.row;
+    int col = _tile.col;
+    Game *game = (Game *)Sparrow.root;
+    Tile *tile = [game tileAtRow:row col:(col + 1)];
+    NSMutableArray *triggerTiles;
+    if (tile) {
+        [triggerTiles addObject:tile];
+        [tile addMineTrigger:self];
+    }
+    tile = [game tileAtRow:row col:(col - 1)];
+    if (tile) {
+        [triggerTiles addObject:tile];
+        [tile addMineTrigger:self];
+    }
+    tile = [game tileAtRow:(row + 1) col:col];
+    if (tile) {
+        [triggerTiles addObject:tile];
+        [tile addMineTrigger:self];
+    }
+    tile = [game tileAtRow:(row - 1) col:col];
+    if (tile) {
+        [triggerTiles addObject:tile];
+        [tile addMineTrigger:self];
+    }
+    _triggerTiles = [NSArray arrayWithArray:triggerTiles];
+}
+
+
 
 - (void)explode:(ShipSegment *)segment
 {

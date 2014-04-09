@@ -16,6 +16,7 @@
 
 @property (nonatomic, weak) Game * game;
 @property (nonatomic, strong) SPQuad *selectableOverlay;
+@property (nonatomic, weak) Mine *triggerMine;
 
 @property (nonatomic, strong) SPQuad *notifyOverlay;
 
@@ -104,6 +105,7 @@ static SPTexture *visTexture = nil;
     [self fogOfWar:NO];
     [self setSonar:NO];
     _dfsFlag = NO;
+    _triggerMine = nil;
 }
 
 - (void)setSelectable:(BOOL)selectable
@@ -137,6 +139,7 @@ static SPTexture *visTexture = nil;
 - (void)hardSetMine
 {
     _mine = [[Mine alloc] initWithTile:self];
+    _triggerMine = _mine;
     [self addChild:_mine];
 }
 
@@ -147,6 +150,11 @@ static SPTexture *visTexture = nil;
         _mine = nil;
         NSLog(@"Deleted Mine");
     }
+}
+
+- (void)addMineTrigger:(Mine *)mine
+{
+    _triggerMine = mine;
 }
 
 - (void)displayCannonHit:(BOOL)display
@@ -251,12 +259,14 @@ static SPTexture *visTexture = nil;
 
 - (BOOL)collide:(Ship *)ship shipSegment:(ShipSegment *)segment
 {
-    if (_mine) {
+    if (_triggerMine || _mine) {
         if (ship.shipType == Miner) {
-            [self notifyEvent];
-            return YES;
+            if (_mine) {
+                [self notifyEvent];
+                return YES;
+            }
         } else {
-            [_mine explode:segment];
+            [_triggerMine explode:segment];
             return YES;
         }
     }
@@ -273,6 +283,7 @@ static SPTexture *visTexture = nil;
     
     return NO;
 }
+
 
 - (void)performKamikazeAction
 {

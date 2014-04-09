@@ -28,6 +28,7 @@
 
 - (void)hardSetMine;
 - (void)performMineAction:(Ship *)ship;
+- (void)addMineTrigger:(Mine *)mine;
 - (void)performCannonAction;
 - (void)performHeavyCannonAction;
 - (void)displayCannonHit:(BOOL)display;
