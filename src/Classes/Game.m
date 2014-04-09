@@ -730,7 +730,7 @@ static NSArray *startShipTypes = nil;
         float newX = (touch1Pos.x + touch2Pos.x) * 0.5f;
         float newY = (touch1Pos.y + touch2Pos.y) * 0.5f;
         float sizeDiff = vector.length / prevVector.length;
-        float newScale = MAX(0.45f, _content.scaleX * sizeDiff);
+        float newScale = MIN(MAX(0.45f, _content.scaleX * sizeDiff), 2.0f);
 //        if (newX - newPivotX * newScale > 0.0f) {
 //            newPivotX = _content.pivotX;
 //            newX = _content.x;

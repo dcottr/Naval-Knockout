@@ -784,7 +784,21 @@ static BOOL shipTypeMapsInitialized = NO;
             }
         }
     }
-    return validTiles;
+    NSMutableSet *result = [[NSMutableSet alloc] init];
+    for (Tile *tile in validTiles) {
+        [result addObject:tile];
+    }
+    for (Tile *tile in validTiles) {
+        NSArray *neighbours = [self getNeighbours:tile];
+        for (Tile *t in neighbours) {
+            if ((t.myShipSegment && t.myShipSegment.ship.shipType != Miner) || t.reef) {
+                if ([result containsObject:t]) {
+                    [result removeObject:t];
+                }
+            }
+        }
+    }
+    return result;
 }
 
 

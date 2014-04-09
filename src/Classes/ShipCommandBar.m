@@ -184,7 +184,7 @@ static NSDictionary *shipNameMap = nil;
         [_kamikazeButton setText:@"Kamikaze!!"];
         [_kamikazeButton setVisible:YES];
     }
-    if (ship.shipType == Torpedo) {
+    if (ship.shipType == Torpedo || ship.shipType == Destroyer) {
         [_torpedoButton setVisible:YES];
     }
     // Set validTileSelections Likes

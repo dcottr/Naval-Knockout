@@ -17,8 +17,6 @@
 @property (nonatomic, weak) Game * game;
 @property (nonatomic, strong) SPQuad *selectableOverlay;
 
-@property (nonatomic, weak) Mine *triggerMine;
-
 @property (nonatomic, strong) SPQuad *notifyOverlay;
 
 @property (nonatomic, strong) SPQuad *sunkOverlay;
@@ -100,7 +98,6 @@ static SPTexture *visTexture = nil;
     if (_mine) {
         [self removeMine];
     }
-    _triggerMine = nil;
     [self setReef:NO];
     _backgroundImage.alpha = 1.0f;
     [self displayCannonHit:NO];
@@ -140,7 +137,6 @@ static SPTexture *visTexture = nil;
 - (void)hardSetMine
 {
     _mine = [[Mine alloc] initWithTile:self];
-    _triggerMine = _mine;
     [self addChild:_mine];
 }
 
@@ -253,14 +249,8 @@ static SPTexture *visTexture = nil;
     return (_myShipSegment && !_myShipSegment.ship.isEnemyShip && _myShipSegment.ship.shipType == BaseType);
 }
 
-- (void)addMineTrigger:(Mine *)mine
-{
-    _triggerMine = mine;
-}
-
 - (BOOL)collide:(Ship *)ship shipSegment:(ShipSegment *)segment
 {
-    // Forget about triggerMine
     if (_mine) {
         if (ship.shipType == Miner) {
             [self notifyEvent];

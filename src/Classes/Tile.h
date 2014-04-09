@@ -40,8 +40,6 @@
 - (void)setSonar:(BOOL)visible;
 - (BOOL)isBase;
 
-- (void)addMineTrigger:(Mine *)mine;
-
 - (BOOL)collide:(Ship *)ship shipSegment:(ShipSegment *)segment;
 
 - (void)removeMine;
