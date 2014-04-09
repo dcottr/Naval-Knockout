@@ -181,6 +181,7 @@ static NSDictionary *shipNameMap = nil;
         [_lButton setVisible:YES];
         [_rButton setVisible:YES];
     } else {
+        [_kamikazeButton setText:@"Kamikaze!!"];
         [_kamikazeButton setVisible:YES];
     }
     if (ship.shipType == Torpedo) {
@@ -360,6 +361,7 @@ static NSDictionary *shipNameMap = nil;
         [self setSelected:_ship];
         return;
     }
+    [_kamikazeButton setText:@"Disarm"];
     
     [self deselectTiles];
     
