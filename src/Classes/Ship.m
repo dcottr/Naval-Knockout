@@ -1022,7 +1022,9 @@ static BOOL shipTypeMapsInitialized = NO;
 		  
 		}
 	  }
-	  
+	  else{
+		return nil;
+	  }
 	  if (_dir == Up) // send the reverse of what we just calculated
 	  {
 		NSMutableArray *a = [[NSMutableArray alloc] init];
@@ -1058,7 +1060,9 @@ static BOOL shipTypeMapsInitialized = NO;
 		  l++;
 		}
 	  }
-	  
+	  else{
+		return nil;
+	  }
 	  if (_dir == Down) // send the reverse of what we just calculated
 	  {
 		NSMutableArray *a = [[NSMutableArray alloc] init];
@@ -1096,7 +1100,9 @@ static BOOL shipTypeMapsInitialized = NO;
 		  l++;
 		}
 	  }
-	  
+	  else{
+		return nil;
+	  }
 	  if (_dir == Down) // send the reverse of what we just calculated
 	  {
 		NSMutableArray *a = [[NSMutableArray alloc] init];
@@ -1131,6 +1137,9 @@ static BOOL shipTypeMapsInitialized = NO;
 		  l++;
 		}
 	  }
+	  else{
+		return nil;
+	  }
 	  
 	  if (_dir == Up) // send the reverse of what we just calculated
 	  {
@@ -1147,53 +1156,69 @@ static BOOL shipTypeMapsInitialized = NO;
 	}
   }
   else{
-	int centerRow;
-	int centerCol;
+	  int centerRow;
+	  int centerCol;
+	  
+	  switch (_dir) {
+		case Up:
+		  centerRow = _baseRow - 1;
+		  centerCol = _baseColumn;
+		  break;
+		case Down:
+		  centerRow = _baseRow + 1;
+		  centerCol = _baseColumn;
+		  break;
+		case Left:
+		  centerRow = _baseRow;
+		  centerCol = _baseColumn - 1;
+		case Right:
+		  centerRow = _baseRow;
+		  centerCol = _baseColumn + 1;
+		  
+		default:
+		  break;
+	  }
+	  
 	
-	switch (_dir) {
-	  case Up:
-		centerRow = _baseRow - 1;
-		centerCol = _baseColumn;
-		break;
-	  case Down:
-		centerRow = _baseRow + 1;
-		centerCol = _baseColumn;
-		break;
-	  case Left:
-		centerRow = _baseRow;
-		centerCol = _baseColumn - 1;
-	  case Right:
-		centerRow = _baseRow;
-		centerCol = _baseColumn + 1;
-		
-	  default:
-		break;
-	}
-	
-	if (( (_dir == Up && newdir == Right) || (_dir == Right && newdir == Up)
-		 )){
-	  // assuming boat is in position and baserow/basecol is at the very back
-	  for (int i = centerRow + 1; i >= centerRow - 1  ; i--){
-		for( int j = centerCol -1; j<= centerCol +1; j ++ ){
-		  if ( ( i != centerRow - 1 && j != centerCol - 1 )
-			  &&  ( i != centerRow + 1 && j != centerCol + 1 ) ){
-			[tiles addObject:[_gameContainer tileAtRow:i col:j]];
+	  if (( (_dir == Up && newdir == Right) || (_dir == Right && newdir == Up)
+		   )){
+		// assuming boat is in position and baserow/basecol is at the very back
+		int tip = 2;
+		int bottom = 0;
+		for (int i = centerRow + 1; i >= centerRow - 1  ; i--){
+		  for( int j = centerCol -1; j<= centerCol +1; j ++ ){
+			if ( ( i != centerRow - 1 && j != centerCol - 1 )
+				&&  ( i != centerRow + 1 && j != centerCol + 1 ) ){
+			  if (i < _baseRow){
+				[tiles insertObject:[_gameContainer tileAtRow:i col:j] atIndex:tip];
+			  }
+			  else {
+				[tiles insertObject:[_gameContainer tileAtRow:i col:j] atIndex:bottom];
+			  }
+			}
+		  }
+		}
+	  }
+	  if (( (_dir == Up && newdir == Left) || (_dir == Left && newdir == Up) || (_dir== Down && newdir == Right) || (_dir == Right && newdir == Down) )){
+		// assuming boat is in position and baserow/basecol is at the very back
+		int tip = 0;
+		int bottom = 2;
+		for (int i = centerRow + 1; i >= centerRow - 1  ; i--){
+		  for( int j = centerCol -1; j<= centerCol +1; j ++ ){
+			if ( ( i != centerRow - 1 && j != centerCol + 1 )
+				&&  ( i != centerRow + 1 && j != centerCol - 1 ) ){
+			  if (i < _baseRow){
+				[tiles insertObject:[_gameContainer tileAtRow:i col:j] atIndex:tip];
+			  }
+			  else {
+				[tiles insertObject:[_gameContainer tileAtRow:i col:j] atIndex:bottom];
+			  }
+
+			}
 		  }
 		}
 	  }
 	}
-	if (( (_dir == Up && newdir == Left) || (_dir == Left && newdir == Up) || (_dir== Down && newdir == Right) || (_dir == Right && newdir == Down) )){
-	  // assuming boat is in position and baserow/basecol is at the very back
-	  for (int i = centerRow + 1; i >= centerRow - 1  ; i--){
-		for( int j = centerCol -1; j<= centerCol +1; j ++ ){
-		  if ( ( i != centerRow - 1 && j != centerCol + 1 )
-			  &&  ( i != centerRow + 1 && j != centerCol - 1 ) ){
-			[tiles addObject:[_gameContainer tileAtRow:i col:j]];
-		  }
-		}
-	  }
-	}
-  }
   return tiles;
 }
 
