@@ -784,6 +784,7 @@ static BOOL shipTypeMapsInitialized = NO;
             }
         }
     }
+    
     NSMutableSet *result = [[NSMutableSet alloc] init];
     for (Tile *tile in validTiles) {
         [result addObject:tile];
@@ -791,9 +792,9 @@ static BOOL shipTypeMapsInitialized = NO;
     for (Tile *tile in validTiles) {
         NSArray *neighbours = [self getNeighbours:tile];
         for (Tile *t in neighbours) {
-            if ((t.myShipSegment && t.myShipSegment.ship.shipType != Miner) || t.reef) {
-                if ([result containsObject:t]) {
-                    [result removeObject:t];
+            if (!tile.mine && ((t.myShipSegment && t.myShipSegment.ship.shipType != Miner) || t.reef)) {
+                if ([result containsObject:tile]) {
+                    [result removeObject:tile];
                 }
             }
         }
@@ -802,7 +803,6 @@ static BOOL shipTypeMapsInitialized = NO;
 }
 
 
-#pragma mark("TODO: Check for collision")
 - (void)performMoveActionTo:(Tile *)tile
 {
     
