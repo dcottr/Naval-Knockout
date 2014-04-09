@@ -838,7 +838,8 @@ static BOOL shipTypeMapsInitialized = NO;
 	  if (_baseColumn  == tile.col){
 		for (int i = 0 ; i <= tile.row - head; i++ ){
 		  next = [_gameContainer tileAtRow:(head + i) col: _baseColumn];
-		  if ([next collide:self shipSegment:([_shipSegments objectAtIndex:(_shipLength -1)])]){
+		  NSLog(@"checking tile at %d, %d", next.row, next.col);
+		  if ([next collide:self shipSegment:[_shipSegments objectAtIndex:(_shipLength -1)]]){
 			break;
 		  }
 		  current =  next;
@@ -1620,6 +1621,7 @@ static BOOL shipTypeMapsInitialized = NO;
   
     for (Tile *tile in collisionTiles) {
         if ([tile performTorpedoAction:_dir]) {
+		  NSLog(@" torpedo hit tile %d, %d", tile.row, tile.col);
             return;
         }
     }
