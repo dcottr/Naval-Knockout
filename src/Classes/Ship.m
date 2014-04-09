@@ -935,64 +935,28 @@ static BOOL shipTypeMapsInitialized = NO;
 
 - (NSSet *)validKamikazeHitTiles
 {
-    NSMutableSet *validTiles = [[NSMutableSet alloc] init];
-    
-    NSArray *cannonSize = [shipCannonDimensions objectForKey:num(_shipType)];
-    int semiwidth =  ([[cannonSize objectAtIndex:0] intValue] - 1)/2; // half the width
-    int length  = [[cannonSize objectAtIndex:1] intValue]; // length is long side
-    int offset = [[cannonSize objectAtIndex:2] intValue];
-    NSLog(@"offset: %d, semiwidth: %d, length: %d", offset, semiwidth, length);
-    Tile *tile;
-    switch (_dir) {
-        case Down:  // swap length + width
-            for ( int i = MAX(_baseRow-offset,0); i < _baseRow -offset + length && i<_gameContainer.tileCount && i>=0; i++){
-                for ( int j = MAX(_baseColumn - semiwidth, 0); j<= semiwidth + _baseColumn && j<_gameContainer.tileCount && j>=0; j++ ){
-                    tile = [[_gameContainer.tiles objectAtIndex:j] objectAtIndex:i];
-                    if (!tile.reef && !tile.myShipSegment) {
-                        [validTiles addObject:tile];
-                    }
-                }
-            }
-            break;
-            
-        case Up: // swap l + w, face downward
-            for ( int i = MIN(_baseRow +offset, 29); i > MIN(_baseRow +offset - length, 29)  && i<_gameContainer.tileCount && i>=0; i--){
-                for ( int j = MAX(_baseColumn - semiwidth, 0); j<= semiwidth + _baseColumn && j<_gameContainer.tileCount && j>=0; j++ ){
-                    tile = [[_gameContainer.tiles objectAtIndex:j] objectAtIndex:i];
-                    if (!tile.reef && !tile.myShipSegment) {
-                        [validTiles addObject:tile];
-                    }
-                    
-                }
-            }
-            break;
-            
-        case Left:
-            NSLog(@"Left");
-            for ( int i = MIN(_baseColumn	+ offset, 29); i > MIN(_baseColumn +offset- length, 29) && i<_gameContainer.tileCount && i>=0; i--){
-                for ( int j = MAX(_baseRow - semiwidth, 0); j<= semiwidth + _baseRow && j<_gameContainer.tileCount && j>=0; j++ ){
-                    tile = [[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j];
-                    if (!tile.reef && !tile.myShipSegment) {
-                        [validTiles addObject:tile];
-                    }
-                }
-            }
-            break;
-            
-        default:  // object is facing right
-            for ( int i = MAX(_baseColumn - offset, 0); i < _baseColumn -offset+ length && i<_gameContainer.tileCount && i>=0; i++){
-                for ( int j = MAX(_baseRow - semiwidth, 0); j<= semiwidth + _baseRow && j<_gameContainer.tileCount && j>=0; j++ ){
-                    tile = [[_gameContainer.tiles objectAtIndex:i] objectAtIndex:j];
-                    if (!tile.reef && !tile.myShipSegment) {
-                        [validTiles addObject:tile];
-                    }
-                }
-            }
-            break;
-    }
-    return validTiles;
+    Tile *tile = [_gameContainer tileAtRow:_baseRow col:_baseColumn];
+    tile.dfsFlag = YES;
+     return [NSSet setWithArray:[self squareDFS:tile upperBound:_baseColumn - 3 leftBound:_baseRow - 3]];
 }
 
+- (NSArray *)squareDFS:(Tile *)tile upperBound:(int)u leftBound:(int)l
+{
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    NSArray *neighbours = [self getNeighbours:tile];
+    for (Tile *tile in neighbours) {
+        if (tile.col > u && tile.col < u + 6) {
+            if (tile.row > l && tile.row < l + 6) {
+                if (!tile.reef && !tile.myShipSegment && !tile.dfsFlag) {
+                    tile.dfsFlag = YES;
+                    [result addObject:tile];
+                    [result addObjectsFromArray:[self squareDFS:tile upperBound:u leftBound:l]];
+                }
+            }
+        }
+    }
+    return [NSArray arrayWithArray:result];
+}
 
 - (NSSet *)validShootCannonTiles
 {
@@ -1285,7 +1249,6 @@ static BOOL shipTypeMapsInitialized = NO;
                         NSMutableArray *tileList = [tiles objectAtIndex:bottom];
                         [tileList addObject:[_gameContainer tileAtRow:i col:j]];
                     }
-                    
                 }
             }
         }
@@ -1359,6 +1322,33 @@ static BOOL shipTypeMapsInitialized = NO;
         }
     }
     return NO;
+}
+
+- (NSArray *)getNeighbours:(Tile *)t
+{
+    NSMutableArray *neighbours = [[NSMutableArray alloc] init];
+    if (!t) {
+        return neighbours;
+    }
+    int row = t.row;
+    int col = t.col;
+    Tile * tile = [_gameContainer tileAtRow:row col:(col + 1)];
+    if (tile) {
+        [neighbours addObject:tile];
+    }
+    tile = [_gameContainer tileAtRow:row col:(col - 1)];
+    if (tile) {
+        [neighbours addObject:tile];
+    }
+    tile = [_gameContainer tileAtRow:(row + 1) col:col];
+    if (tile) {
+        [neighbours addObject:tile];
+    }
+    tile = [_gameContainer tileAtRow:(row - 1) col:col];
+    if (tile) {
+        [neighbours addObject:tile];
+    }
+    return neighbours;
 }
 
 - (void)toggleSuperRadar:(BOOL)on
