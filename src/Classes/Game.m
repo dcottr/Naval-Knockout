@@ -671,8 +671,6 @@ static NSArray *startShipTypes = nil;
     NSArray *touches = [[event touchesWithTarget:_gridContainer andPhase:SPTouchPhaseMoved] allObjects];
     SPTouch *touchUp = [[event touchesWithTarget:self andPhase:SPTouchPhaseEnded] anyObject];
     
-    
-    
     if (touches.count == 0) {
         if (touchUp) {
             if (!isGrabbed && !isPinched) {
@@ -690,8 +688,24 @@ static NSArray *startShipTypes = nil;
         SPTouch *touch = touches[0];
         SPPoint *movement = [touch movementInSpace:_content.parent];
         
-        _content.x += movement.x;
-        _content.y += movement.y;        
+        float newX = _content.x + movement.x;
+        float newY = _content.y + movement.y;
+////        NSLog(@"width: %f, value: %f", _content.width, _content.pivotX * _content.scaleX - newX);
+//        if (newX - _content.pivotX * _content.scaleX > 0.0f) {
+//            newX = _content.x;
+//        } else if (_content.pivotX * _content.scaleX - newX > _content.width - Sparrow.stage.width*_content.scaleX) {
+//            newX = _content.x;
+//        }
+//        
+//        if (newY - _content.pivotY * _content.scaleY > 0.0f) {
+//            newY = _content.y;
+//        }
+////        else if (_content.pivotY * _content.scaleY - newY > _content.height - Sparrow.stage.height*_content.scaleY) {
+////            newY = _content.y;
+////        }
+        _content.x = newX;
+        _content.y = newY;
+  
     } else if (touches.count >= 2) {
         isPinched = YES;
         // two fingers touching -> rotate and scale
@@ -709,15 +723,35 @@ static NSArray *startShipTypes = nil;
         // update pivot point based on previous center
         SPPoint *touch1PrevLocalPos = [touch1 previousLocationInSpace:_content];
         SPPoint *touch2PrevLocalPos = [touch2 previousLocationInSpace:_content];
-        _content.pivotX = (touch1PrevLocalPos.x + touch2PrevLocalPos.x) * 0.5f;
-        _content.pivotY = (touch1PrevLocalPos.y + touch2PrevLocalPos.y) * 0.5f;
         
         // update location based on the current center
-        _content.x = (touch1Pos.x + touch2Pos.x) * 0.5f;
-        _content.y = (touch1Pos.y + touch2Pos.y) * 0.5f;
-        
+        float newPivotX = (touch1PrevLocalPos.x + touch2PrevLocalPos.x) * 0.5f;
+        float newPivotY = (touch1PrevLocalPos.y + touch2PrevLocalPos.y) * 0.5f;
+        float newX = (touch1Pos.x + touch2Pos.x) * 0.5f;
+        float newY = (touch1Pos.y + touch2Pos.y) * 0.5f;
         float sizeDiff = vector.length / prevVector.length;
-        _content.scaleX = _content.scaleY = MAX(0.45f, _content.scaleX * sizeDiff);
+        float newScale = MAX(0.45f, _content.scaleX * sizeDiff);
+//        if (newX - newPivotX * newScale > 0.0f) {
+//            newPivotX = _content.pivotX;
+//            newX = _content.x;
+//            newScale = _content.scaleX;
+//        }
+//        if (newY - newPivotY * newScale > 0.0f) {
+//            newPivotY = _content.pivotY;
+//            newY = _content.y;
+//            newScale = _content.scaleX;
+//        } else if (newPivotY * newScale - newY > _content.height - Sparrow.stage.height*newScale) {
+//            newPivotY = _content.pivotY;
+//            newY = _content.y;
+//            newScale = _content.scaleX;
+//        }
+        _content.pivotX = newPivotX;
+        _content.pivotY = newPivotY;
+
+        _content.x = newX;
+        _content.y = newY;
+        
+        _content.scaleX = _content.scaleY = newScale;
     }
 }
 

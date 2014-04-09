@@ -181,7 +181,11 @@ static NSDictionary *shipNameMap = nil;
         [_lButton setVisible:YES];
         [_rButton setVisible:YES];
     } else {
+        [_kamikazeButton setText:@"Kamikaze!!"];
         [_kamikazeButton setVisible:YES];
+    }
+    if (ship.shipType == Torpedo) {
+        [_torpedoButton setVisible:YES];
     }
     // Set validTileSelections Likes
     _selectedAction = ActionMove;
@@ -229,6 +233,7 @@ static NSDictionary *shipNameMap = nil;
     [_radarOnButton setVisible:NO];
     [_radarOffButton setVisible:NO];
     [_kamikazeButton setVisible:NO];
+    [_torpedoButton setVisible:NO];
     _ship = nil;
 }
 
@@ -356,10 +361,11 @@ static NSDictionary *shipNameMap = nil;
         [self setSelected:_ship];
         return;
     }
+    [_kamikazeButton setText:@"Disarm"];
     
     [self deselectTiles];
     
-    _validTileSelects = [_ship validShootCannonTiles];
+    _validTileSelects = [_ship validKamikazeHitTiles];
     [self setSelectableTiles];
     _selectedAction = ActionKamikaze;
 }

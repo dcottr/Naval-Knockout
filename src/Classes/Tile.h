@@ -48,4 +48,7 @@
 - (void)performKamikazeAction;
 - (BOOL)performTorpedoAction:(NSInteger)dir;
 
+
+@property (nonatomic, assign) BOOL dfsFlag;
+
 @end

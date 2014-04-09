@@ -58,6 +58,7 @@ typedef NSInteger WeaponType;
 - (NSSet *)validMoveTiles;
 - (NSSet *)validDropMineTiles;
 - (NSSet *)validShootCannonTiles;
+- (NSSet *)validKamikazeHitTiles;
 - (void)toggleSuperRadar:(BOOL)on;
 - (void)updateLocation;
 - (void)performMoveActionTo:(Tile *)tile;

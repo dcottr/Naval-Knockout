@@ -12,7 +12,7 @@
 @interface Mine : SPSprite
 
 - (id)initWithTile:(Tile *)tile;
-@property (nonatomic, weak) Tile *tile;
+@property (nonatomic, weak, readonly) Tile *tile;
 - (void)explode:(ShipSegment *)segment;
 
 @end

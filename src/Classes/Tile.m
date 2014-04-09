@@ -58,6 +58,7 @@ static SPTexture *visTexture = nil;
         _row = r;
         _col = c;
         _fogOfWarVisibility = NO;
+        _dfsFlag = NO;
         
         _backgroundImage = [[SPImage alloc] initWithTexture:waterTexture];
         _backgroundImage.width = _game.tileSize;
@@ -105,6 +106,7 @@ static SPTexture *visTexture = nil;
     [self displayCannonHit:NO];
     [self fogOfWar:NO];
     [self setSonar:NO];
+    _dfsFlag = NO;
 }
 
 - (void)setSelectable:(BOOL)selectable
@@ -115,6 +117,7 @@ static SPTexture *visTexture = nil;
     } else {
         [_selectableOverlay setVisible:selectable];
     }
+    _dfsFlag = NO;
 }
 
 - (void)performMineAction:(Ship *)ship
@@ -146,6 +149,7 @@ static SPTexture *visTexture = nil;
     if (_mine) {
         [self removeChild:_mine];
         _mine = nil;
+        NSLog(@"Deleted Mine");
     }
 }
 
@@ -240,7 +244,6 @@ static SPTexture *visTexture = nil;
 - (void)setSonar:(BOOL)visible
 {
     if (_mine) {
-        NSLog(@"Setting visible: %d", visible);
         [_mine setVisible:visible];
     }
 }
