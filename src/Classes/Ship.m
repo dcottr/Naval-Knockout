@@ -835,12 +835,32 @@ static BOOL shipTypeMapsInitialized = NO;
 	}
 	if (_dir == Down){ // straight line down
 	  int head = _baseRow + _shipLength; // row position for head
-	  for (int i = 0 ; i <= tile.row - head; i++ ){
-		next = [_gameContainer tileAtRow:(head + i) col: _baseColumn];
-		if ([next collide:self shipSegment:([_shipSegments objectAtIndex:(_shipLength -1)])]){
-		  break;
+	  if (_baseColumn  == tile.col){
+		for (int i = 0 ; i <= tile.row - head; i++ ){
+		  next = [_gameContainer tileAtRow:(head + i) col: _baseColumn];
+		  if ([next collide:self shipSegment:([_shipSegments objectAtIndex:(_shipLength -1)])]){
+			break;
+		  }
+		  current =  next;
 		}
-		current =  next;
+	  }
+	  else if (_baseColumn < tile.col ){ // strafe right
+		current = tile;
+		for (int i = 0; i < _shipLength; i ++){
+		  if ( [[_gameContainer tileAtRow:(_baseRow - i) col:(_baseColumn + 1)] collide:self
+																			shipSegment:[_shipSegments objectAtIndex:i]]){
+			return nil; // collision
+		  }
+		}
+	  }
+	  else{	// strafe left
+		current = tile;
+		for (int i = 0; i < _shipLength; i ++){
+		  if ( [[_gameContainer tileAtRow:(_baseRow - i) col:(_baseColumn - 1)] collide:self
+																			shipSegment:[_shipSegments objectAtIndex:i]]){
+			return nil; // collision
+		  }
+		}
 	  }
 	}
 	if (_dir == Left){ // shift down
@@ -864,22 +884,43 @@ static BOOL shipTypeMapsInitialized = NO;
 	}
 	
   }
-  if (_baseRow > tile.row){ // tile is above ship
+  else if (_baseRow > tile.row){ // tile is above ship
 	
-	if ( _dir == Up){	//	straight line up
-	  int head = _baseRow - _shipLength; // row position for head
-	  for (int i = 0 ; i <= head - tile.row; i++ ){
-		next = [_gameContainer tileAtRow:(head - i) col: _baseColumn];
-		if ([next collide:self shipSegment:([_shipSegments objectAtIndex:(_shipLength -1)])]){
-		  break;
+	if ( _dir == Up ){
+	  if (_baseColumn == tile.col){
+		//	straight line up
+		int head = _baseRow - _shipLength; // row position for head
+		for (int i = 0 ; i <= head - tile.row; i++ ){
+		  next = [_gameContainer tileAtRow:(head - i) col: _baseColumn];
+		  if ([next collide:self shipSegment:([_shipSegments objectAtIndex:(_shipLength -1)])]){
+			break;
+		  }
+		  current =  next;
 		}
-		current =  next;
+	  }
+	  else if (_baseColumn < tile.col ){ // strafe right
+		current = tile;
+		for (int i = 0; i < _shipLength; i ++){
+		  if ( [[_gameContainer tileAtRow:(_baseRow - i) col:(_baseColumn + 1)] collide:self
+																			shipSegment:[_shipSegments objectAtIndex:i]]){
+			return nil; // collision
+		  }
+		}
+	  }
+	  else{	// strafe left
+		current = tile;
+		for (int i = 0; i < _shipLength; i ++){
+		  if ( [[_gameContainer tileAtRow:(_baseRow - i) col:(_baseColumn - 1)] collide:self
+																			shipSegment:[_shipSegments objectAtIndex:i]]){
+			return nil; // collision
+		  }
+		}
 	  }
 	}
 	if( _dir == Down){ // backpedal
 	  next =[_gameContainer tileAtRow:(_baseRow - 1)col: _baseColumn];
 	  current = [next collide:self shipSegment:([_shipSegments objectAtIndex:0])] ? nil: next;
-
+	  
 	}
 	if (_dir == Left){ // shift up
 	  current = tile;
@@ -1537,7 +1578,34 @@ static BOOL shipTypeMapsInitialized = NO;
 
 - (void)shootTorpedo
 {
-    NSArray *collisionTiles; // POPULATE THIIIIIIS with tiles the torpedo would hit, 10 squares
+    NSMutableArray *collisionTiles; // POPULATE THIIIIIIS with tiles the torpedo would hit, 10 squares
+	
+  if (_dir == Down){
+	int head = _baseRow + _shipLength;
+	for ( int i =  head; i <= MIN(head + 10, 30); i ++  ){
+	  [collisionTiles addObject:[_gameContainer tileAtRow:i col:_baseColumn]];
+	}
+  }
+  if (_dir == Up){
+	int head = _baseRow - _shipLength;
+	for ( int i =  head; i <= MAX(head - 10, 0); i --  ){
+	  [collisionTiles addObject:[_gameContainer tileAtRow:i col:_baseColumn]];
+	}
+  }
+  if (_dir == Left){
+	int head = _baseColumn - _shipLength;
+	for ( int i =  head; i >= MAX(head - 10, 0); i --  ){
+	  [collisionTiles addObject:[_gameContainer tileAtRow:_baseRow	col:i]];
+	}
+  }
+  if (_dir == Right){
+	int head = _baseColumn + _shipLength;
+	for ( int i =  head; i <= MIN(head + 10, 30); i ++  ){
+	  [collisionTiles addObject:[_gameContainer tileAtRow:_baseRow	col:i]];
+	}
+  }
+  
+  
     for (Tile *tile in collisionTiles) {
         if ([tile performTorpedoAction:_dir]) {
             return;
